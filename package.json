@@ -2,7 +2,7 @@
   "name": "electron-quick-start",
   "version": "1.0.0",
   "description": "A minimal Electron application",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
     "start": "electron ."
   },
@@ -23,6 +23,17 @@
   },
   "homepage": "https://github.com/electron/electron-quick-start#readme",
   "devDependencies": {
+    "babel-cli": "^6.11.4",
+    "babel-plugin-syntax-jsx": "^6.13.0",
+    "babel-plugin-transform-react-jsx": "^6.8.0",
+    "babel-preset-es2015": "^6.13.2",
+    "babel-preset-react": "^6.11.1",
+    "babel-preset-stage-0": "^6.5.0",
     "electron-prebuilt": "^1.2.0"
+  },
+  "scripts": {
+    "build": "babel --quiet src --out-dir build",
+    "start": "npm run build & electron .",
+    "build_with_watch": "babel src --out-dir build --watch"
   }
 }
