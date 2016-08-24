@@ -13,11 +13,18 @@ var path = require('path');
 var mainWindow = void 0;
 
 function createWindow() {
+  BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.1_0');
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 800, height: 600 });
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600
+    // "web-preferences": {
+    //   "web-security": false
+    // }
+  });
 
   // and load the index.html of the app.
-  mainWindow.loadURL('file://' + path.resolve(__dirname, '../../static/index.html'));
+  mainWindow.loadURL('file://' + path.resolve(__dirname, '../../static/main.html'));
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();

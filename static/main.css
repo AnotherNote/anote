@@ -1,0 +1,64 @@
+/*layout*/
+html, body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.page-wrapper {
+  height: 100%;
+  position: relative;
+}
+
+.sidebar {
+  position:fixed; /* <-- fixes the left panel to prevent from scrolling */
+  top:50px;
+  left:0px;
+  width:235px;
+  bottom:0px;
+  background-color: #9a9a9a;
+}
+
+.content {
+  margin-left:235px;
+  top: 50px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  position: absolute;
+  overflow-y: scroll;
+}
+
+.header {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 50px;
+  right: 0px;
+  background-color: #2a2a2a;
+  opacity: 0.8;
+}
+
+.work-wrapper {
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  position: absolute;
+  margin-left: 300px;
+}
+
+.work-wrapper .sec-sidebar {
+  width: 300px;
+  background-color: #aaa;
+  height: 100%;
+  margin-left: -300px;
+  position: fixed;
+}
+
+.work-wrapper .work-pane {
+  background-color: #eaeaea;
+  height: 100%;
+  position: relative;
+}
