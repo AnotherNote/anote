@@ -47,6 +47,7 @@ class BooksContainer extends Component {
       bookDialogOpen: false,
       booksSearchText: null
     }
+    this.debouncedChangeBooksSearchText = debounce(this.changeBooksSearchText, 200);
   }
   // hook method for fetch books
   componentDidMount() {
@@ -55,6 +56,10 @@ class BooksContainer extends Component {
     books.find({ available: true }).sort({ 'updatedAt': -1 }).exec((err, bks) => {
       that.props.listBooks(bks);
     });
+  }
+
+  componentWillUnmount() {
+    this.debouncedChangeBooksSearchText.cancel();
   }
 
   _newBook = (event) => {
@@ -140,7 +145,7 @@ class BooksContainer extends Component {
           hintText="Search a notebook"
           style={{ marginLeft: '10px' }}
           defaultValue={this.state.booksSearchText}
-          onChange={(event) => {event.persist();debounce(this.changeBooksSearchText, 200)(event)}}
+          onChange={(event) => {event.persist();this.debouncedChangeBooksSearchText(event)}}
           />
         </div>
         <BooksList books={this.props.books.filter((book) =>  {

@@ -31,6 +31,7 @@ var _MuiThemeProvider2 = _interopRequireDefault(_MuiThemeProvider);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 Promise = require('bluebird');
+window.$ = window.jQuery = window.jquery = require('jquery');
 require('babel-polyfill');
 
 var fs = require('fs'),

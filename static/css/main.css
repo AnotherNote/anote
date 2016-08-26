@@ -15,13 +15,13 @@ html, body {
   position:fixed; /* <-- fixes the left panel to prevent from scrolling */
   top:50px;
   left:0px;
-  width:235px;
+  width:180px;
   bottom:0px;
   background-color: #9a9a9a;
 }
 
 .content {
-  margin-left:235px;
+  margin-left:180px;
   top: 50px;
   bottom: 0px;
   right: 0px;
@@ -50,15 +50,22 @@ html, body {
 }
 
 .work-wrapper .sec-sidebar {
-  width: 300px;
-  background-color: #aaa;
+  width: 295px;
+  background-color: #eee;
   height: 100%;
   margin-left: -300px;
   position: fixed;
 }
 
 .work-wrapper .work-pane {
-  background-color: #eaeaea;
   height: 100%;
   position: relative;
+}
+
+.editor-wrapper {
+  top: 50px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  position: absolute;
 }

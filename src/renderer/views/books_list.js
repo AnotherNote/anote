@@ -7,8 +7,8 @@ import Settings from 'material-ui/svg-icons/action/settings';
 import IconMenu from 'material-ui/IconMenu';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
-import constants from '../../constants'
-import { key2path, debounce } from '../../util'
+import constants from '../../constants';
+import { key2path, throttle } from '../../util';
 import { Link } from 'react-router';
 
 const styles = {
@@ -19,7 +19,7 @@ const styles = {
     marginTop: '20px'
   },
   gridList: {
-    width: '80%',
+    width: '90%',
     overflowY: 'auto',
     marginBottom: 24
   },
@@ -32,11 +32,17 @@ class BooksList extends Component {
     this.state = {
       gridCols: 4
     }
+    this.throttledGridCols = throttle(this.gridCols, 100);
   }
 
   componentDidMount() {
-    // add a debounce process
-    window.addEventListener('resize', debounce(this.gridCols, 200));
+    // add a throttle process
+    window.addEventListener('resize', this.throttledGridCols);
+  }
+
+  componentWillUnmount() {
+    if(this.throttledGridCols)
+      this.throttledGridCols.cancel();
   }
 
   // for better performance

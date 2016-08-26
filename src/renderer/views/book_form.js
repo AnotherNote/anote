@@ -1,6 +1,6 @@
 import path from 'path';
 import co from 'co';
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -102,6 +102,14 @@ class BookForm extends Component {
       </Dialog>
     );
   }
+}
+
+// strong params
+BookForm.propTypes = {
+    book: PropTypes.object,
+    open: PropTypes.bool,
+    onCancel: PropTypes.func,
+    onOk: PropTypes.func
 }
 
 export default BookForm;

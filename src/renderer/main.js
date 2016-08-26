@@ -1,4 +1,5 @@
 Promise = require('bluebird');
+window.$ = window.jQuery = window.jquery = require('jquery');
 require('babel-polyfill');
 
 const fs = require('fs'),

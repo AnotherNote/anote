@@ -60,23 +60,77 @@ const key2path = (key) => {
 }
 
 const debounce = (func, wait, immediate) => {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
+	var timeout = null,
+    debounced = function() {
+  		var context = this, args = arguments;
+  		var later = function() {
+  			timeout = null;
+  			if (!immediate) func.apply(context, args);
+  		};
+  		var callNow = immediate && !timeout;
+  		clearTimeout(timeout);
+  		timeout = setTimeout(later, wait);
+  		if (callNow) func.apply(context, args);
 	};
+  debounced.cancel = function(){
+    clearTimeout(timeout);
+  }
+  return debounced;
+};
+
+const throttle = function(func, wait, options) {
+  var timeout, context, args, result;
+  var previous = 0;
+  if (!options) options = {};
+  var getNow = function() {
+    return new Date().getTime();
+  }
+  var later = function() {
+    // 如果options.leading === false在这里重新设置 previous
+    previous = options.leading === false ? 0 : getNow();
+    timeout = null;
+    result = func.apply(context, args);
+    if (!timeout) context = args = null;
+  };
+
+  var throttled = function() {
+    var now = getNow();
+    if (!previous && options.leading === false) previous = now;
+    var remaining = wait - (now - previous);
+    context = this;
+    // 但是args每次都是最新的
+    args = arguments;
+    // 距离上次的时间已经大约wait，直接运行
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      previous = now;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+
+    // 这个是options.leading === false的时候做第一次调用
+    // 或者wait之内再调用的时候
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
+    }
+
+    return result;
+  };
+
+  throttled.cancel = function() {
+    clearTimeout(timeout);
+    previous = 0;
+    timeout = context = args = null;
+  };
+
+  return throttled;
 };
 
 const findIndexById = (list, item) => {
   return list.findIndex((currentItem) => {
-    return currentItem._id = item._id;
+    return currentItem._id == item._id;
   })
 }
 
@@ -86,5 +140,6 @@ module.exports = {
   hash2Key,
   key2path,
   debounce,
+  throttle,
   findIndexById
 }

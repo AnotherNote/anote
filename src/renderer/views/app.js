@@ -7,6 +7,8 @@ import { popHistory, pushHistory } from '../actions';
 import Layout from './layout';
 import BooksContainer from './books_container';
 import FilesContainer from './files_container';
+import FileForm from './file_form';
+import EmptyFile from './empty_file';
 
 const mapStateToProps = (state) => {
   return {
@@ -35,8 +37,11 @@ const App = class App extends Component {
         <Router history={hashHistory}>
           <Route path="/" component={Layout}>
             <IndexRoute component={BooksContainer}></IndexRoute>
-            <Route path='/books' component={BooksContainer}></Route>
-            <Route path='/notes' component={FilesContainer}></Route>
+            <Route path='books' component={BooksContainer}></Route>
+            <Route path='notes' component={FilesContainer}>
+              <IndexRoute component={EmptyFile}></IndexRoute>
+              <Route path=':id/edit'component={FileForm} ></Route>
+            </Route>
           </Route>
         </Router>
       );

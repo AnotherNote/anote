@@ -1,18 +1,31 @@
 import React, { Component, PropTypes } from 'react';
-import Paper from 'material-ui/Paper'
+import {Card, CardHeader, CardText} from 'material-ui/Card';
+import { Link, IndexLink } from 'react-router';
+
 
 class FilesList extends Component {
   render () {
     return (
-      <div>
+      <div style={{marginTop: '40px'}}>
         {this.props.files.map((file) => {
           return (
-            <Paper
-              style={style}
-              zDepth={1}
-              rounded={false}
-              children={<span>xxxxx</span>}
-            />
+            <Link
+              to={{pathname: `/notes/${file._id}/edit`, query: this.props.query}}
+              key={file._id}
+            >
+              <Card
+                style={{boxShadow: 'none', border: '1px solid #eee'}}
+              >
+                <CardHeader
+                  title={file.title || 'Untitled'}
+                  subtitle="Subtitle"
+                  showExpandableButton={true}
+                />
+                <CardText expandable={true} style={{maxHeight: '50px', overflow: 'hidden'}}>
+                  {file.content || 'Enjoy Markdonw! coding now'}
+                </CardText>
+              </Card>
+            </Link>
           );
         })}
       </div>
