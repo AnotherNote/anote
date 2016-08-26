@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
-import { listFiles, addFile, delFile, concatFiles, editFile, activeFile } from '../actions';
+import { listFiles, addFile, delFile, concatFiles, editFile, activeFile, setGlobalBook } from '../actions';
 import { files, books, tags } from '../../main/set_db';
 import { hashHistory } from 'react-router';
 import FilesList from './files_list';
 import FileForm from './file_form';
 import FlatButton from 'material-ui/FlatButton';
-import { debounce } from '../../util'
+import { debounce } from '../../util';
 
 const mapStateToProps = (state) => {
   return {
     files: state.files,
-    currentFile: state.activeFile
+    currentFile: state.activeFile,
+    globalBook: state.globalBook
   }
 }
 
@@ -35,6 +36,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     activeFile: (file) => {
       dispatch(activeFile(file));
+    },
+    setGlobalBook: (book) => {
+      dispatch(setGlobalBook(book));
     }
   }
 }
@@ -43,6 +47,12 @@ class FilesContainer extends Component {
   constructor(props) {
     super(props);
     this.debouncedSaveFileToDb = debounce(this.saveFileToDb, 200);
+    if(this.props.location.query.bookId){
+      this.props.setGlobalBook({
+        _id: this.props.location.query.bookId,
+        name: this.props.location.query.bookName
+      });
+    }
   }
 
   // this hook method is not always recalled when url changed
@@ -55,6 +65,10 @@ class FilesContainer extends Component {
   componentWillReceiveProps(newProps) {
     if(this.props.location.query.bookId != newProps.location.query.bookId){
       this._fetchFiles(newProps);
+      this.props.setGlobalBook({
+        _id: this.props.location.query.bookId,
+        name: this.props.location.query.bookName
+      });
       return;
     }
     if(this.props.location.query.searchFileText != newProps.location.query.searchFileText){
@@ -114,11 +128,11 @@ class FilesContainer extends Component {
     event.stopPropagation();
 
     // only can create note when there is bookId
-    if(!this.props.location.query.bookId){
+    if(!this.bookId()){
       console.log('unable to newAndCreateFile');
       return;
     }
-    files.insert({bookId: this.props.location.query.bookId}, (error, newFile) => {
+    files.insert({bookId: this.bookId()}, (error, newFile) => {
       if(error) {
         throw error;
         return;
@@ -128,6 +142,14 @@ class FilesContainer extends Component {
         hashHistory.push({ pathname: `/notes/${newFile._id}/edit`, query: this.props.location.query });
       }, 100);
     });
+  }
+
+  bookId = () => {
+    return this.props.location.query.bookId || this.props.globalBook._id;
+  }
+
+  isInBook = () => {
+    return this.props.location.query.bookId;
   }
 
   onChangeContent = (content, file) => {
@@ -153,7 +175,7 @@ class FilesContainer extends Component {
     return (
       <div className='work-wrapper'>
         <div className='sec-sidebar'>
-          <FlatButton label="New Note" onClick={this.newAndCreateFile} primary={true} backgroundColor='#ddd' style={{width: '295px', lineHeight: '40px', height: '42px', color: '#3d3d3d', backgroundColor: 'white', border: '1px solid', borderColor: '#ddd', position: 'fixed'}} />
+          <FlatButton label={this.bookId() ? `NEW NOTE IN ${this.props.globalBook.name}` : 'UNABLE NEW A NOTE!!'} onClick={this.newAndCreateFile} primary={true} backgroundColor={this.bookId() ? '#fff' : '#ddd'} style={{width: '295px', lineHeight: '40px', height: '42px', color: '#3d3d3d', border: '1px solid', borderColor: '#ddd', position: 'fixed'}} />
           <FilesList
             files={this.props.files}
             query={this.props.location.query}

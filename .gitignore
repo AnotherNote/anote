@@ -1,8 +1,10 @@
 node_modules
 build
 dist
-./build/*
-./node_modules
-./db/*
-./files/*
-./notes/*
+build/**/*
+node_modules
+db/**/*
+files/**/*
+notes/**/*
+files
+db

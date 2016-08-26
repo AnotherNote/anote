@@ -3480,9 +3480,9 @@
             return text;
         };
 
-        // the image render need hack 
+        // the image render need hack
         markedRenderer.image = function(href, title, text) {
-          return href;
+          return "<p>" + "<img src='" + FILES_PATH + '/' + href + "'/>" + "</p>";
         };
 
         markedRenderer.atLink = function(text) {

@@ -13,6 +13,8 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import reducers from './reducers';
 let store = createStore(reducers);
+import constants from '../constants';
+let { FILES_PATH } = constants;
 
 // material-ui use the plugin
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -20,12 +22,20 @@ injectTapEventPlugin();
 
 // material-ui theme provider
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
+const muiTheme = getMuiTheme({
+  fontFamily: '"YaHei Consolas Hybrid", Consolas, 微软雅黑, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, Monaco, courier, monospace !important',
+  palette: {
+    primary1Color: '#e78170'
+  }
+});
 
 
 document.addEventListener('DOMContentLoaded', function() {
   render(
     <Provider store={store}>
-      <MuiThemeProvider>
+      <MuiThemeProvider muiTheme={muiTheme}>
         <App/>
       </MuiThemeProvider>
     </Provider>,
@@ -33,4 +43,4 @@ document.addEventListener('DOMContentLoaded', function() {
   );
 }, false);
 
-window.files = files;
+window.FILES_PATH = FILES_PATH;

@@ -130,8 +130,8 @@ class BooksContainer extends Component {
     return shallowCompare(this, nextProps, nextState);
   }
 
-  jumpToNotes = (url) => {
-    hashHistory.push(url);
+  jumpToNotes = (obj) => {
+    hashHistory.push(obj);
   }
 
   render() {

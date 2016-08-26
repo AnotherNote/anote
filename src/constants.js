@@ -15,7 +15,8 @@ let constants = keyMirror({
   DEL_FILE: null,
   EDIT_FILE: null,
   CONCAT_FILES: null,
-  ACTIVE_FILE: null
+  ACTIVE_FILE: null,
+  SET_GLOBAL_BOOK: null
 });
 
 constants.FILES_PATH = `${path.resolve(__dirname, '../files')}`;

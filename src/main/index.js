@@ -14,8 +14,9 @@ function createWindow () {
   BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.1_0');
   // Create the browser window.
   mainWindow = new BrowserWindow({
-      width: 800,
-      height: 600
+      name: 'anote',
+      width: 1000,
+      height: 800
       // "web-preferences": {
       //   "web-security": false
       // }

@@ -6,15 +6,16 @@ import { Link, IndexLink } from 'react-router';
 class FilesList extends Component {
   render () {
     return (
-      <div style={{marginTop: '40px'}}>
+      <div style={{marginTop: '43px'}}>
         {this.props.files.map((file) => {
           return (
             <Link
               to={{pathname: `/notes/${file._id}/edit`, query: this.props.query}}
               key={file._id}
+              activeClassName='active'
             >
               <Card
-                style={{boxShadow: 'none', border: '1px solid #eee'}}
+                style={{boxShadow: 'none', border: '1px solid #eee', marginTop: '1px', marginBottom: '1px'}}
               >
                 <CardHeader
                   title={file.title || 'Untitled'}

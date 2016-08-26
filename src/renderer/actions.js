@@ -1,5 +1,5 @@
 import constants from '../constants';
-let { LIST_BOOKS, ADD_BOOK, DEL_BOOK, EDIT_BOOK, CONCAT_BOOKS, ACTIVE_BOOK, POP_HISTORY, PUSH_HISTORY ,LIST_FILES, ADD_FILE, DEL_FILE, EDIT_FILE, CONCAT_FILES, ACTIVE_FILE } = constants;
+let { LIST_BOOKS, ADD_BOOK, DEL_BOOK, EDIT_BOOK, CONCAT_BOOKS, ACTIVE_BOOK, POP_HISTORY, PUSH_HISTORY ,LIST_FILES, ADD_FILE, DEL_FILE, EDIT_FILE, CONCAT_FILES, ACTIVE_FILE, SET_GLOBAL_BOOK } = constants;
 
 /* book actions */
 export function addBook(book) {
@@ -99,5 +99,13 @@ export function activeFile(file) {
   return {
     type: ACTIVE_FILE,
     file
+  }
+}
+
+// set global book id for create note
+export function setGlobalBook(globalBook) {
+  return {
+    type: SET_GLOBAL_BOOK,
+    globalBook
   }
 }

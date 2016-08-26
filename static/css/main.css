@@ -4,6 +4,11 @@ html, body {
   width: 100%;
   padding: 0;
   margin: 0;
+  font-family: "YaHei Consolas Hybrid", Consolas, 微软雅黑, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, Monaco, courier, monospace!important;
+}
+
+#root {
+  background: rgba(0, 0, 0, 0);
 }
 
 .page-wrapper {
@@ -17,7 +22,7 @@ html, body {
   left:0px;
   width:180px;
   bottom:0px;
-  background-color: #9a9a9a;
+  background-color: #3f3f3f;
 }
 
 .content {
@@ -55,6 +60,7 @@ html, body {
   height: 100%;
   margin-left: -300px;
   position: fixed;
+  overflow-y: scroll;
 }
 
 .work-wrapper .work-pane {
@@ -68,4 +74,61 @@ html, body {
   right: 0px;
   left: 0px;
   position: absolute;
+}
+
+.sec-sidebar .active>div {
+  border-width: 1.5px !important;
+  border-color: #d1c091 !important;
+  box-shadow: inset 0px 0px 10px #ddd !important;
+}
+
+.sec-sidebar .active {
+  text-decoration: none !important;
+}
+
+.sec-sidebar a {
+  text-decoration: none !important;
+}
+
+/*sidebar menu css*/
+.main-menu {
+  margin-top: 30px;
+}
+
+.s-menu {
+  color: white;
+}
+
+.s-menu a {
+  color: white;
+  text-decoration: none !important;
+}
+
+.s-menu li {
+  height: 40px;
+  line-height: 40px;
+  font-size: 13pt;
+}
+
+.s-menu li a {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.s-menu li a.active {
+  background: #e78170;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.2);
+  box-shadow: inset 0px 0px 10px #666;
+  transition: background-color 0.3s;
+}
+
+.banner {
+  margin-top: 30px;
+  color: white;
+  font-size: 14pt;
+  font-family: "Meiryo UI", "Microsoft YaHei", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, "Monaco", monospace, Tahoma, STXihei, "华文细黑", STHeiti, "Helvetica Neue", "Droid Sans", "wenquanyi micro hei", FreeSans, Arimo, Arial, SimSun, "宋体", Heiti, "黑体", sans-serif;
 }
