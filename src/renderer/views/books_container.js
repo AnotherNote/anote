@@ -11,7 +11,8 @@ import {
     delBook,
     editBook,
     concatBooks,
-    activeBook
+    activeBook,
+    setGlobalBook
 } from '../actions';
 import {
     files,
@@ -32,11 +33,13 @@ import {
 import {
     hashHistory
 } from 'react-router';
+import ConfirmDialog from './confirm_dialog';
 
 const mapStateToProps = (state) => {
   return {
     books: state.books,
-    currentBook: state.activeBook
+    currentBook: state.activeBook,
+    globalBook: state.globalBook
   }
 }
 
@@ -56,6 +59,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     activeBook: (book) => {
       dispatch(activeBook(book));
+    },
+    setGlobalBook: (book) => {
+      dispatch(setGlobalBook(book));
     }
   }
 }
@@ -66,7 +72,11 @@ class BooksContainer extends Component {
     this.state = {
       editBook: {},
       bookDialogOpen: false,
-      booksSearchText: null
+      booksSearchText: null,
+      // for custom confirm dialog
+      confirmationOpen: false,
+      confirmString: '',
+      confirmationTmpData: {}
     }
     this.debouncedChangeBooksSearchText = debounce(this.changeBooksSearchText, 200);
   }
@@ -111,17 +121,6 @@ class BooksContainer extends Component {
     });
   }
 
-  delBook = (book) => {
-    var that = this;
-    books.remove({_id: book._id}, function(error) {
-      if(error){
-        throw error;
-        return;
-      }
-      that.props.delBook(book);
-    });
-  }
-
   closeBookFormDialog = () => {
     this.setState({
       bookDialogOpen: false
@@ -136,13 +135,13 @@ class BooksContainer extends Component {
           throw error;
           return;
         }
-        that.props.addBook(newBook);
+        that.props.addBook(Object.assign({}, newBook, {filesCount: 0}));
         that.setState({
           bookDialogOpen: false
         });
       });
     }else{
-      books.update({'_id': book._id}, that._bookAttributes(), {}, (error) => {
+      books.update({'_id': book._id}, that._bookAttributes(book), {}, (error) => {
         if(error){
           throw error;
           return;
@@ -173,6 +172,37 @@ class BooksContainer extends Component {
     hashHistory.push(obj);
   }
 
+  delBook = (book) => {
+    this.setState({
+      confirmationOpen: true,
+      confirmString: `Are you sure you want to delete the notebook '${book.name}'`,
+      confirmationTmpData: {bookId: book._id}
+    });
+  }
+
+  onCancelConfirmationDialog = () => {
+    this.setState({
+      confirmationOpen: false
+    });
+  }
+
+  onOkConfirmationDialog = (event, tmpData) => {
+    let that = this;
+    books.update({_id: tmpData.bookId}, {$set: {available: false}}, {}, function(error) {
+      if(error){
+        throw error;
+        return;
+      }
+      that.props.delBook({_id: tmpData.bookId});
+      if(that.props.globalBook._id == tmpData.bookId) {
+        that.props.setGlobalBook({});
+      }
+      that.setState({
+        confirmationOpen: false
+      });
+    });
+  }
+
   render() {
     return (
       <div>
@@ -198,6 +228,16 @@ class BooksContainer extends Component {
           open={this.state.bookDialogOpen}
           onCancel={this.closeBookFormDialog}
           onOk={this.submitBookFormDialog}
+        />
+        <ConfirmDialog
+          cancelString='Cancel'
+          okString='Delete'
+          onCancel={this.onCancelConfirmationDialog}
+          onOk={this.onOkConfirmationDialog}
+          title= ''
+          open={this.state.confirmationOpen}
+          confirmString={this.state.confirmString}
+          tmpData={this.state.confirmationTmpData}
         />
       </div>
     );

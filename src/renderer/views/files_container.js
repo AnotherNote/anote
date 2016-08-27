@@ -4,7 +4,6 @@ import React, {
 import {
     connect
 } from 'react-redux';
-import RaisedButton from 'material-ui/RaisedButton';
 import {
     listFiles,
     addFile,
