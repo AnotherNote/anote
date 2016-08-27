@@ -26,7 +26,8 @@ import FilesList from './files_list';
 import FileForm from './file_form';
 import FlatButton from 'material-ui/FlatButton';
 import {
-    debounce
+    debounce,
+    pick
 } from '../../util';
 
 const mapStateToProps = (state) => {
@@ -110,11 +111,11 @@ class FilesContainer extends Component {
       props = newProps || this.props;
 
     if(props.location.query.bookId) {
-      searchConditions = { bookId: props.location.query.bookId };
+      searchConditions = { bookId: props.location.query.bookId, available: true };
     }else if(props.location.query.searchFileText) {
-      searchConditions = { $or: [ { title: { $regex: new RegExp(props.location.query.searchFileText, 'i') } }, { content: { $regex: new RegExp(props.location.query.searchFileText, 'i') } } ] };
+      searchConditions = { $or: [ { title: { $regex: new RegExp(props.location.query.searchFileText, 'i') } }, { content: { $regex: new RegExp(props.location.query.searchFileText, 'i') } } ], available: true };
     }else {
-      searchConditions = {};
+      searchConditions = { available: true };
     }
     files.find(searchConditions).sort(sortConditions).exec( (err, fls) => {
       if(err)
@@ -146,13 +147,12 @@ class FilesContainer extends Component {
   newAndCreateFile = (event) => {
     event.preventDefault();
     event.stopPropagation();
-
     // only can create note when there is bookId
     if(!this.bookId()){
       console.log('unable to newAndCreateFile');
       return;
     }
-    files.insert({bookId: this.bookId()}, (error, newFile) => {
+    files.insert({bookId: this.bookId(), available: true}, (error, newFile) => {
       if(error) {
         throw error;
         return;
@@ -183,7 +183,7 @@ class FilesContainer extends Component {
   saveFileToDb = (file) => {
     var that = this;
     that.props.editFile(file);
-    files.update({'_id': file._id}, {title: file.title, content: file.content, bookId: file.bookId}, {upsert: false, multi: false}, (error) => {
+    files.update({'_id': file._id}, {$set: that._fileAttributes(file)}, {upsert: false, multi: false}, (error) => {
       if(error){
         throw error;
         return;
@@ -191,11 +191,30 @@ class FilesContainer extends Component {
     });
   }
 
+  _fileAttributes = (file) => {
+    return pick(file, 'title', 'content');
+  }
+
   render() {
     return (
       <div className='work-wrapper'>
         <div className='sec-sidebar'>
-          <FlatButton label={this.bookId() ? `NEW NOTE IN ${this.props.globalBook.name}` : 'UNABLE NEW A NOTE!!'} onClick={this.newAndCreateFile} primary={true} backgroundColor={this.bookId() ? '#fff' : '#ddd'} style={{width: '295px', lineHeight: '40px', height: '42px', color: '#3d3d3d', border: '1px solid', borderColor: '#ddd', position: 'fixed'}} />
+          <FlatButton
+            label={this.bookId() ? `NEW NOTE IN ${this.props.globalBook.name}` : 'UNABLE NEW A NOTE!!'}
+            onClick={this.newAndCreateFile}
+            primary={true}
+            backgroundColor={this.bookId() ? 'rgba(255, 255, 255, 1)' : '#ddd'}
+            style={{
+              width: '295px',
+              lineHeight: '40px',
+              height: '42px',
+              color: '#3d3d3d',
+              border: '1px solid',
+              borderColor: '#ddd',
+              position: 'fixed',
+              zIndex: 100
+            }}
+          />
           <FilesList
             files={this.props.files}
             query={this.props.location.query}

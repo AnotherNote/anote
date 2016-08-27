@@ -26,7 +26,8 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import DropZone from 'react-dropzone';
 import TextField from 'material-ui/TextField';
 import {
-    debounce
+    debounce,
+    pick
 } from '../../util';
 import {
     hashHistory
@@ -74,7 +75,21 @@ class BooksContainer extends Component {
     // can write some fetch infos code
     let that = this;
     books.find({ available: true }).sort({ 'updatedAt': -1 }).exec((err, bks) => {
-      that.props.listBooks(bks);
+      if(bks.length == 0)
+        that.props.listBooks(bks);
+      let tmpC = 0;
+      bks.forEach((bk, index) => {
+        files.count({bookId: bk._id, available: true}, (error, count) => {
+          if(error){
+            throw new Error('db error');
+            return;
+          }
+          bk.filesCount = count;
+          tmpC += 1;
+          if(tmpC == bks.length)
+            that.props.listBooks(bks);
+        })
+      });
     });
   }
 
@@ -116,7 +131,7 @@ class BooksContainer extends Component {
   submitBookFormDialog = (book) => {
     var that = this;
     if(!book._id){
-      books.insert(book, (error, newBook) => {
+      books.insert(that._bookAttributes(book), (error, newBook) => {
         if(error){
           throw error;
           return;
@@ -127,7 +142,7 @@ class BooksContainer extends Component {
         });
       });
     }else{
-      books.update({'_id': book._id}, book, {}, (error) => {
+      books.update({'_id': book._id}, that._bookAttributes(), {}, (error) => {
         if(error){
           throw error;
           return;
@@ -138,6 +153,10 @@ class BooksContainer extends Component {
         });
       });
     }
+  }
+
+  _bookAttributes = (book) => {
+    return pick(book, 'imagePath', 'available', 'name');
   }
 
   changeBooksSearchText = (event)=> {

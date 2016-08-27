@@ -31,7 +31,7 @@ class FileForm extends Component {
                         hintText="Untitled"
                         fullWidth={true}
                         style={{height: '50px'}}
-                        inputStyle={{'fontSize': '24px', color: '#5d5d5d'}}
+                        inputStyle={{'fontSize': '16px', color: '#5d5d5d'}}
                         defaultValue={this.props.currentFile && this.props.currentFile.title}
                         onChange={this.onTitleChange}
                       />

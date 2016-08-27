@@ -113,7 +113,7 @@ class BooksList extends Component {
                       <GridTile
                           key={book.name}
                           title={book.name}
-                          subtitle={<span>by <b>subtitle</b></span>}
+                          subtitle={<span><b>{book.filesCount} Notes</b></span>}
                           actionIcon={
                             <IconMenu
                               iconButtonElement={<IconButton><Settings color="white" /></IconButton>}
