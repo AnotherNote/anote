@@ -11,6 +11,10 @@ import {
     Link,
     IndexLink
 } from 'react-router';
+import {
+  ppDate,
+  chineseDate
+} from '../../util';
 
 class FilesList extends Component {
   render () {
@@ -24,14 +28,31 @@ class FilesList extends Component {
               activeClassName='active'
             >
               <Card
-                style={{boxShadow: 'none', border: '1px solid #eee', marginTop: '1px', marginBottom: '1px'}}
+                style={{
+                  boxShadow: 'none',
+                  border: '1px solid #eee',
+                  marginTop: '1px',
+                  marginBottom: '1px'
+                }}
               >
                 <CardHeader
                   title={file.title || 'Untitled'}
-                  subtitle="Subtitle"
+                  subtitle={ppDate(chineseDate(file.updatedAt || file.createdAt))}
                   showExpandableButton={true}
+                  style={{
+                    lineHeight: '18px',
+                    fontSize: '16px'
+                  }}
                 />
-                <CardText expandable={true} style={{maxHeight: '50px', overflow: 'hidden'}}>
+                <CardText
+                  expandable={true}
+                  style={{
+                    maxHeight: '50px',
+                    overflow: 'hidden',
+                    fontSize: '14px',
+                    lineHeight: '16px'
+                  }}
+                >
                   {file.content || 'Enjoy Markdonw! coding now'}
                 </CardText>
               </Card>

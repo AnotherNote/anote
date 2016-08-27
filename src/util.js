@@ -140,6 +140,16 @@ const pick = (o, ...props) => {
   return Object.assign({}, ...props.map((prop) => {return {[prop]: o[prop]};}))
 }
 
+const chineseDate = (date) => {
+  let tmpDate = new Date(date);
+  tmpDate.setHours(date.getHours() + 8);
+  return tmpDate;
+}
+
+const ppDate = (date) => {
+  return `${date.getMonth()}/${date.getDate()}/${date.getFullYear().toString()}`;
+}
+
 module.exports = {
     copyFile,
     getFileHash,
@@ -148,5 +158,7 @@ module.exports = {
     debounce,
     throttle,
     findIndexById,
-    pick
+    pick,
+    chineseDate,
+    ppDate
 }
