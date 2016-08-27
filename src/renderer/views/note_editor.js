@@ -69,7 +69,13 @@ class NoteEditor extends Component {
     this.debouncedOnchange.cancel();
   }
 
+  componentWillReceiveProps = (newProps) => {
+    if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id))
+      this.editor.cm.setValue(newProps.currentFile.content);
+  }
+
   componentDidMount() {
+    console.log('note editor componentDidMount');
     if(this.debouncedOnchange)
       this.debouncedOnchange.cancel();
     this.debouncedOnchange = debounce(this.onChange, 200);
@@ -95,8 +101,6 @@ class NoteEditor extends Component {
         },
         onload: function() {
           $imageInput.change(function(event){
-            console.log('change image');
-            console.log(event.target.files);
             let files = event.target.files;
             if(files.length == 0)
               return;
@@ -114,12 +118,15 @@ class NoteEditor extends Component {
     });
     editor.setToolbarAutoFixed(true);
     window.editor = editor;
+    this.editor = editor;
   }
 
   render () {
     return (
       <div id='editormd'>
-        <textarea defaultValue={this.props.currentFile && this.props.currentFile.content} ref='textArea'></textarea>
+        <textarea
+          defaultValue={this.props.currentFile && this.props.currentFile.content}
+          ref='textArea'/>
         <input type='file' style={{display: 'none'}} ref='imageInput' accept='image/*' />
       </div>
     );

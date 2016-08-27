@@ -66,6 +66,7 @@ class Layout extends Component {
           <ul className='s-menu main-menu'>
             <li><IndexLink to='/' activeClassName='active'>notebooks</IndexLink></li>
             <li><Link to='/notes' activeClassName='active'>notes</Link></li>
+            <li><Link to='/test' activeClassName='active'>test</Link></li>
           </ul>
         </div>
         <div className='content'>

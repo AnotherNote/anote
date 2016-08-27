@@ -481,7 +481,7 @@
             {
                 this.loadQueues();
             }
-
+            console.log('editor init');
             return this;
         },
 
@@ -2088,7 +2088,7 @@
                         flowchartTimer = null;
                     }, 10);
                 }
-
+                console.log('in editor code');
                 if (state.loaded)
                 {
                     $.proxy(settings.onchange, this)();

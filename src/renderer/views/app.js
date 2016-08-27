@@ -21,6 +21,7 @@ import BooksContainer from './books_container';
 import FilesContainer from './files_container';
 import FileForm from './file_form';
 import EmptyFile from './empty_file';
+import TestContainer from './test_container';
 
 const mapStateToProps = (state) => {
   return {
@@ -54,6 +55,7 @@ const App = class App extends Component {
               <IndexRoute component={EmptyFile}></IndexRoute>
               <Route path=':id/edit'component={FileForm} ></Route>
             </Route>
+            <Route path='test' component={TestContainer}></Route>
           </Route>
         </Router>
       );

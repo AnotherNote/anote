@@ -16,11 +16,14 @@ function createWindow () {
   mainWindow = new BrowserWindow({
       name: 'anote',
       width: 1000,
-      height: 800
-      // "web-preferences": {
-      //   "web-security": false
-      // }
+      height: 800,
+      backgroundColor: '#eee',
+      show: false
     });
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${path.resolve(__dirname, '../../static/main.html')}`)
@@ -35,6 +38,8 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  // mainWindow.on('blur')
 }
 
 // This method will be called when Electron has finished
