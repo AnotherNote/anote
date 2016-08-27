@@ -1,7 +1,16 @@
-import React, { Component, PropTypes } from 'react';
-import {Card, CardHeader, CardText} from 'material-ui/Card';
-import { Link, IndexLink } from 'react-router';
-
+import React, {
+    Component,
+    PropTypes
+} from 'react';
+import {
+    Card,
+    CardHeader,
+    CardText
+} from 'material-ui/Card';
+import {
+    Link,
+    IndexLink
+} from 'react-router';
 
 class FilesList extends Component {
   render () {

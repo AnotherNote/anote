@@ -1,6 +1,12 @@
 import constants from '../../constants';
-import { findIndexById } from '../../util'
-let { LIST_FILES, ADD_FILE, DEL_FILE, EDIT_FILE, CONCAT_FILES } = constants;
+import {
+    findIndexById
+} from '../../util'
+let {
+    LIST_FILES,
+    ADD_FILE,
+    DEL_FILE,
+    EDIT_FILE, CONCAT_FILES } = constants;
 
 export default function (state=[], action) {
   switch (action.type) {

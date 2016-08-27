@@ -1,11 +1,21 @@
 import path from 'path';
 import co from 'co';
-import React, { Component } from 'react';
+import React, {
+    Component
+} from 'react';
 import ReactDom from 'react-dom';
-import { debounce } from '../../util';
-import { copyFile, getFileHash, hash2Key } from '../../util';
+import {
+    debounce
+} from '../../util';
+import {
+    copyFile,
+    getFileHash,
+    hash2Key
+} from '../../util';
 import constants from '../../constants';
-let { FILES_PATH } = constants;
+let {
+    FILES_PATH
+} = constants;
 
 class NoteEditor extends Component {
   constructor(props) {

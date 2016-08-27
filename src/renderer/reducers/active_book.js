@@ -1,5 +1,7 @@
 import constants from '../../constants';
-let { ACTIVE_BOOK } = constants;
+let {
+    ACTIVE_BOOK
+} = constants;
 
 export default function (state={}, action){
   switch (action.type) {

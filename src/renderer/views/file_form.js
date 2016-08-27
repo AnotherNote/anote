@@ -1,7 +1,12 @@
-import React, { Component, PropTypes } from 'react';
+import React, {
+    Component,
+    PropTypes
+} from 'react';
 import NoteEditor from './note_editor';
 import TextField from 'material-ui/TextField';
-import { debounce } from '../../util'
+import {
+    debounce
+} from '../../util'
 
 class FileForm extends Component {
   constructor(props) {

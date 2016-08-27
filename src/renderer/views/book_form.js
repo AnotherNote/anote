@@ -1,13 +1,22 @@
 import path from 'path';
 import co from 'co';
-import React, { Component, PropTypes } from 'react';
+import React, {
+    Component,
+    PropTypes
+} from 'react';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import DropZone from 'react-dropzone';
 import constants from '../../constants'
-let { FILES_PATH } = constants;
-import { copyFile, getFileHash, hash2Key } from '../../util'
+let {
+    FILES_PATH
+} = constants;
+import {
+    copyFile,
+    getFileHash,
+    hash2Key
+} from '../../util'
 
 // props {book, open, onCancel, onOk}
 class BookForm extends Component {

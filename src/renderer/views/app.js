@@ -1,9 +1,21 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {
+    Component
+} from 'react';
+import {
+    connect
+} from 'react-redux';
 import reducers from '../reducers';
-import { Router, Route, hashHistory, IndexRoute } from 'react-router';
+import {
+    Router,
+    Route,
+    hashHistory,
+    IndexRoute
+} from 'react-router';
 
-import { popHistory, pushHistory } from '../actions';
+import {
+    popHistory,
+    pushHistory
+} from '../actions';
 import Layout from './layout';
 import BooksContainer from './books_container';
 import FilesContainer from './files_container';

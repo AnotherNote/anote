@@ -1,4 +1,6 @@
-import { combineReducers } from 'redux';
+import {
+    combineReducers
+} from 'redux';
 import books from './books';
 import activeBook from './active_book';
 import histories from './histories';

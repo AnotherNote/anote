@@ -1,13 +1,33 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {
+    Component
+} from 'react';
+import {
+    connect
+} from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
-import { listFiles, addFile, delFile, concatFiles, editFile, activeFile, setGlobalBook } from '../actions';
-import { files, books, tags } from '../../main/set_db';
-import { hashHistory } from 'react-router';
+import {
+    listFiles,
+    addFile,
+    delFile,
+    concatFiles,
+    editFile,
+    activeFile,
+    setGlobalBook
+} from '../actions';
+import {
+    files,
+    books,
+    tags
+} from '../../main/set_db';
+import {
+    hashHistory
+} from 'react-router';
 import FilesList from './files_list';
 import FileForm from './file_form';
 import FlatButton from 'material-ui/FlatButton';
-import { debounce } from '../../util';
+import {
+    debounce
+} from '../../util';
 
 const mapStateToProps = (state) => {
   return {

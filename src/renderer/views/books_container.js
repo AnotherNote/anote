@@ -1,16 +1,36 @@
-import React, { Component } from 'react';
+import React, {
+    Component
+} from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
-import { connect } from 'react-redux';
-import { addBook, listBooks, delBook, editBook, concatBooks, activeBook } from '../actions';
-import { files, books, tags, infos } from '../../main/set_db';
+import {
+    connect
+} from 'react-redux';
+import {
+    addBook,
+    listBooks,
+    delBook,
+    editBook,
+    concatBooks,
+    activeBook
+} from '../actions';
+import {
+    files,
+    books,
+    tags,
+    infos
+} from '../../main/set_db';
 import BooksList from './books_list';
 import BookForm from './book_form';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import DropZone from 'react-dropzone';
 import TextField from 'material-ui/TextField';
-import { debounce } from '../../util';
-import { hashHistory } from 'react-router';
+import {
+    debounce
+} from '../../util';
+import {
+    hashHistory
+} from 'react-router';
 
 const mapStateToProps = (state) => {
   return {

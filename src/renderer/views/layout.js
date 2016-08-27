@@ -1,10 +1,20 @@
-import React, { Component } from 'react';
-import { Link, IndexLink } from 'react-router';
-import {List, ListItem} from 'material-ui/List';
+import React, {
+    Component
+} from 'react';
+import {
+    Link,
+    IndexLink
+} from 'react-router';
+import {
+    List,
+    ListItem
+} from 'material-ui/List';
 import TextField from 'material-ui/TextField';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
-import { hashHistory } from 'react-router';
+import {
+    hashHistory
+} from 'react-router';
 import ReactDom from 'react-dom';
 
 class Layout extends Component {

@@ -1,6 +1,12 @@
-import React, { Component, PropTypes } from 'react';
+import React, {
+    Component,
+    PropTypes
+} from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
-import {GridList, GridTile} from 'material-ui/GridList';
+import {
+    GridList,
+    GridTile
+} from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
 import Settings from 'material-ui/svg-icons/action/settings';
@@ -8,9 +14,13 @@ import IconMenu from 'material-ui/IconMenu';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import constants from '../../constants';
-import { key2path, throttle } from '../../util';
-import { Link } from 'react-router';
-
+import {
+    key2path,
+    throttle
+} from '../../util';
+import {
+    Link
+} from 'react-router';
 const styles = {
   root: {
     display: 'flex',

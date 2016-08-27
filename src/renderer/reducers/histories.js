@@ -1,6 +1,9 @@
 // use history array replace url history and url
 import constants from '../../constants';
-let { POP_HISTORY, PUSH_HISTORY } = constants;
+let {
+    POP_HISTORY,
+    PUSH_HISTORY
+} = constants;
 
 const defaultHome = {
   containerName: 'BooksContainer',
