@@ -28,6 +28,9 @@ import {
     debounce,
     pick
 } from '../../util';
+import {
+  openFileItemContextMenu
+} from '../controllers/files_controller.js';
 
 const mapStateToProps = (state) => {
   return {
@@ -194,10 +197,42 @@ class FilesContainer extends Component {
     return pick(file, 'title', 'content');
   }
 
+  onContextMenu = (file) => {
+    let chooseFile = file ? true : false;
+    let canNew = this.bookId() ? true : false;
+    openFileItemContextMenu(
+      canNew,
+      chooseFile,
+      {
+        newFile: () => {
+
+        },
+        moveToNotebook: () => {
+
+        },
+        copyToNotebook: () => {
+
+        },
+        normalExport: () => {
+
+        },
+        exportAsPdf: () => {
+
+        },
+        deleteFile: () => {
+
+        }
+      }
+    );
+  }
+
   render() {
     return (
       <div className='work-wrapper'>
-        <div className='sec-sidebar'>
+        <div
+          className='sec-sidebar'
+          onContextMenu={(event) => {this.onContextMenu();}}
+        >
           <FlatButton
             label={this.bookId() ? `NEW NOTE IN ${this.props.globalBook.name}` : 'UNABLE NEW A NOTE!!'}
             onClick={this.newAndCreateFile}
@@ -217,6 +252,7 @@ class FilesContainer extends Component {
           <FilesList
             files={this.props.files}
             query={this.props.location.query}
+            onContextMenu={this.onContextMenu}
           />
         </div>
         <div className='work-pane'>

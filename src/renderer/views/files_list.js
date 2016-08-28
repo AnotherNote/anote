@@ -19,7 +19,9 @@ import {
 class FilesList extends Component {
   render () {
     return (
-      <div style={{marginTop: '43px'}}>
+      <div
+        style={{marginTop: '43px'}}
+      >
         {this.props.files.map((file) => {
           return (
             <Link
@@ -34,6 +36,7 @@ class FilesList extends Component {
                   marginTop: '1px',
                   marginBottom: '1px'
                 }}
+                onContextMenu={(event) => {event.stopPropagation();this.props.onContextMenu(file);}}
               >
                 <CardHeader
                   title={file.title || 'Untitled'}

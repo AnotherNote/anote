@@ -71,7 +71,7 @@ class NoteEditor extends Component {
 
   componentWillReceiveProps = (newProps) => {
     if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id))
-      this.editor.cm.setValue(newProps.currentFile.content);
+      this.editor.cm.setValue(newProps.currentFile.content || '');
   }
 
   componentDidMount() {

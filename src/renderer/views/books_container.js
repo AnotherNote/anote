@@ -237,6 +237,10 @@ class BooksContainer extends Component {
     return (
       <div
         onContextMenu={this.onNormalContextMenu}
+        style={{
+          height: '100%',
+          width: '100%'
+        }}
       >
         <FloatingActionButton style={{ position: 'fixed', bottom: '10px', right: '10px', zIndex: 1000 }} onClick={this._newBook}>
           <ContentAdd />
