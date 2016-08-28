@@ -16,6 +16,7 @@ const path = require('path'),
 
 db.books.ensureIndex({ fieldName: 'updatedAt' });
 db.files.ensureIndex({ fieldName: 'updatedAt' });
+db.files.ensureIndex({ fieldName: 'bookId' });
 
 db.files.ensureIndex({ fieldName: '_id', unique: true }, function (err) {
 })

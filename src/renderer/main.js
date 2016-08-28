@@ -15,6 +15,7 @@ import reducers from './reducers';
 let store = createStore(reducers);
 import constants from '../constants';
 let { FILES_PATH } = constants;
+import { setupIpc } from './setup_ipc';
 
 // material-ui use the plugin
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -44,3 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
 }, false);
 
 window.FILES_PATH = FILES_PATH;
+
+// setupIpc to main
+setupIpc();

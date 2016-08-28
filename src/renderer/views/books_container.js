@@ -34,6 +34,9 @@ import {
     hashHistory
 } from 'react-router';
 import ConfirmDialog from './confirm_dialog';
+import {
+  openBookItemContextMenu
+} from '../controllers/books_controller.js';
 
 const mapStateToProps = (state) => {
   return {
@@ -203,6 +206,21 @@ class BooksContainer extends Component {
     });
   }
 
+  onContextMenu = (event, book) => {
+    var that = this;
+    openBookItemContextMenu({
+      editBook: () => {
+        that.editBook(book);
+      },
+      deleteBook: () => {
+        that.delBook(book);
+      },
+      newBook: () => {
+        that._newBook();
+      }
+    });
+  }
+
   render() {
     return (
       <div>
@@ -217,12 +235,20 @@ class BooksContainer extends Component {
           onChange={(event) => {event.persist();this.debouncedChangeBooksSearchText(event)}}
           />
         </div>
-        <BooksList books={this.props.books.filter((book) =>  {
-          if(!this.state.booksSearchText || this.state.booksSearchText == '')
-            return true;
-          let patt = new RegExp(this.state.booksSearchText, 'i');
-          return patt.test(book.name);
-        })} callbacks={{ editBook: this.editBook, delBook: this.delBook, jumpToNotes: this.jumpToNotes }} />
+        <BooksList
+          books={this.props.books.filter((book) =>  {
+            if(!this.state.booksSearchText || this.state.booksSearchText == '')
+              return true;
+              let patt = new RegExp(this.state.booksSearchText, 'i');
+              return patt.test(book.name);
+          })}
+          callbacks={{
+            editBook: this.editBook,
+            delBook: this.delBook,
+            jumpToNotes: this.jumpToNotes,
+            onContextMenu: this.onContextMenu
+          }}
+        />
         <BookForm
           book={this.props.currentBook}
           open={this.state.bookDialogOpen}

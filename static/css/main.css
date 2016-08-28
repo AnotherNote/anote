@@ -128,6 +128,8 @@ html, body {
 
 .banner {
   margin-top: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
   color: white;
   font-size: 14pt;
   line-height: 18pt;

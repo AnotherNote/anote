@@ -84,12 +84,14 @@ class NoteEditor extends Component {
     var editor = editormd("editormd", {
         autoFocus: false,
         path : "./lib/",
+        // 这个方法只有preview和watch的时候才调用
         onchange: function() {
-          console.log('editor onchange');
+          // console.log('editor onchange');
           // console.log("onchange =>", this, this.id, this.settings, this.state);
           // console.log(that.refs.textArea.value);
-          that.debouncedOnchange();
+          // that.debouncedOnchange();
         },
+        watch: false,
         toolbarIcons: ["undo", "redo", "|", "bold", "italic", "quote", "|", "h1", "h2", "h3", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "insertImage", "code", "preformatted-text", "code-block", "table", "datetime", "html-entities", "pagebreak", "|", "goto-line", "watch", "preview", "fullscreen", "clear", "search"],
         toolbarIconsClass : {
           insertImage: "fa-picture-o"  // 指定一个FontAawsome的图标类
@@ -98,6 +100,11 @@ class NoteEditor extends Component {
           insertImage: function(cm, icon, cursor, selection) {
             $imageInput.trigger('click');
           }
+        },
+        // a hack hook(我自己hack的)
+        onChange: function() {
+          // console.log('xxxxjxjxjxjxjxjxj');
+          that.debouncedOnchange();
         },
         onload: function() {
           $imageInput.change(function(event){
@@ -121,12 +128,18 @@ class NoteEditor extends Component {
     this.editor = editor;
   }
 
+  onChangedd = () => {
+    console.log('xxxxxxxxx');
+  }
+
   render () {
     return (
       <div id='editormd'>
         <textarea
           defaultValue={this.props.currentFile && this.props.currentFile.content}
-          ref='textArea'/>
+          ref='textArea'
+          onChange={this.onChangedd}
+        />
         <input type='file' style={{display: 'none'}} ref='imageInput' accept='image/*' />
       </div>
     );

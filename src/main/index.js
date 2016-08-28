@@ -6,63 +6,52 @@ const BrowserWindow = electron.BrowserWindow
 
 const path = require('path')
 
+const windows = require('./windows');
+
+const ipc = require('./ipc');
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
 
-function createWindow () {
-  BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.1_0');
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-      name: 'anote',
-      width: 1000,
-      height: 800,
-      backgroundColor: '#eee',
-      show: false
-    });
-
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
+function init () {
+  app.on('ready', function() {
+    BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.1_0');
+    windows.main.init();
   });
-
-  // and load the index.html of the app.
-  mainWindow.loadURL(`file://${path.resolve(__dirname, '../../static/main.html')}`)
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null
-  })
-
-  // mainWindow.on('blur')
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+var shouldQuit = false;
+
+if(!shouldQuit){
+  shouldQuit = app.makeSingleInstance(onAppOpen);
+  if(shouldQuit){
+    app.quite();
+  }
+}
+
+if(!shouldQuit){
+  init();
+}
+
+ipc.init();
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
 })
 
 app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow()
+  if (windows.main.win === null) {
+    windows.main.init();
   }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+function onAppOpen () {
+  if(app.ipcReady){
+      windows.main.show();
+  }
+}

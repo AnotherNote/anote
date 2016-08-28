@@ -35,6 +35,7 @@ const styles = {
   },
 };
 
+
 // props {callbacks, books}
 class BooksList extends Component {
   constructor(props) {
@@ -128,6 +129,7 @@ class BooksList extends Component {
                         <img
                           src={key2path(book.imagePath)}
                           onClick={(event) => {this.props.callbacks.jumpToNotes({pathname: '/notes', query: {bookId: book._id, bookName: book.name}})}}
+                          onContextMenu={(event) => {this.props.callbacks.onContextMenu(event, book)}}
                         />
                       </GridTile>
                     )

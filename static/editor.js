@@ -1964,7 +1964,7 @@
          */
 
         save : function() {
-
+            console.log('editor.md save');
             var _this            = this;
             var state            = this.state;
             var settings         = this.settings;
@@ -2088,12 +2088,15 @@
                         flowchartTimer = null;
                     }, 10);
                 }
-                console.log('in editor code');
+
                 if (state.loaded)
                 {
                     $.proxy(settings.onchange, this)();
                 }
             }
+
+            if(settings.onChange)
+              $.proxy(settings.onChange, this)();
 
             return this;
         },
