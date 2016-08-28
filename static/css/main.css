@@ -43,6 +43,7 @@ html, body {
   right: 0px;
   background-color: #2a2a2a;
   opacity: 0.8;
+  -webkit-app-region: drag;
 }
 
 .work-wrapper {

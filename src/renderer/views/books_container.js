@@ -35,7 +35,8 @@ import {
 } from 'react-router';
 import ConfirmDialog from './confirm_dialog';
 import {
-  openBookItemContextMenu
+  openBookItemContextMenu,
+  openNormalContextMenu
 } from '../controllers/books_controller.js';
 
 const mapStateToProps = (state) => {
@@ -221,19 +222,32 @@ class BooksContainer extends Component {
     });
   }
 
+  onNormalContextMenu = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    var that = this;
+    openNormalContextMenu({
+      newBook: () => {
+        that._newBook();
+      }
+    });
+  }
+
   render() {
     return (
-      <div>
+      <div
+        onContextMenu={this.onNormalContextMenu}
+      >
         <FloatingActionButton style={{ position: 'fixed', bottom: '10px', right: '10px', zIndex: 1000 }} onClick={this._newBook}>
           <ContentAdd />
         </FloatingActionButton>
         <div>
-        <TextField
-          hintText="Search a notebook"
-          style={{ marginLeft: '10px' }}
-          defaultValue={this.state.booksSearchText}
-          onChange={(event) => {event.persist();this.debouncedChangeBooksSearchText(event)}}
-          />
+          <TextField
+            hintText="Search a notebook"
+            style={{ marginLeft: '10px' }}
+            defaultValue={this.state.booksSearchText}
+            onChange={(event) => {event.persist();this.debouncedChangeBooksSearchText(event)}}
+            />
         </div>
         <BooksList
           books={this.props.books.filter((book) =>  {

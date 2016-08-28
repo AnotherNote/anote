@@ -121,15 +121,15 @@ class BooksList extends Component {
                               onChange={(event, value) => { event.stopPropagation(); this.handleMenuChange(event, value, book)}}
                               value={0}
                             >
-                              <MenuItem value="1" primaryText="Edit" />
-                              <MenuItem value="2" primaryText="Delete" />
+                              <MenuItem value="1" primaryText="Edit..." />
+                              <MenuItem value="2" primaryText="Move To Trash..." />
                             </IconMenu> }
                           cols={1}
                         >
                         <img
                           src={key2path(book.imagePath)}
                           onClick={(event) => {this.props.callbacks.jumpToNotes({pathname: '/notes', query: {bookId: book._id, bookName: book.name}})}}
-                          onContextMenu={(event) => {this.props.callbacks.onContextMenu(event, book)}}
+                          onContextMenu={(event) => {event.stopPropagation();this.props.callbacks.onContextMenu(event, book);}}
                         />
                       </GridTile>
                     )
