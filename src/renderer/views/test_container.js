@@ -6,6 +6,8 @@ const {remote} = require('electron')
 const {Menu, MenuItem} = remote
 const BrowserWindow = remote.BrowserWindow
 const path = require('path')
+const ipcRender = require('electron').ipcRenderer
+
 
 const menu = new Menu()
 menu.append(new MenuItem({label: 'MenuItem1', click() { console.log('item 1 clicked') }}))
@@ -27,6 +29,11 @@ export default class TestContainer extends Component {
     win.show()
   }
 
+  testIpc = () => {
+    // 函数是传不过去的
+    ipcRender.send('ipcTestMain', {hh: hh});
+  }
+
   render() {
     return (
       <div>
@@ -44,7 +51,13 @@ export default class TestContainer extends Component {
           }}
           onClick={this.windowClick}
         >open window</div>
-        <div>test3</div>
+        <div
+          style={{
+            height: '100px',
+            backgroundColor: '#eef'
+          }}
+          onClick={this.testIpc}
+        >test Ipc</div>
         <div>test4</div>
         <div>test5</div>
       </div>

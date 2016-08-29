@@ -28,6 +28,7 @@ class FilesList extends Component {
               to={{pathname: `/notes/${file._id}/edit`, query: this.props.query}}
               key={file._id}
               activeClassName='active'
+              className='file-item'
             >
               <Card
                 style={{
