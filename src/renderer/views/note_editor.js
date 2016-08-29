@@ -76,7 +76,11 @@ class NoteEditor extends Component {
     if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
       this.editor.cm.setValue(newProps.currentFile.content || '');
       this.debouncedOnchange.cancel();
-      this.first = true;
+      if(newProps.currentFile.content != this.props.currentFile.content){
+        this.first = true;
+      }else{
+        this.first = false;
+      }
     }
   }
 

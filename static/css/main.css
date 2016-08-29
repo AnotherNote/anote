@@ -81,7 +81,7 @@ html, body {
 
 .sec-sidebar .active>div {
   border-width: 1.5px !important;
-  border-color: #d1c091 !important;
+  border-color: #66b3ff !important;
   box-shadow: inset 0px 0px 2px #ddd !important;
 }
 
@@ -137,13 +137,13 @@ html, body {
 
 a.file-item>div:hover {
   border-width: 1.5px !important;
-  border-color: #66b3ff !important;
+  border-color: #d1c091 !important;
   box-shadow: inset 0px 0px 2px #ddd !important;
 }
 
 div.book-item:hover {
   border-width: 1.5px !important;
-  border-color: #66b3ff !important;
+  border-color: #d1c091 !important;
   border-style: solid !important;
   box-shadow: inset 0px 0px 2px #ddd !important;
 }

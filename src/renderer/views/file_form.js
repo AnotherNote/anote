@@ -26,7 +26,7 @@ class FileForm extends Component {
 
   componentWillReceiveProps = (newProps) => {
     if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
-      jQuery(ReactDom.findDOMNode(this.refs.fileTitle)).find('input').val(newProps.currentFile.title || '');
+      jQuery(ReactDom.findDOMNode(this.refs.fileTitle)).find('input').val(newProps.currentFile.title || 'Untitled');
       this.debouncedOnTitleChange.cancel();
     }
   }
