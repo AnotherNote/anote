@@ -13,10 +13,27 @@ import {
 } from 'react-router';
 import {
   ppDate,
-  chineseDate
+  chineseDate,
+  debounce
 } from '../../util';
+import {
+    hashHistory
+} from 'react-router';
 
 class FilesList extends Component {
+  constructor(props) {
+    super(props);
+    this.debouncedLinkClick = debounce(this.linkClick, 200);
+  }
+
+  componentWillUnmount() {
+    this.debouncedLinkClick.cancel();
+  }
+
+  linkClick = (pathname) => {
+    hashHistory.push({pathname: pathname, query: this.props.query})
+  }
+
   render () {
     return (
       <div
@@ -29,6 +46,11 @@ class FilesList extends Component {
               key={file._id}
               activeClassName='active'
               className='file-item'
+              onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  this.debouncedLinkClick(`/notes/${file._id}/edit`);
+                }}
             >
               <Card
                 style={{

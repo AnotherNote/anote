@@ -11,7 +11,8 @@ import {
     concatFiles,
     editFile,
     activeFile,
-    setGlobalBook
+    setGlobalBook,
+    listBooks
 } from '../actions';
 import {
     files,
@@ -32,12 +33,14 @@ import {
   openFileItemContextMenu
 } from '../controllers/files_controller.js';
 import ConfirmDialog from './confirm_dialog';
+import ListMenu from './list_menu';
 
 const mapStateToProps = (state) => {
   return {
     files: state.files,
     currentFile: state.activeFile,
-    globalBook: state.globalBook
+    globalBook: state.globalBook,
+    books: state.books
   }
 }
 
@@ -63,6 +66,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     setGlobalBook: (book) => {
       dispatch(setGlobalBook(book));
+    },
+    listBooks: (books) => {
+      dispatch(listBooks(books));
     }
   }
 }
@@ -78,9 +84,14 @@ class FilesContainer extends Component {
       });
     }
     this.state = {
+      // for confirmation dialog
       confirmationOpen: false,
       confirmString: '',
-      confirmationTmpData: {}
+      confirmationTmpData: {},
+      // for copy and past menu
+      listMenuOpen: false,
+      currentBookId: null,
+      listMenuTmpData: {}
     };
   }
 
@@ -88,6 +99,7 @@ class FilesContainer extends Component {
   // this decided by react diff and replace strategy
   componentDidMount() {
     this._fetchFiles();
+    this._fetchBooks();
   }
 
   // cause: use newProps, because this.props has not been updated !!!!
@@ -131,6 +143,15 @@ class FilesContainer extends Component {
       that.props.listFiles(fls);
       that._processJump(fls);
     });
+  }
+
+  _fetchBooks = () => {
+    var that = this;
+    if(this.props.books.length == 0){
+      books.find({ available: true }).sort({ 'updatedAt': -1 }).exec((err, bks) => {
+        that.props.listBooks(bks);
+      });
+    }
   }
 
   // decide where to go
@@ -214,30 +235,37 @@ class FilesContainer extends Component {
   }
 
   onOkConfirmationDialog = (event, tmpData) => {
-    console.log(tmpData);
     let that = this;
     files.update({ _id: tmpData.fileId }, {$set: {available: false}}, {}, function(error) {
       if(error) {
         throw error;
         return;
       }
-      let tmpFile = null,
-        fileLength = that.props.files.length;
-      if(fileLength > 1 && tmpData.index == fileLength-1) {
-        tmpFile = that.props.files[0];
-      }else if(fileLength > 1){
-        tmpFile = that.props.files[tmpData.index+1];
-      }
-      console.log(tmpFile);
-      console.log(`/notes/${tmpFile._id}/edit`);
-      that.props.delFile({_id: tmpData.fileId});
-      that.setState({
-        confirmationOpen: false
+      that._processDelAndJump(tmpData.index, tmpData.fileId, () => {
+        that.setState({
+          confirmationOpen: false
+        });
       });
-      if(fileLength == 1)
-        return;
-      hashHistory.push({ pathname: `/notes/${tmpFile._id}/edit`, query: that.props.location.query });
     });
+  }
+
+  // process delete action and jump
+  _processDelAndJump = ( index, fileId, customerFunc ) => {
+    console.log('_processDelAndJump');
+    console.log(index, fileId);
+    let tmpFile = null,
+      fileLength = this.props.files.length;
+    if(fileLength > 1 && index == fileLength-1) {
+      tmpFile = this.props.files[0];
+    }else if(fileLength > 1){
+      tmpFile = this.props.files[index+1];
+    }
+    this.props.delFile({_id: fileId});
+    if(customerFunc)
+      customerFunc();
+    if(fileLength == 1)
+      return;
+    hashHistory.push({ pathname: `/notes/${tmpFile._id}/edit`, query: this.props.location.query });
   }
 
   onCancelConfirmationDialog = () => {
@@ -257,10 +285,32 @@ class FilesContainer extends Component {
           this.newAndCreateFile();
         },
         moveToNotebook: () => {
-
+          let tmpIdx = this.props.books.findIndex((book) => {
+            return book._id == file.bookId;
+          });
+          this.setState({
+            currentBookId: this.props.books[tmpIdx]._id,
+            listMenuOpen: true,
+            listMenuTmpData: {
+              file: file,
+              type: 'move',
+              index: index
+            }
+          });
         },
         copyToNotebook: () => {
-
+          let tmpIdx = this.props.books.findIndex((book) => {
+            return book._id == file.bookId;
+          });
+          this.setState({
+            currentBookId: this.props.books[tmpIdx]._id,
+            listMenuOpen: true,
+            listMenuTmpData: {
+              file: file,
+              type: 'copy',
+              index: index
+            }
+          });
         },
         normalExport: () => {
 
@@ -273,6 +323,52 @@ class FilesContainer extends Component {
         }
       }
     );
+  }
+
+  menuListFilter = (dataItem, currentDataItem) => {
+    return dataItem.id == currentDataItem;
+  }
+
+  listMenuCancel = () => {
+    this.setState({
+      listMenuOpen: false
+    });
+  }
+
+  listMenuOk = (event, checkedId, tmpData) => {
+    this[`_${tmpData.type}File`](tmpData, checkedId);
+  }
+
+  // move file to other notebook
+  _moveFile = ({file, index}, bookId) => {
+    var that = this;
+    files.update({ _id: file._id }, { $set: { bookId: bookId } }, {}, function(error) {
+      if(error){
+        throw error;
+        return;
+      }
+      that._processDelAndJump( index, file._id, () => {
+        that.setState({
+          listMenuOpen: false
+        });
+      });
+    })
+  }
+
+  // copy file to other notebook
+  _copyFile = ({file, index}, bookId) => {
+    var that = this;
+    files.insert(Object.assign(
+      {
+        available: true,
+        bookId: bookId
+      },
+      that._fileAttributes(file)
+    ), (error, newFile) => {
+      that.setState({
+        listMenuOpen: false
+      });
+    });
   }
 
   render() {
@@ -317,11 +413,24 @@ class FilesContainer extends Component {
           confirmString={this.state.confirmString}
           tmpData={this.state.confirmationTmpData}
         />
+        <ListMenu
+          cancelString='Cancel'
+          okString='Ok'
+          onCancel={this.listMenuCancel}
+          onOk={this.listMenuOk}
+          title=''
+          open={this.state.listMenuOpen}
+          dataList={this.props.books.map((book) => { return {name: book.name, id: book._id} })}
+          dataItem={this.state.currentBookId}
+          filterFunc={this.menuListFilter}
+          tmpData={this.state.listMenuTmpData}
+        />
       </div>
     );
   }
 }
 
 window.FilesContainer = FilesContainer;
+window.books = books;
 
 export default connect(mapStateToProps, mapDispatchToProps)(FilesContainer);

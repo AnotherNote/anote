@@ -21,6 +21,7 @@ class NoteEditor extends Component {
   constructor(props) {
     super(props);
     this.debouncedOnchange = debounce(this.onChange, 200);
+    this.first = false;
   }
 
   // default keymap like emacs keybinding
@@ -59,9 +60,11 @@ class NoteEditor extends Component {
   }
 
   onChange = () => {
-    console.log('note editor onchange');
-    if((this.refs.textArea.value != this.props.currentFile.content) && this.props.callbacks && this.props.callbacks.onChangeContent){
+    if(!this.first && this.props.callbacks && this.props.callbacks.onChangeContent){
       this.props.callbacks.onChangeContent(this.refs.textArea.value, this.props.currentFile);
+    }else{
+      console.log('first .,.............');
+      this.first = false;
     }
   }
 
@@ -70,8 +73,11 @@ class NoteEditor extends Component {
   }
 
   componentWillReceiveProps = (newProps) => {
-    if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id))
+    if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
       this.editor.cm.setValue(newProps.currentFile.content || '');
+      this.debouncedOnchange.cancel();
+      this.first = true;
+    }
   }
 
   componentDidMount() {
@@ -103,7 +109,6 @@ class NoteEditor extends Component {
         },
         // a hack hook(我自己hack的)
         onChange: function() {
-          // console.log('xxxxjxjxjxjxjxjxj');
           that.debouncedOnchange();
         },
         onload: function() {
