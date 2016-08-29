@@ -207,8 +207,8 @@ class FilesContainer extends Component {
     this.debouncedSaveFileToDb(Object.assign({}, file, {content: content}));
   }
 
-  onChangeTitle = (event, file) => {
-    this.debouncedSaveFileToDb(Object.assign({}, file, {title: event.target.value}));
+  onChangeTitle = (value, file) => {
+    this.debouncedSaveFileToDb(Object.assign({}, file, {title: value}));
   }
 
   saveFileToDb = (file) => {

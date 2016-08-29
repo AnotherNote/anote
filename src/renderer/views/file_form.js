@@ -15,9 +15,9 @@ class FileForm extends Component {
     this.debouncedOnTitleChange = debounce(this.onTitleChange, 200);
   }
 
-  onTitleChange = (event) => {
-    if(this.props.callbacks && this.props.callbacks.onChangeTitle && this.props.currentFile.title != event.target.value)
-      this.props.callbacks.onChangeTitle(event, this.props.currentFile)
+  onTitleChange = (value, currentFile) => {
+    if(this.props.callbacks && this.props.callbacks.onChangeTitle && currentFile.title != value)
+      this.props.callbacks.onChangeTitle(value, currentFile)
   }
 
   componentWillUnmount = () => {
@@ -25,8 +25,10 @@ class FileForm extends Component {
   }
 
   componentWillReceiveProps = (newProps) => {
-    if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id))
+    if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
       jQuery(ReactDom.findDOMNode(this.refs.fileTitle)).find('input').val(newProps.currentFile.title || '');
+      this.debouncedOnTitleChange.cancel();
+    }
   }
 
   // cause: defaultValue only a initial state, not updated by state or props, so, have to replace element by condition
@@ -41,7 +43,11 @@ class FileForm extends Component {
                         style={{height: '50px'}}
                         inputStyle={{'fontSize': '16px', color: '#5d5d5d'}}
                         defaultValue={this.props.currentFile && this.props.currentFile.title}
-                        onChange={this.onTitleChange}
+                        onChange={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          this.debouncedOnTitleChange(event.target.value, this.props.currentFile);
+                        }}
                         ref='fileTitle'
                       />
                       <div className='editor-wrapper'>

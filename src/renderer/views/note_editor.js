@@ -59,9 +59,9 @@ class NoteEditor extends Component {
     return keyMap;
   }
 
-  onChange = () => {
+  onChange = (value, currentFile) => {
     if(!this.first && this.props.callbacks && this.props.callbacks.onChangeContent){
-      this.props.callbacks.onChangeContent(this.refs.textArea.value, this.props.currentFile);
+      this.props.callbacks.onChangeContent(value, currentFile);
     }else{
       console.log('first .,.............');
       this.first = false;
@@ -81,7 +81,6 @@ class NoteEditor extends Component {
   }
 
   componentDidMount() {
-    console.log('note editor componentDidMount');
     if(this.debouncedOnchange)
       this.debouncedOnchange.cancel();
     this.debouncedOnchange = debounce(this.onChange, 200);
@@ -109,7 +108,7 @@ class NoteEditor extends Component {
         },
         // a hack hook(我自己hack的)
         onChange: function() {
-          that.debouncedOnchange();
+          that.debouncedOnchange(that.refs.textArea.value, that.props.currentFile);
         },
         onload: function() {
           $imageInput.change(function(event){
@@ -133,17 +132,12 @@ class NoteEditor extends Component {
     this.editor = editor;
   }
 
-  onChangedd = () => {
-    console.log('xxxxxxxxx');
-  }
-
   render () {
     return (
       <div id='editormd'>
         <textarea
           defaultValue={this.props.currentFile && this.props.currentFile.content}
           ref='textArea'
-          onChange={this.onChangedd}
         />
         <input type='file' style={{display: 'none'}} ref='imageInput' accept='image/*' />
       </div>

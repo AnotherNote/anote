@@ -23,11 +23,13 @@ import {
 class FilesList extends Component {
   constructor(props) {
     super(props);
-    this.debouncedLinkClick = debounce(this.linkClick, 200);
+    // this.debouncedLinkClick = debounce(this.linkClick, 200);
+    this.debouncedLinkClick = this.linkClick;
   }
 
   componentWillUnmount() {
-    this.debouncedLinkClick.cancel();
+    if(this.debouncedLinkClick.cancel)
+      this.debouncedLinkClick.cancel();
   }
 
   linkClick = (pathname) => {
