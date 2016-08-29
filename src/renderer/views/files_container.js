@@ -31,6 +31,7 @@ import {
 import {
   openFileItemContextMenu
 } from '../controllers/files_controller.js';
+import ConfirmDialog from './confirm_dialog';
 
 const mapStateToProps = (state) => {
   return {
@@ -76,6 +77,11 @@ class FilesContainer extends Component {
         name: this.props.location.query.bookName
       });
     }
+    this.state = {
+      confirmationOpen: false,
+      confirmString: '',
+      confirmationTmpData: {}
+    };
   }
 
   // this hook method is not always recalled when url changed
@@ -140,15 +146,17 @@ class FilesContainer extends Component {
   getCurrentFile = (newProps) => {
     let currentFile = newProps.files.find((file) => {
       return file._id == newProps.params.id;
-    }) || null;
+    }) || {};
     this.debouncedSaveFileToDb.cancel();
     this.props.activeFile(currentFile);
     return currentFile;
   }
 
   newAndCreateFile = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
+    if(event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     // only can create note when there is bookId
     if(!this.bookId()){
       console.log('unable to newAndCreateFile');
@@ -197,7 +205,48 @@ class FilesContainer extends Component {
     return pick(file, 'title', 'content');
   }
 
-  onContextMenu = (file) => {
+  delFile = (file, index) => {
+    this.setState({
+      confirmationOpen: true,
+      confirmString: `Are you sure you want to delete the note '${file.title || "Untitled"}'`,
+      confirmationTmpData: {fileId: file._id, index: index}
+    });
+  }
+
+  onOkConfirmationDialog = (event, tmpData) => {
+    console.log(tmpData);
+    let that = this;
+    files.update({ _id: tmpData.fileId }, {$set: {available: false}}, {}, function(error) {
+      if(error) {
+        throw error;
+        return;
+      }
+      let tmpFile = null,
+        fileLength = that.props.files.length;
+      if(fileLength > 1 && tmpData.index == fileLength-1) {
+        tmpFile = that.props.files[0];
+      }else if(fileLength > 1){
+        tmpFile = that.props.files[tmpData.index+1];
+      }
+      console.log(tmpFile);
+      console.log(`/notes/${tmpFile._id}/edit`);
+      that.props.delFile({_id: tmpData.fileId});
+      that.setState({
+        confirmationOpen: false
+      });
+      if(fileLength == 1)
+        return;
+      hashHistory.push({ pathname: `/notes/${tmpFile._id}/edit`, query: that.props.location.query });
+    });
+  }
+
+  onCancelConfirmationDialog = () => {
+    this.setState({
+      confirmationOpen: false
+    });
+  }
+
+  onContextMenu = (file, index) => {
     let chooseFile = file ? true : false;
     let canNew = this.bookId() ? true : false;
     openFileItemContextMenu(
@@ -205,7 +254,7 @@ class FilesContainer extends Component {
       chooseFile,
       {
         newFile: () => {
-
+          this.newAndCreateFile();
         },
         moveToNotebook: () => {
 
@@ -220,7 +269,7 @@ class FilesContainer extends Component {
 
         },
         deleteFile: () => {
-
+          this.delFile(file, index);
         }
       }
     );
@@ -258,6 +307,16 @@ class FilesContainer extends Component {
         <div className='work-pane'>
           {this.props.children && React.cloneElement(this.props.children, {currentFile: this.props.currentFile, callbacks: {onChangeContent: this.onChangeContent, onChangeTitle: this.onChangeTitle}})}
         </div>
+        <ConfirmDialog
+          cancelString='Cancel'
+          okString='Delete'
+          onCancel={this.onCancelConfirmationDialog}
+          onOk={this.onOkConfirmationDialog}
+          title= ''
+          open={this.state.confirmationOpen}
+          confirmString={this.state.confirmString}
+          tmpData={this.state.confirmationTmpData}
+        />
       </div>
     );
   }

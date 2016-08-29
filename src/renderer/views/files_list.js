@@ -22,7 +22,7 @@ class FilesList extends Component {
       <div
         style={{marginTop: '43px'}}
       >
-        {this.props.files.map((file) => {
+        {this.props.files.map((file, index) => {
           return (
             <Link
               to={{pathname: `/notes/${file._id}/edit`, query: this.props.query}}
@@ -37,7 +37,7 @@ class FilesList extends Component {
                   marginTop: '1px',
                   marginBottom: '1px'
                 }}
-                onContextMenu={(event) => {event.stopPropagation();this.props.onContextMenu(file);}}
+                onContextMenu={(event) => {event.stopPropagation();this.props.onContextMenu(file, index);}}
               >
                 <CardHeader
                   title={file.title || 'Untitled'}
