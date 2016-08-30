@@ -107,6 +107,8 @@ class FilesContainer extends Component {
 
   // cause: use newProps, because this.props has not been updated !!!!
   componentWillReceiveProps(newProps) {
+    // 确保files最新
+
     if(this.props.location.query.bookId != newProps.location.query.bookId){
       this._fetchFiles(newProps);
       this.props.setGlobalBook({
@@ -115,13 +117,24 @@ class FilesContainer extends Component {
       });
       return;
     }
+
     if(this.props.location.query.searchFileText != newProps.location.query.searchFileText
         || this.props.location.query.available != newProps.location.query.available){
       this._fetchFiles(newProps);
       return;
     }
+
+    // ---------------------------------------------------------------------
+
+    // 确保currentfile最新，由于我们用一个页面相同元素换属性来展示页面，所以不是替换元素，出发不了componentDidMount
     if(newProps.files != this.props.files || newProps.params.id != this.props.params.id)
       this.getCurrentFile(newProps);
+
+    // 确保有book可以新建文章
+    if(newProps.books != this.props.books)
+      this._ensureGlobalBook(newProps.books.filter((book) => {
+        return book.available;
+      })[0]);
   }
 
   componentWillUnmount() {
@@ -155,6 +168,18 @@ class FilesContainer extends Component {
     if(this.props.books.length == 0){
       books.find({}).sort({ 'updatedAt': -1 }).exec((err, bks) => {
         that.props.listBooks(bks);
+      });
+    }else{
+      this._ensureGlobalBook();
+    }
+  }
+
+  _ensureGlobalBook = (book) => {
+    let firstBook = null;
+    if(!this.bookId() && (firstBook = book || this.availableBooks()[0])){
+      this.props.setGlobalBook({
+        _id: firstBook._id,
+        name: firstBook.name
       });
     }
   }
@@ -215,7 +240,8 @@ class FilesContainer extends Component {
   // 用于新建的bookId
   bookId = () => {
     if(this.props.location.query.available == 'true'){
-      return this.props.location.query.bookId || this.props.globalBook._id;
+      let result = this.props.location.query.bookId || this.props.globalBook._id;
+      return result;
     }else{
       return null;
     }
@@ -556,7 +582,7 @@ class FilesContainer extends Component {
           onContextMenu={(event) => {this.onContextMenu();}}
         >
           <FlatButton
-            label={this.bookId() ? `NEW NOTE IN ${this.props.globalBook.name}` : 'UNABLE NEW A NOTE!!'}
+            label={this.bookId() ? `NEW NOTE IN ${this.props.globalBook.name}` : 'UNABLE NEW BOOK!!'}
             onClick={this.newAndCreateFile}
             primary={true}
             backgroundColor={this.bookId() ? 'rgba(255, 255, 255, 1)' : '#ddd'}
