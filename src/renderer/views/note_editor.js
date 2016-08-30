@@ -60,6 +60,8 @@ class NoteEditor extends Component {
   }
 
   onChange = (value, currentFile) => {
+    if(value == null || currentFile == null)
+      return;
     if(!this.first && this.props.callbacks && this.props.callbacks.onChangeContent){
       this.props.callbacks.onChangeContent(value, currentFile);
     }else{
@@ -112,7 +114,7 @@ class NoteEditor extends Component {
         },
         // a hack hook(我自己hack的)
         onChange: function() {
-          that.debouncedOnchange(that.refs.textArea.value, that.props.currentFile);
+          that.debouncedOnchange((that.refs.textArea && that.refs.textArea.value) || null, (that.props && that.props.currentFile) || null);
         },
         onload: function() {
           $imageInput.change(function(event){

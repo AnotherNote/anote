@@ -1,9 +1,9 @@
 const {remote} = require('electron')
 const {Menu, MenuItem} = remote
 
-// canNew checkIf can new a file
-// chooseFile checkIf choose a file
-export function openFileItemContextMenu (canNew, chooseFile, callbacks) {
+var handlers = {};
+
+handlers.openAvailableFileItemContextMenu = function (canNew, chooseFile, callbacks) {
   const menu = new Menu();
   if(!canNew && !chooseFile)
     return;
@@ -22,4 +22,27 @@ export function openFileItemContextMenu (canNew, chooseFile, callbacks) {
     menu.append(new MenuItem({label: 'Move To Trash...', click() { callbacks.deleteFile(); }}));
   }
   menu.popup(remote.getCurrentWindow());
+}
+
+handlers.openUnavailableFileItemContextMenu = function (canNew, chooseFile, callbacks) {
+  const menu = new Menu();
+  if(chooseFile) {
+    menu.append(new MenuItem({label: 'Delete Forever...', click() { callbacks.clearFile(); }}));
+    menu.append(new MenuItem({label: 'Restore...', click() { callbacks.restoreFile(); }}));
+    menu.append(new MenuItem({type: 'separator'}));
+    menu.append(new MenuItem({label: 'Clear All...', click() { callbacks.clearTrash(); }}));
+  }else{
+    menu.append(new MenuItem({label: 'Clear All...', click() { callbacks.clearTrash(); }}));
+  }
+  menu.popup(remote.getCurrentWindow());
+}
+
+// canNew checkIf can new a file
+// chooseFile checkIf choose a file
+export function openFileItemContextMenu (available, canNew, chooseFile, callbacks) {
+  let availableDic = {
+    'false': 'openUnavailableFileItemContextMenu',
+    'true': 'openAvailableFileItemContextMenu'
+  };
+  handlers[availableDic[available]](canNew, chooseFile, callbacks);
 }

@@ -112,7 +112,8 @@ class FilesContainer extends Component {
       });
       return;
     }
-    if(this.props.location.query.searchFileText != newProps.location.query.searchFileText){
+    if(this.props.location.query.searchFileText != newProps.location.query.searchFileText
+        || this.props.location.query.available != newProps.location.query.available){
       this._fetchFiles(newProps);
       return;
     }
@@ -129,11 +130,12 @@ class FilesContainer extends Component {
       searchConditions = null,
       sortConditions = { 'updatedAt': -1 },
       props = newProps || this.props;
-
     if(props.location.query.bookId) {
       searchConditions = { bookId: props.location.query.bookId, available: true };
     }else if(props.location.query.searchFileText) {
       searchConditions = { $or: [ { title: { $regex: new RegExp(props.location.query.searchFileText, 'i') } }, { content: { $regex: new RegExp(props.location.query.searchFileText, 'i') } } ], available: true };
+    }else if(props.location.query.available == 'false') {
+      searchConditions = { available: false };
     }else {
       searchConditions = { available: true };
     }
@@ -230,11 +232,11 @@ class FilesContainer extends Component {
     this.setState({
       confirmationOpen: true,
       confirmString: `Are you sure you want to delete the note '${file.title || "Untitled"}'`,
-      confirmationTmpData: {fileId: file._id, index: index}
+      confirmationTmpData: {fileId: file._id, index: index, callback: 'delFileOk'}
     });
   }
 
-  onOkConfirmationDialog = (event, tmpData) => {
+  delFileOk = (tmpData) => {
     let that = this;
     files.update({ _id: tmpData.fileId }, {$set: {available: false}}, {}, function(error) {
       if(error) {
@@ -247,6 +249,33 @@ class FilesContainer extends Component {
         });
       });
     });
+  }
+
+  clearFile = (file, index) => {
+    this.setState({
+      confirmationOpen: true,
+      confirmString: `Are you sure you want to delete forever the note '${file.title || "Untitled"}'`,
+      confirmationTmpData: {fileId: file._id, index: index, callback: 'clearFileOk'}
+    });
+  }
+
+  clearFileOk = (tmpData) => {
+    let that = this;
+    files.remove({ _id: tmpData.fileId }, {}, function(error) {
+      if(error) {
+        throw error;
+        return;
+      }
+      that._processDelAndJump(tmpData.index, tmpData.fileId, () => {
+        that.setState({
+          confirmationOpen: false
+        });
+      });
+    });
+  }
+
+  onOkConfirmationDialog = (event, tmpData) => {
+    this[tmpData.callback](tmpData);
   }
 
   // process delete action and jump
@@ -278,6 +307,7 @@ class FilesContainer extends Component {
     let chooseFile = file ? true : false;
     let canNew = this.bookId() ? true : false;
     openFileItemContextMenu(
+      this.props.location.query.available,
       canNew,
       chooseFile,
       {
@@ -285,32 +315,10 @@ class FilesContainer extends Component {
           this.newAndCreateFile();
         },
         moveToNotebook: () => {
-          let tmpIdx = this.props.books.findIndex((book) => {
-            return book._id == file.bookId;
-          });
-          this.setState({
-            currentBookId: this.props.books[tmpIdx]._id,
-            listMenuOpen: true,
-            listMenuTmpData: {
-              file: file,
-              type: 'move',
-              index: index
-            }
-          });
+          this.moveToNotebook(file, index);
         },
         copyToNotebook: () => {
-          let tmpIdx = this.props.books.findIndex((book) => {
-            return book._id == file.bookId;
-          });
-          this.setState({
-            currentBookId: this.props.books[tmpIdx]._id,
-            listMenuOpen: true,
-            listMenuTmpData: {
-              file: file,
-              type: 'copy',
-              index: index
-            }
-          });
+          this.copyToNotebook(file, index);
         },
         normalExport: () => {
 
@@ -320,9 +328,48 @@ class FilesContainer extends Component {
         },
         deleteFile: () => {
           this.delFile(file, index);
+        },
+        clearFile: () => {
+          this.clearFile(file, index);
+        },
+        restoreFile: () => {
+          this.restoreFile(file, index);
+        },
+        clearTrash: () => {
+          this.clearTrash();
         }
       }
     );
+  }
+
+  moveToNotebook = (file, index) => {
+    let tmpIdx = this.props.books.findIndex((book) => {
+      return book._id == file.bookId;
+    });
+    this.setState({
+      currentBookId: this.props.books[tmpIdx]._id,
+      listMenuOpen: true,
+      listMenuTmpData: {
+        file: file,
+        type: 'move',
+        index: index
+      }
+    });
+  }
+
+  copyToNotebook = (file, index) => {
+    let tmpIdx = this.props.books.findIndex((book) => {
+      return book._id == file.bookId;
+    });
+    this.setState({
+      currentBookId: this.props.books[tmpIdx]._id,
+      listMenuOpen: true,
+      listMenuTmpData: {
+        file: file,
+        type: 'copy',
+        index: index
+      }
+    });
   }
 
   menuListFilter = (dataItem, currentDataItem) => {
@@ -401,7 +448,7 @@ class FilesContainer extends Component {
           />
         </div>
         <div className='work-pane'>
-          {this.props.children && React.cloneElement(this.props.children, {currentFile: this.props.currentFile, callbacks: {onChangeContent: this.onChangeContent, onChangeTitle: this.onChangeTitle}})}
+          {this.props.children && React.cloneElement(this.props.children, {currentFile: this.props.currentFile, available: this.props.location.query.available, callbacks: {onChangeContent: this.onChangeContent, onChangeTitle: this.onChangeTitle}})}
         </div>
         <ConfirmDialog
           cancelString='Cancel'

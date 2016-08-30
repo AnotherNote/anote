@@ -126,10 +126,10 @@ class BooksList extends Component {
                             </IconMenu> }
                           cols={1}
                           className='book-item'
-                          onClick={(event) => {this.props.callbacks.jumpToNotes({pathname: '/notes', query: {bookId: book._id, bookName: book.name}})}}
                           onContextMenu={(event) => {event.stopPropagation();this.props.callbacks.onContextMenu(event, book);}}
                         >
                         <img
+                          onClick={(event) => {this.props.callbacks.jumpToNotes({pathname: '/notes', query: {bookId: book._id, bookName: book.name, available: true}})}}
                           src={key2path(book.imagePath)}
                         />
                       </GridTile>

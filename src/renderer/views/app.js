@@ -53,7 +53,7 @@ const App = class App extends Component {
             <Route path='books' component={BooksContainer}></Route>
             <Route path='notes' component={FilesContainer}>
               <IndexRoute component={EmptyFile}></IndexRoute>
-              <Route path=':id/edit'component={FileForm} ></Route>
+              <Route path=':id/edit' component={FileForm} ></Route>
             </Route>
             <Route path='test' component={TestContainer}></Route>
           </Route>

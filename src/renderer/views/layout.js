@@ -28,7 +28,7 @@ class Layout extends Component {
   globalSearch = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    hashHistory.push({ pathname: '/notes', query: {searchFileText: this.state.searchFileText}});
+    hashHistory.push({ pathname: '/notes', query: {searchFileText: this.state.searchFileText, available: true}});
   }
 
   changeSearchFileText = (event) => {
@@ -65,7 +65,8 @@ class Layout extends Component {
           <div className='banner'><p>Enjoy ANOTE coding now...</p></div>
           <ul className='s-menu main-menu'>
             <li><IndexLink to='/' activeClassName='active'>notebooks</IndexLink></li>
-            <li><Link to='/notes' activeClassName='active'>notes</Link></li>
+            <li><Link to={{pathname: '/notes', query: { available: true }}} activeClassName='active'>notes</Link></li>
+            <li><Link to={{pathname: '/notes', query: { available: false }}} activeClassName='active'>trash</Link></li>
             <li><Link to='/test' activeClassName='active'>playstation</Link></li>
           </ul>
         </div>
