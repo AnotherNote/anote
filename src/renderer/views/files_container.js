@@ -150,10 +150,22 @@ class FilesContainer extends Component {
   _fetchBooks = () => {
     var that = this;
     if(this.props.books.length == 0){
-      books.find({ available: true }).sort({ 'updatedAt': -1 }).exec((err, bks) => {
+      books.find({}).sort({ 'updatedAt': -1 }).exec((err, bks) => {
         that.props.listBooks(bks);
       });
     }
+  }
+
+  availableBooks = () => {
+    return this.props.books.filter((book) => {
+      return book.available;
+    });
+  }
+
+  unavailableBooks = () => {
+    return this.props.books.filter((book) => {
+      return !book.available;
+    });
   }
 
   // decide where to go
@@ -274,6 +286,76 @@ class FilesContainer extends Component {
     });
   }
 
+  clearTrash = (file, index) => {
+    this.setState({
+      confirmationOpen: true,
+      confirmString: 'Are you sure you want to clear trash',
+      confirmationTmpData: {callback: 'clearTrashOk'}
+    });
+  }
+
+  clearTrashOk = () => {
+    let that = this;
+    files.remove({available: false}, {multi: true}, (err) => {
+      that.props.listFiles([]);
+      hashHistory.push({pathname: '/notes', query: {available: false}});
+      that.setState({
+        confirmationOpen: false
+      });
+    })
+  }
+
+  findBook = (bookId) => {
+    return this.props.books.filter((book) => {
+      return book._id == bookId;
+    })[0];
+  }
+
+  restoreFile = (file, index) => {
+    let tmpBook = this.findBook(file.bookId);
+    this.setState({
+      confirmationOpen: true,
+      confirmString: `Are you sure you want to restore the note '${file.title || "Untitled"}' to ${(tmpBook && tmpBook.name) || 'original book'}`,
+      confirmationTmpData: {fileId: file._id, index: index, callback: 'restoreFileOk', file: file}
+    });
+  }
+
+  restoreFileOk = (tmpData) => {
+    let that = this;
+    let tmpBook = this.findBook(tmpData.file.bookId);
+    if(tmpBook && !tmpBook.available){
+      books.update({ _id: tmpBook._id }, {$set: {available: true}}, {}, function(error) {
+        if(error) {
+          throw error;
+          return;
+        }
+        files.update({ _id: tmpData.fileId }, {$set: {available: true}}, {}, function(error) {
+          if(error) {
+            throw error;
+            return;
+          }
+          that._processDelAndJump(tmpData.index, tmpData.fileId, () => {
+            that.setState({
+              confirmationOpen: false
+            });
+          });
+        });
+      });
+    }else{
+      files.update({ _id: tmpData.fileId }, {$set: {available: true}}, {}, function(error) {
+        if(error) {
+          throw error;
+          return;
+        }
+        that._processDelAndJump(tmpData.index, tmpData.fileId, () => {
+          that.setState({
+            confirmationOpen: false
+          });
+        });
+      });
+    }
+  }
+
   onOkConfirmationDialog = (event, tmpData) => {
     this[tmpData.callback](tmpData);
   }
@@ -333,6 +415,7 @@ class FilesContainer extends Component {
           this.clearFile(file, index);
         },
         restoreFile: () => {
+          console.log('restore');
           this.restoreFile(file, index);
         },
         clearTrash: () => {
@@ -343,11 +426,11 @@ class FilesContainer extends Component {
   }
 
   moveToNotebook = (file, index) => {
-    let tmpIdx = this.props.books.findIndex((book) => {
+    let tmpIdx = this.availableBooks().findIndex((book) => {
       return book._id == file.bookId;
     });
     this.setState({
-      currentBookId: this.props.books[tmpIdx]._id,
+      currentBookId: this.availableBooks()[tmpIdx]._id,
       listMenuOpen: true,
       listMenuTmpData: {
         file: file,
@@ -358,11 +441,11 @@ class FilesContainer extends Component {
   }
 
   copyToNotebook = (file, index) => {
-    let tmpIdx = this.props.books.findIndex((book) => {
+    let tmpIdx = this.availableBooks().findIndex((book) => {
       return book._id == file.bookId;
     });
     this.setState({
-      currentBookId: this.props.books[tmpIdx]._id,
+      currentBookId: this.availableBooks()[tmpIdx]._id,
       listMenuOpen: true,
       listMenuTmpData: {
         file: file,
@@ -452,7 +535,7 @@ class FilesContainer extends Component {
         </div>
         <ConfirmDialog
           cancelString='Cancel'
-          okString='Delete'
+          okString='Ok'
           onCancel={this.onCancelConfirmationDialog}
           onOk={this.onOkConfirmationDialog}
           title= ''
@@ -467,7 +550,7 @@ class FilesContainer extends Component {
           onOk={this.listMenuOk}
           title=''
           open={this.state.listMenuOpen}
-          dataList={this.props.books.map((book) => { return {name: book.name, id: book._id} })}
+          dataList={this.availableBooks().map((book) => { return {name: book.name, id: book._id} })}
           dataItem={this.state.currentBookId}
           filterFunc={this.menuListFilter}
           tmpData={this.state.listMenuTmpData}

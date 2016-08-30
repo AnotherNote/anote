@@ -88,7 +88,7 @@ class BooksContainer extends Component {
   componentDidMount() {
     // can write some fetch infos code
     let that = this;
-    books.find({ available: true }).sort({ 'updatedAt': -1 }).exec((err, bks) => {
+    books.find({  }).sort({ 'updatedAt': -1 }).exec((err, bks) => {
       if(bks.length == 0)
         that.props.listBooks(bks);
       let tmpC = 0;
@@ -179,8 +179,8 @@ class BooksContainer extends Component {
   delBook = (book) => {
     this.setState({
       confirmationOpen: true,
-      confirmString: `Are you sure you want to delete the notebook '${book.name}'`,
-      confirmationTmpData: {bookId: book._id}
+      confirmString: `Are you sure you want to delete the notebook '${book.name}' all notes to trash`,
+      confirmationTmpData: {bookId: book._id, book: book}
     });
   }
 
@@ -197,12 +197,18 @@ class BooksContainer extends Component {
         throw error;
         return;
       }
-      that.props.delBook({_id: tmpData.bookId});
+      that.props.editBook(Object.assign({}, tmpData.book, {available: false}));
       if(that.props.globalBook._id == tmpData.bookId) {
         that.props.setGlobalBook({});
       }
-      that.setState({
-        confirmationOpen: false
+      files.update({ bookId: tmpData.bookId }, { $set: { available: false } }, { multi: true }, (error) => {
+        if(error){
+          throw error;
+          return;
+        }
+        that.setState({
+          confirmationOpen: false
+        });
       });
     });
   }
@@ -233,6 +239,18 @@ class BooksContainer extends Component {
     });
   }
 
+  availableBooks = () => {
+    return this.props.books.filter((book) => {
+      return book.available;
+    });
+  }
+
+  unavailableBooks = () => {
+    return this.props.books.filter((book) => {
+      return !book.available;
+    });
+  }
+
   render() {
     return (
       <div
@@ -254,7 +272,7 @@ class BooksContainer extends Component {
             />
         </div>
         <BooksList
-          books={this.props.books.filter((book) =>  {
+          books={this.availableBooks().filter((book) =>  {
             if(!this.state.booksSearchText || this.state.booksSearchText == '')
               return true;
               let patt = new RegExp(this.state.booksSearchText, 'i');

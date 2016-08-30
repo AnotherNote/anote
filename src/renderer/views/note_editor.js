@@ -77,6 +77,8 @@ class NoteEditor extends Component {
   componentWillReceiveProps = (newProps) => {
     if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
       this.editor.cm.setValue(newProps.currentFile.content || '');
+      // for performance , I need to clear histories
+      this.editor.cm.getDoc().clearHistory();
       this.debouncedOnchange.cancel();
       if(newProps.currentFile.content != this.props.currentFile.content){
         this.first = true;
