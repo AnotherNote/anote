@@ -39,7 +39,7 @@ class FilesList extends Component {
   render () {
     return (
       <div
-        style={{marginTop: '43px'}}
+        style={{marginTop: '95px'}}
       >
         {this.props.files.map((file, index) => {
           return (

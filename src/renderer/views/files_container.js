@@ -34,6 +34,9 @@ import {
 } from '../controllers/files_controller.js';
 import ConfirmDialog from './confirm_dialog';
 import ListMenu from './list_menu';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
+import Divider from 'material-ui/Divider';
 
 const mapStateToProps = (state) => {
   return {
@@ -107,8 +110,8 @@ class FilesContainer extends Component {
     if(this.props.location.query.bookId != newProps.location.query.bookId){
       this._fetchFiles(newProps);
       this.props.setGlobalBook({
-        _id: this.props.location.query.bookId,
-        name: this.props.location.query.bookName
+        _id: newProps.location.query.bookId,
+        name: newProps.location.query.bookName
       });
       return;
     }
@@ -209,8 +212,13 @@ class FilesContainer extends Component {
     });
   }
 
+  // 用于新建的bookId
   bookId = () => {
-    return this.props.location.query.bookId || this.props.globalBook._id;
+    if(this.props.location.query.available == 'true'){
+      return this.props.location.query.bookId || this.props.globalBook._id;
+    }else{
+      return null;
+    }
   }
 
   isInBook = () => {
@@ -501,6 +509,45 @@ class FilesContainer extends Component {
     });
   }
 
+  dropdownMenuChange = (event, index, value) => {
+    if(value == 'trash') {
+      return hashHistory.push({
+        pathname: '/notes',
+        query: {
+          available: false
+        }
+      });
+    }
+    if(value == 'all') {
+      return hashHistory.push({
+        pathname: '/notes',
+        query: {
+          available: true
+        }
+      });
+    }
+    let tmpBook = this.findBook(value);
+    if(tmpBook)
+      return hashHistory.push({
+        pathname: '/notes',
+        query: {
+          bookId: tmpBook._id,
+          bookName: tmpBook.name,
+          available: true
+        }
+      });
+  }
+
+  dropdownMenuValue = () => {
+    if(this.props.location.query.available == 'false') {
+      return 'trash';
+    }
+    if(this.props.location.query.bookId) {
+      return this.props.location.query.bookId;
+    }
+    return 'all';
+  }
+
   render() {
     return (
       <div className='work-wrapper'>
@@ -518,12 +565,49 @@ class FilesContainer extends Component {
               lineHeight: '40px',
               height: '42px',
               color: '#3d3d3d',
-              border: '1px solid',
-              borderColor: '#ddd',
+              border: '1px solid #ddd',
               position: 'fixed',
               zIndex: 100
             }}
           />
+          <DropDownMenu
+            value={this.dropdownMenuValue()}
+            onChange={this.dropdownMenuChange}
+            style={{
+              zIndex: 100,
+              marginTop: '43px',
+              width: '294px',
+              position: 'fixed',
+              color: '#3d3d3d',
+              border: '1px solid #ddd',
+              backgroundColor: 'white',
+              fontSize: '16px',
+              lineHeight: '16px',
+              textAlign: 'center'
+            }}
+            maxHeight={300}
+          >
+            {
+              this.availableBooks().map((book) => {
+                return (
+                  <MenuItem
+                    key={book._id}
+                    value={book._id}
+                    primaryText={book.name}
+                  />
+                )
+              })
+            }
+            <Divider/>
+            <MenuItem
+              value='all'
+              primaryText='All'
+            />
+            <MenuItem
+              value='trash'
+              primaryText='trash'
+            />
+          </DropDownMenu>
           <FilesList
             files={this.props.files}
             query={this.props.location.query}
