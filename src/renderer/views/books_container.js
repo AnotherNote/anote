@@ -144,7 +144,7 @@ class BooksContainer extends Component {
   }
 
   _newBook = (event) => {
-    this.props.activeBook({ imagePath: 'avatar.jpeg', available: true });
+    this.props.activeBook({ imagePath: '', available: true });
     this.setState({
       bookDialogOpen: true
     });

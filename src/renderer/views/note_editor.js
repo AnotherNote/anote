@@ -10,12 +10,55 @@ import {
 import {
     copyFile,
     getFileHash,
-    hash2Key
+    hash2Key,
+    buffer2File
 } from '../../util';
 import constants from '../../constants';
 let {
     FILES_PATH
 } = constants;
+const clipboard = require('electron').clipboard;
+const fs = require('fs');
+const toMarkdown = require('to-markdown');
+const sanitizeHtml = require('sanitize-html');
+
+function pastImage(cm) {
+  let image = clipboard.readImage();
+  if(image && !image.isEmpty()){
+    let text = clipboard.readText();
+    buffer2File(image.toPNG()).then(function(key){
+      cm.replaceSelection("![" + text + "](" + key + ")");
+    });
+    return true;
+  }
+  return false;
+}
+
+function pastHtml(cm) {
+  let htmlText = clipboard.readHTML();
+  let cleanText = sanitizeHtml(htmlText, {
+    allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+  'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br',
+  'table', 'thead', 'tbody', 'tr', 'th', 'td', 'pre' ],
+    selfClosing: ['br', 'hr', 'base'],
+    allowedAttributes: {
+      'a': [ 'href' ]
+    }
+  });
+  if(htmlText && htmlText.length > 0){
+    console.log('pastHtml');
+    cm.replaceSelection(toMarkdown(cleanText));
+    return true;
+  }
+  return false
+}
+
+function pastText(cm) {
+  let text = clipboard.readText();
+  if(text && text.length > 0){
+    cm.replaceSelection(text);
+  }
+}
 
 class NoteEditor extends Component {
   constructor(props) {
@@ -52,10 +95,20 @@ class NoteEditor extends Component {
       },
       "Alt-B": function(cm){
         cm.execCommand("goWordLeft");
+      },
+      "Cmd-V": function(cm){
+        if(pastImage(cm)){
+          return;
+        }
+        if(pastHtml(cm)){
+          return;
+        }
+        pastText(cm);
       }
     };
     return keyMap;
   }
+
 
   componentDidMount() {
     var that = this,

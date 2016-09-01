@@ -28,7 +28,8 @@ class FileForm extends Component {
     if(value == null || currentFile == null)
       return;
     if(!this.first && this.props.callbacks && this.props.callbacks.onChangeContent){
-      this.props.callbacks.onChangeContent(value, currentFile);
+      if(value != currentFile.content)
+        this.props.callbacks.onChangeContent(value, currentFile);
     }else{
       this.first = false;
     }

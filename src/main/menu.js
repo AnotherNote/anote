@@ -107,26 +107,41 @@ function getMenuTemplate () {
         },
         {
           label: 'Move To Notebook...',
-          click: () => { log('move to notebook') }
+          click: () => {
+            log('move to notebook');
+            windows.main.dispatch('moveToNotebook');
+          }
         },
         {
           label: 'Copy To Notebook...',
-          click: () => { log('copy to notebook') }
+          click: () => {
+            log('copy to notebook')
+            windows.main.dispatch('copyToNotebook');
+          }
         },
         {
           label: 'Move To Trash',
-          click: () => { log('move to trash') }
+          click: () => {
+            log('move to trash');
+            windows.main.dispatch('moveToTrash');
+          }
         },
         {
           type: 'separator'
         },
         {
           label: 'Delete Forever',
-          click: () => { log('delete forever') }
+          click: () => {
+            log('delete forever')
+            windows.main.dispatch('clearFile');
+          }
         },
         {
           label: 'Restore...',
-          click: () => { log('restore') }
+          click: () => {
+            log('restore')
+            windows.main.dispatch('restoreFile');
+          }
         }
       ]
     },
@@ -142,7 +157,12 @@ function getMenuTemplate () {
           label: 'Undo',
           accelerator: 'Shft+Cmd+Z',
           click: () => { log('Undo') }
-        }
+        },
+        { type: "separator" },
+        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
       ]
     },
     {

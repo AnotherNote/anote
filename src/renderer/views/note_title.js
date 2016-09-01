@@ -22,7 +22,8 @@ class NoteTitle extends Component {
   focus = () => {
     // a chrome focus bug
     setTimeout(() => {
-      this.refs.input.focus();
+      if(this.refs.input)
+        this.refs.input.focus();
     }, 1);
   }
 

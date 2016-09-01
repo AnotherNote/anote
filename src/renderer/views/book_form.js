@@ -8,7 +8,7 @@ import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import DropZone from 'react-dropzone';
-import constants from '../../constants'
+import constants from '../../constants';
 let {
     FILES_PATH
 } = constants;
@@ -103,7 +103,7 @@ class BookForm extends Component {
           /><br/>
           <DropZone onDrop={this._dropImage} multiple={false} style={{width: '200px', height: '200px'}}>
             <img
-              src={`${FILES_PATH}/${this.state.book.imagePath}`}
+              src={this.state.book.imagePath != '' ? `${FILES_PATH}/${this.state.book.imagePath}` : constants.TMP_IMAGE_PATH}
               style={{ height: '100%', width: '100%', objectFit: 'contain' }}
             />
           </DropZone>

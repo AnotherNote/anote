@@ -1964,7 +1964,6 @@
          */
 
         save : function() {
-            console.log('editor.md save');
             var _this            = this;
             var state            = this.state;
             var settings         = this.settings;

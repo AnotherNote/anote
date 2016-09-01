@@ -39,7 +39,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 const ipcRenderer = require('electron').ipcRenderer;
 import util from 'util';
-import dispatchHandlers from '../dispatch_handlers';
+import { setDispatchHandler } from '../dispatch_handlers';
 
 const mapStateToProps = (state) => {
   return {
@@ -99,6 +99,41 @@ class FilesContainer extends Component {
       currentBookId: null,
       listMenuTmpData: {}
     };
+    setDispatchHandler('moveToNotebook', this.menuMoveToNotebook);
+    setDispatchHandler('copyToNotebook', this.menuCopyToNotebook);
+    setDispatchHandler('moveToTrash', this.menuMoveToTrash);
+    setDispatchHandler('clearFile', this.menuClearFile);
+    setDispatchHandler('restoreFile', this.menuRestoreFile);
+  }
+
+  menuMoveToNotebook = () => {
+    this.moveToNotebook(this.props.currentFile, this.props.files.findIndex((file) => {
+      return file._id == this.props.currentFile._id;
+    }));
+  }
+
+  menuCopyToNotebook = () => {
+    this.copyToNotebook(this.props.currentFile, this.props.files.findIndex((file) => {
+      return file._id == this.props.currentFile._id;
+    }));
+  }
+
+  menuMoveToTrash = () => {
+    this.delFile(this.props.currentFile, this.props.files.findIndex((file) => {
+      return file._id == this.props.currentFile._id;
+    }));
+  }
+
+  menuClearFile = () => {
+    this.clearFile(this.props.currentFile, this.props.files.findIndex((file) => {
+      return file._id == this.props.currentFile._id;
+    }));
+  }
+
+  menuRestoreFile = () => {
+    this.restoreFile(this.props.currentFile, this.props.files.findIndex((file) => {
+      return file._id == this.props.currentFile._id;
+    }));
   }
 
   // this hook method is not always recalled when url changed
@@ -237,9 +272,9 @@ class FilesContainer extends Component {
     }) || {};
     this.debouncedSaveFileToDb.cancel();
     this.props.activeFile(currentFile);
-    if(this.props.location.query.available == 'true'){
+    if(currentFile._id && this.props.location.query.available == 'true'){
       ipcRenderer.send('onEditNote');
-    }else{
+    }else if(currentFile._id && this.props.location.query.available == 'false'){
       ipcRenderer.send('onEditTrash');
     }
     return currentFile;

@@ -1,7 +1,0 @@
-{"imagePath":"80fc7/80fc70d0d948d473f3644bba5e2d3a3c842de358","available":true,"name":"Ruby Book","_id":"53n6PmAqqHlNy7yO","createdAt":{"$$date":1471868033759},"updatedAt":{"$$date":1471868033759}}
-{"imagePath":"a4784/a4784b33e7e6b5478218b4a377a3cc0f7ca23477","available":true,"name":"Nodejs Book","_id":"HivBRJPqS2Y6atRH","createdAt":{"$$date":1471868137249},"updatedAt":{"$$date":1471868137249}}
-{"imagePath":"avatar.jpeg","available":true,"name":"Others","_id":"PyZ5D9UevCFjH4Mp","createdAt":{"$$date":1471953628019},"updatedAt":{"$$date":1471953628019}}
-{"imagePath":"bf5fa/bf5fa03a99e92fcd7804dbc5c38e6346f81a936f","available":true,"name":"Js Book","_id":"WCSrgpaRHB3HTIvB","createdAt":{"$$date":1471867722351},"updatedAt":{"$$date":1471867722351}}
-{"imagePath":"e3a21/e3a214b4fb185f43f1c29d16e912af5516b3a41d","available":true,"name":"Css Book","_id":"jGImh5NxI4nQhu2C","createdAt":{"$$date":1471956050108},"updatedAt":{"$$date":1472025329435}}
-{"imagePath":"avatar.jpeg","available":true,"name":"动漫那些事儿","_id":"qENKih7B24IcYIzV","createdAt":{"$$date":1472024993796},"updatedAt":{"$$date":1472025350592}}
-{"$$indexCreated":{"fieldName":"updatedAt","unique":false,"sparse":false}}

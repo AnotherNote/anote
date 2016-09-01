@@ -111,7 +111,7 @@ class BooksList extends Component {
           {this.props.books.map((book) => {
             return (
                       <GridTile
-                          key={book.name}
+                          key={book._id}
                           title={book.name}
                           subtitle={<span><b>{book.filesCount} Notes</b></span>}
                           actionIcon={
@@ -129,7 +129,7 @@ class BooksList extends Component {
                         >
                         <img
                           onClick={(event) => {this.props.callbacks.jumpToNotes({pathname: '/notes', query: {bookId: book._id, bookName: book.name, available: true}})}}
-                          src={key2path(book.imagePath)}
+                          src={book.imagePath != '' ? key2path(book.imagePath) : constants.TMP_IMAGE_PATH}
                         />
                       </GridTile>
                     )

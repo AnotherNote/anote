@@ -12,6 +12,7 @@ import { files, books, tags, infos } from '../main/set_db';
 import { Provider } from 'react-redux';
 import store from './store';
 import constants from '../constants';
+window.constants = constants;
 let { FILES_PATH } = constants;
 import { setupIpc } from './setup_ipc';
 

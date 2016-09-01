@@ -3,9 +3,15 @@ import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
 import constants from './constants';
+import co from 'co';
 let {
-    FILES_PATH
+    FILES_PATH,
+    TMP_FILES_PATH
 } = constants;
+
+const writeFileAsyn =  Promise.promisify(fs.writeFile);
+
+const unlinkAsync = Promise.promisify(fs.unlink);
 
 function ensureDirectoryExistence(filePath) {
     var dirname = path.dirname(filePath);
@@ -37,6 +43,19 @@ const copyFile = (source, target) => {
             reject();
         });
     });
+}
+
+const buffer2File = (buffer) => {
+  let tmpPath = path.resolve(TMP_FILES_PATH, `${Date.now()}`);
+  ensureDirectoryExistence(tmpPath);
+  return co(function * () {
+    yield writeFileAsyn(tmpPath, buffer);
+    let hashKey = yield getFileHash(tmpPath);
+    let key = hash2Key(hashKey);
+    yield copyFile(tmpPath, `${FILES_PATH}/${key}`);
+    yield unlinkAsync(tmpPath);
+    return `${key}`;
+  });
 }
 
 const getFileHash = (filePath) => {
@@ -160,5 +179,6 @@ module.exports = {
     findIndexById,
     pick,
     chineseDate,
-    ppDate
+    ppDate,
+    buffer2File
 }
