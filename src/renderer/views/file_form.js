@@ -9,11 +9,14 @@ import {
 } from '../../util';
 import ReactDom from 'react-dom';
 import NotePreview from './note_preview';
+import NoteTitle from './note_title'
 
 class FileForm extends Component {
   constructor(props) {
     super(props);
     this.debouncedOnTitleChange = debounce(this.onTitleChange, 200);
+    this.debouncedOnContentchange = debounce(this.onContentChange, 200);
+    this.first = false;
   }
 
   onTitleChange = (value, currentFile) => {
@@ -21,15 +24,40 @@ class FileForm extends Component {
       this.props.callbacks.onChangeTitle(value, currentFile)
   }
 
+  onContentChange = (value, currentFile) => {
+    if(value == null || currentFile == null)
+      return;
+    if(!this.first && this.props.callbacks && this.props.callbacks.onChangeContent){
+      this.props.callbacks.onChangeContent(value, currentFile);
+    }else{
+      this.first = false;
+    }
+  }
+
   componentWillUnmount = () => {
     this.debouncedOnTitleChange.cancel();
+    this.debouncedOnContentchange.cancel();
   }
 
   componentWillReceiveProps = (newProps) => {
     if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
-      let $input = jQuery(ReactDom.findDOMNode(this.refs.fileTitle)).find('input');
-      $input.val(newProps.currentFile.title || 'Untitled');
-      this.debouncedOnTitleChange.cancel();
+      if(this.refs.fileTitle){
+        this.refs.fileTitle.setValue(newProps.currentFile.title);
+        this.refs.fileTitle.focus();
+        this.debouncedOnTitleChange.cancel();
+      }
+    }
+    if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
+      if(this.refs.fileContent){
+        this.refs.fileContent.setValue(newProps.currentFile.content || '');
+        this.refs.fileContent.clearHistory();
+        this.debouncedOnContentchange.cancel();
+        if(newProps.currentFile.content != this.props.currentFile.content){
+          this.first = true;
+        }else{
+          this.first = false;
+        }
+      }
     }
   }
 
@@ -41,22 +69,33 @@ class FileForm extends Component {
     let realForm = (
                     this.props.available == 'true' ?
                       <div>
-                        <TextField
-                          hintText="Untitled"
-                          fullWidth={true}
-                          style={{height: '50px'}}
-                          inputStyle={{'fontSize': '16px', color: '#5d5d5d'}}
-                          defaultValue={this.props.currentFile && this.props.currentFile.title}
+                        <NoteTitle
+                          autoFocus={true}
                           onChange={(event) => {
                             event.preventDefault();
                             event.stopPropagation();
                             this.debouncedOnTitleChange(event.target.value, this.props.currentFile);
                           }}
-                          autoFocus
+                          defaultValue={(this.props.currentFile && this.props.currentFile.title)}
                           ref='fileTitle'
+                          style={{
+                            padding: '11px 8px 12px 8px',
+                            display: 'block',
+                            border: 'none',
+                            borderBottom: '1pz solid #808080',
+                            fontSize: '16px',
+                            width: '100%',
+                            boxSizing: 'border-box'
+                          }}
                         />
                         <div className='editor-wrapper'>
-                          <NoteEditor {...this.props}/>
+                          <NoteEditor
+                            defaultValue={this.props.currentFile && this.props.currentFile.content}
+                            ref='fileContent'
+                            onChange={(value) => {
+                              this.debouncedOnContentchange(value, (this.props && this.props.currentFile) || null)
+                            }}
+                          />
                         </div>
                       </div>
                     :

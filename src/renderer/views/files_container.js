@@ -37,6 +37,9 @@ import ListMenu from './list_menu';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
+const ipcRenderer = require('electron').ipcRenderer;
+import util from 'util';
+import dispatchHandlers from '../dispatch_handlers';
 
 const mapStateToProps = (state) => {
   return {
@@ -101,30 +104,33 @@ class FilesContainer extends Component {
   // this hook method is not always recalled when url changed
   // this decided by react diff and replace strategy
   componentDidMount() {
+
+    this._checkNewNoteParam();
     this._fetchFiles();
     this._fetchBooks();
+    ipcRenderer.send('onNoEditNotesList');
   }
 
   // cause: use newProps, because this.props has not been updated !!!!
   componentWillReceiveProps(newProps) {
-    // 确保files最新
 
+    this._checkNewNoteParam(newProps);
+    // 确保files最新
     if(this.props.location.query.bookId != newProps.location.query.bookId){
       this._fetchFiles(newProps);
-      this.props.setGlobalBook({
-        _id: newProps.location.query.bookId,
-        name: newProps.location.query.bookName
-      });
-      return;
+      if(newProps.location.query.bookId){
+        this.props.setGlobalBook({
+          _id: newProps.location.query.bookId,
+          name: newProps.location.query.bookName
+        });
+      }
     }
 
+    // searchFileText change 重新 fetch 数据
     if(this.props.location.query.searchFileText != newProps.location.query.searchFileText
         || this.props.location.query.available != newProps.location.query.available){
       this._fetchFiles(newProps);
-      return;
     }
-
-    // ---------------------------------------------------------------------
 
     // 确保currentfile最新，由于我们用一个页面相同元素换属性来展示页面，所以不是替换元素，出发不了componentDidMount
     if(newProps.files != this.props.files || newProps.params.id != this.props.params.id)
@@ -139,6 +145,24 @@ class FilesContainer extends Component {
 
   componentWillUnmount() {
     this.debouncedSaveFileToDb.cancel();
+  }
+
+  _checkNewNoteParam = (props) => {
+    props = props || this.props;
+    if(props.location.query.newNote == 'true'){
+      // 保证只开一次新建的dialog
+      this._delNewNoteParam();
+      this.newAndCreateFile();
+      return true;
+    }
+    return false;
+  }
+
+  _delNewNoteParam = () => {
+    hashHistory.replace({
+      pathname: this.props.location.pathname,
+      query: Object.assign({}, pick(this.props.location.query, 'searchFileText', 'bookId', 'bookName'), {available: true})
+    });
   }
 
   _fetchFiles = (newProps) => {
@@ -163,6 +187,7 @@ class FilesContainer extends Component {
     });
   }
 
+  // 如果没有book数据，就需要fetch book的数据
   _fetchBooks = () => {
     var that = this;
     if(this.props.books.length == 0){
@@ -176,7 +201,7 @@ class FilesContainer extends Component {
 
   _ensureGlobalBook = (book) => {
     let firstBook = null;
-    if(!this.bookId() && (firstBook = book || this.availableBooks()[0])){
+    if(!this.bookId() && (firstBook = book || this._availableBooks()[0])){
       this.props.setGlobalBook({
         _id: firstBook._id,
         name: firstBook.name
@@ -184,13 +209,13 @@ class FilesContainer extends Component {
     }
   }
 
-  availableBooks = () => {
+  _availableBooks = () => {
     return this.props.books.filter((book) => {
       return book.available;
     });
   }
 
-  unavailableBooks = () => {
+  _unavailableBooks = () => {
     return this.props.books.filter((book) => {
       return !book.available;
     });
@@ -212,6 +237,11 @@ class FilesContainer extends Component {
     }) || {};
     this.debouncedSaveFileToDb.cancel();
     this.props.activeFile(currentFile);
+    if(this.props.location.query.available == 'true'){
+      ipcRenderer.send('onEditNote');
+    }else{
+      ipcRenderer.send('onEditTrash');
+    }
     return currentFile;
   }
 
@@ -230,21 +260,18 @@ class FilesContainer extends Component {
         throw error;
         return;
       }
-      this.props.addFile(newFile);
-      setTimeout(() => {
-        hashHistory.push({ pathname: `/notes/${newFile._id}/edit`, query: this.props.location.query });
-      }, 100);
+      if(this.props.location.query.available == 'true') {
+        this.props.addFile(newFile);
+        console.log('添加');
+      }
+      hashHistory.push({ pathname: `/notes/${newFile._id}/edit`, query: this.props.location.query});
     });
   }
 
   // 用于新建的bookId
   bookId = () => {
-    if(this.props.location.query.available == 'true'){
-      let result = this.props.location.query.bookId || this.props.globalBook._id;
-      return result;
-    }else{
-      return null;
-    }
+    let result = this.props.location.query.bookId || this.props.globalBook._id;
+    return result;
   }
 
   isInBook = () => {
@@ -460,11 +487,11 @@ class FilesContainer extends Component {
   }
 
   moveToNotebook = (file, index) => {
-    let tmpIdx = this.availableBooks().findIndex((book) => {
+    let tmpIdx = this._availableBooks().findIndex((book) => {
       return book._id == file.bookId;
     });
     this.setState({
-      currentBookId: this.availableBooks()[tmpIdx]._id,
+      currentBookId: this._availableBooks()[tmpIdx]._id,
       listMenuOpen: true,
       listMenuTmpData: {
         file: file,
@@ -475,11 +502,11 @@ class FilesContainer extends Component {
   }
 
   copyToNotebook = (file, index) => {
-    let tmpIdx = this.availableBooks().findIndex((book) => {
+    let tmpIdx = this._availableBooks().findIndex((book) => {
       return book._id == file.bookId;
     });
     this.setState({
-      currentBookId: this.availableBooks()[tmpIdx]._id,
+      currentBookId: this._availableBooks()[tmpIdx]._id,
       listMenuOpen: true,
       listMenuTmpData: {
         file: file,
@@ -614,7 +641,7 @@ class FilesContainer extends Component {
             maxHeight={300}
           >
             {
-              this.availableBooks().map((book) => {
+              this._availableBooks().map((book) => {
                 return (
                   <MenuItem
                     key={book._id}
@@ -660,7 +687,7 @@ class FilesContainer extends Component {
           onOk={this.listMenuOk}
           title=''
           open={this.state.listMenuOpen}
-          dataList={this.availableBooks().map((book) => { return {name: book.name, id: book._id} })}
+          dataList={this._availableBooks().map((book) => { return {name: book.name, id: book._id} })}
           dataItem={this.state.currentBookId}
           filterFunc={this.menuListFilter}
           tmpData={this.state.listMenuTmpData}
@@ -669,8 +696,5 @@ class FilesContainer extends Component {
     );
   }
 }
-
-window.FilesContainer = FilesContainer;
-window.books = books;
 
 export default connect(mapStateToProps, mapDispatchToProps)(FilesContainer);

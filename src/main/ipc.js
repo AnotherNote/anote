@@ -4,6 +4,7 @@ import windows from './windows';
 import { log } from './log';
 const {Menu, MenuItem} = electron;
 const BrowserWindow = electron.BrowserWindow;
+const menu = require('./menu');
 
 var mainMsgQueue = [];
 
@@ -31,6 +32,32 @@ const init = () => {
     // menu.append(new MenuItem({type: 'separator'}))
     // menu.append(new MenuItem({label: 'MenuItem2', type: 'checkbox', checked: true}))
     // menu.popup(win);
+  });
+
+  ipc.on('onNotebookContainer', (event, arg) => {
+    menu.onNotebookContainer();
+  });
+
+  ipc.on('onEditNote', (event, arg) => {
+    menu.onEditNote();
+  });
+
+  ipc.on('onEditTrash', (event, arg) => {
+    menu.onEditTrash();
+  });
+
+  ipc.on('onNoEditNotesList', (event, arg) => {
+    menu.onNoEditNotesList();
+  });
+
+  ipc.on('enableItem', (event, item) => {
+    console.log(`enableItem ${item}`);
+    menu.enableItem(item);
+  });
+
+  ipc.on('disableItem', (event, item) => {
+    console.log(`disableItem ${item}`);
+    menu.disableItem(item);
   });
 }
 

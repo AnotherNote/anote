@@ -9,10 +9,8 @@ import React from 'react';
 import { render } from 'react-dom';
 import App from './views/app';
 import { files, books, tags, infos } from '../main/set_db';
-import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import reducers from './reducers';
-let store = createStore(reducers);
+import store from './store';
 import constants from '../constants';
 let { FILES_PATH } = constants;
 import { setupIpc } from './setup_ipc';
@@ -25,6 +23,8 @@ injectTapEventPlugin();
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
+const ipcRenderer = require('electron').ipcRenderer;
+
 const muiTheme = getMuiTheme({
   fontFamily: '"YaHei Consolas Hybrid", Consolas, 微软雅黑, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, Monaco, courier, monospace !important',
   palette: {
@@ -32,6 +32,22 @@ const muiTheme = getMuiTheme({
   }
 });
 
+// subscribe redux to control new note menu item
+function controlNewNoteMenu() {
+  var globalBook = null;
+  store.subscribe(() => {
+    if((!!store.getState().globalBook._id) != globalBook){
+      globalBook = (!!store.getState().globalBook._id);
+      if(store.getState().globalBook._id){
+        ipcRenderer.send('enableItem', 'New Note');
+      }else{
+        ipcRenderer.send('disableItem', 'New Note');
+      }
+    }
+  });
+}
+
+controlNewNoteMenu();
 
 document.addEventListener('DOMContentLoaded', function() {
   render(

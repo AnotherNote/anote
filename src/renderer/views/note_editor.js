@@ -20,8 +20,6 @@ let {
 class NoteEditor extends Component {
   constructor(props) {
     super(props);
-    this.debouncedOnchange = debounce(this.onChange, 200);
-    this.first = false;
   }
 
   // default keymap like emacs keybinding
@@ -59,39 +57,7 @@ class NoteEditor extends Component {
     return keyMap;
   }
 
-  onChange = (value, currentFile) => {
-    if(value == null || currentFile == null)
-      return;
-    if(!this.first && this.props.callbacks && this.props.callbacks.onChangeContent){
-      this.props.callbacks.onChangeContent(value, currentFile);
-    }else{
-      console.log('first .,.............');
-      this.first = false;
-    }
-  }
-
-  componentWillUnmount() {
-    this.debouncedOnchange.cancel();
-  }
-
-  componentWillReceiveProps = (newProps) => {
-    if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
-      this.editor.cm.setValue(newProps.currentFile.content || '');
-      // for performance , I need to clear histories
-      this.editor.cm.getDoc().clearHistory();
-      this.debouncedOnchange.cancel();
-      if(newProps.currentFile.content != this.props.currentFile.content){
-        this.first = true;
-      }else{
-        this.first = false;
-      }
-    }
-  }
-
   componentDidMount() {
-    if(this.debouncedOnchange)
-      this.debouncedOnchange.cancel();
-    this.debouncedOnchange = debounce(this.onChange, 200);
     var that = this,
       $imageInput = $(ReactDom.findDOMNode(that.refs.imageInput));
     var editor = editormd("editormd", {
@@ -99,10 +65,6 @@ class NoteEditor extends Component {
         path : "./lib/",
         // 这个方法只有preview和watch的时候才调用
         onchange: function() {
-          // console.log('editor onchange');
-          // console.log("onchange =>", this, this.id, this.settings, this.state);
-          // console.log(that.refs.textArea.value);
-          // that.debouncedOnchange();
         },
         watch: false,
         toolbarIcons: ["undo", "redo", "|", "bold", "italic", "quote", "|", "h1", "h2", "h3", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "insertImage", "code", "preformatted-text", "code-block", "table", "datetime", "html-entities", "pagebreak", "|", "goto-line", "watch", "preview", "fullscreen", "clear", "search"],
@@ -116,7 +78,9 @@ class NoteEditor extends Component {
         },
         // a hack hook(我自己hack的)
         onChange: function() {
-          that.debouncedOnchange((that.refs.textArea && that.refs.textArea.value) || null, (that.props && that.props.currentFile) || null);
+          if(that.props.onChange){
+            that.props.onChange((that.refs.textArea && that.refs.textArea.value) || null);
+          }
         },
         onload: function() {
           $imageInput.change(function(event){
@@ -136,15 +100,23 @@ class NoteEditor extends Component {
         }
     });
     editor.setToolbarAutoFixed(true);
-    window.editor = editor;
     this.editor = editor;
+  }
+
+  setValue = (value) => {
+    console.log(`setvalue: ${value}`);
+    this.editor.cm.setValue(value);
+  }
+
+  clearHistory = () => {
+    this.editor.cm.clearHistory();
   }
 
   render () {
     return (
       <div id='editormd'>
         <textarea
-          defaultValue={this.props.currentFile && this.props.currentFile.content}
+          defaultValue={this.props.defaultValue}
           ref='textArea'
         />
         <input type='file' style={{display: 'none'}} ref='imageInput' accept='image/*' />

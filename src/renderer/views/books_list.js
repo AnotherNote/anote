@@ -35,7 +35,6 @@ const styles = {
   },
 };
 
-
 // props {callbacks, books}
 class BooksList extends Component {
   constructor(props) {
@@ -43,12 +42,12 @@ class BooksList extends Component {
     this.state = {
       gridCols: 4
     }
-    this.throttledGridCols = throttle(this.gridCols, 100);
+    this.throttledGridCols = throttle(this.gridCols, 10);
   }
 
   componentDidMount() {
     // add a throttle process
-    window.addEventListener('resize', this.throttledGridCols);
+    window.addEventListener('resize', this.gridCols);
   }
 
   componentWillUnmount() {

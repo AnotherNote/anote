@@ -1,8 +1,8 @@
 {
-  "name": "electron-makedown",
+  "name": "Anote",
   "version": "1.0.0",
   "description": "A minimal Electron application",
-  "productName": "anote",
+  "productName": "Anote",
   "main": "index.js",
   "scripts": {
     "build_js": "babel --quiet src --out-dir build",

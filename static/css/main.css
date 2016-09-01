@@ -7,6 +7,10 @@ html, body {
   font-family: "YaHei Consolas Hybrid", Consolas, 微软雅黑, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, Monaco, courier, monospace!important;
 }
 
+textarea:focus, input:focus{
+  outline: none;
+}
+
 #root {
   background: rgba(0, 0, 0, 0);
 }
@@ -72,7 +76,7 @@ html, body {
 }
 
 .editor-wrapper {
-  top: 50px;
+  top: 43px;
   bottom: 0px;
   right: 0px;
   left: 0px;

@@ -10,6 +10,7 @@ const windows = require('./windows');
 
 const ipc = require('./ipc');
 
+const menu = require('./menu');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 
@@ -17,6 +18,7 @@ function init () {
   app.on('ready', function() {
     BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.1_0');
     windows.main.init();
+    menu.init()
   });
 }
 

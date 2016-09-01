@@ -1,5 +1,4 @@
 const dispatchHandlers = {
-
 }
 
 export default dispatchHandlers;

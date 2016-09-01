@@ -38,6 +38,9 @@ import {
   openBookItemContextMenu,
   openNormalContextMenu
 } from '../controllers/books_controller.js';
+import {
+  ipcRenderer
+} from 'electron';
 
 const mapStateToProps = (state) => {
   return {
@@ -103,7 +106,36 @@ class BooksContainer extends Component {
           if(tmpC == bks.length)
             that.props.listBooks(bks);
         })
+        if(!that.props.globalBook._id && bks.length > 0){
+          that.props.setGlobalBook(
+            {
+              _id: bks[0]._id,
+              name: bks[0].name
+            }
+          );
+        }
       });
+    });
+    ipcRenderer.send('onNotebookContainer');
+    this._checkNewNoteBookParam();
+  }
+
+  componentWillReceiveProps(newProps) {
+    this._checkNewNoteBookParam(newProps);
+  }
+
+  _checkNewNoteBookParam = (props) => {
+    props = props || this.props;
+    if(props.location.query.newNoteBook == 'true'){
+      // 保证只开一次新建的dialog
+      this._delNewNoteBookParam();
+      this._newBook();
+    }
+  }
+
+  _delNewNoteBookParam = () => {
+    hashHistory.replace({
+      pathname: '/'
     });
   }
 
@@ -143,6 +175,14 @@ class BooksContainer extends Component {
         that.setState({
           bookDialogOpen: false
         });
+        if(!that.props.globalBook._id){
+          that.props.setGlobalBook(
+            {
+              _id: newBook._id,
+              name: newBook.name
+            }
+          );
+        }
       });
     }else{
       books.update({'_id': book._id}, that._bookAttributes(book), {}, (error) => {

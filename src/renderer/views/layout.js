@@ -16,6 +16,7 @@ import {
     hashHistory
 } from 'react-router';
 import ReactDom from 'react-dom';
+import { setDispatchHandler } from '../dispatch_handlers'
 
 class Layout extends Component {
   constructor(props) {
@@ -43,6 +44,31 @@ class Layout extends Component {
       this.setState({searchFileText: newProps.location.query.searchFileText || ''});
       jQuery(ReactDom.findDOMNode(this.refs.globalSearchInput)).find('input').val(newProps.location.query.searchFileText || '');
     }
+  }
+
+  componentDidMount = () => {
+    setDispatchHandler('newNoteBook', () => {
+      hashHistory.replace({
+        pathname: '/',
+        query: {
+          newNoteBook: true
+        }
+      });
+    });
+    setDispatchHandler('newNote', () => {
+      let patt = new RegExp('notes');
+      if(patt.test(this.props.location.pathname)){
+        hashHistory.push({
+          pathname: this.props.location.pathname,
+          query: Object.assign({}, this.props.location.query, {available: true, newNote: true})
+        });
+      }else{
+        hashHistory.push({
+          pathname: '/notes',
+          query: {available: true, newNote: true}
+        });
+      }
+    });
   }
 
   render() {
