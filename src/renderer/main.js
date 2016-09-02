@@ -63,5 +63,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 window.FILES_PATH = FILES_PATH;
 
+// prevent external link open from browser
+$('body').on('click', 'a.external', function(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  let href = $(this).attr('href');
+  var pp = /[http|https]/;
+  if(pp.test(href)){
+    ipcRenderer.send('openExternal', href);
+  }
+});
+
 // setupIpc to main
 setupIpc();

@@ -18,7 +18,8 @@ function init () {
   app.on('ready', function() {
     BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.1_0');
     windows.main.init();
-    menu.init()
+    windows.worker.init();
+    menu.init();
   });
 }
 
@@ -54,6 +55,6 @@ app.on('activate', function () {
 
 function onAppOpen () {
   if(app.ipcReady){
-      windows.main.show();
+    windows.main.show();
   }
 }

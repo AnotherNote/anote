@@ -40,6 +40,7 @@ import Divider from 'material-ui/Divider';
 const ipcRenderer = require('electron').ipcRenderer;
 import util from 'util';
 import { setDispatchHandler } from '../dispatch_handlers';
+import { sendWorkerCmd } from '../worker_util';
 
 const mapStateToProps = (state) => {
   return {
@@ -499,7 +500,7 @@ class FilesContainer extends Component {
           this.copyToNotebook(file, index);
         },
         normalExport: () => {
-
+          sendWorkerCmd('saveNoteAsMarkdown', file._id);
         },
         exportAsPdf: () => {
 

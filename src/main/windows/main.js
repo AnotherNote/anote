@@ -44,7 +44,6 @@ function init () {
   // Emitted when the window is closed.
   win.on('closed', function () {
     win = main.win = null;
-    console.log('main window close!!!');
     mainMsgQueue.length = 0;
     app.mainRenderReady = false;
   })

@@ -5,6 +5,8 @@ import { log } from './log';
 const {Menu, MenuItem} = electron;
 const BrowserWindow = electron.BrowserWindow;
 const menu = require('./menu');
+const shell = require('./shell');
+import { openSaveDialog } from './dialog';
 
 var mainMsgQueue = [];
 
@@ -58,6 +60,22 @@ const init = () => {
   ipc.on('disableItem', (event, item) => {
     console.log(`disableItem ${item}`);
     menu.disableItem(item);
+  });
+
+  ipc.on('openExternal', shell.openExternal);
+
+  // a bridge between main render process and worker process
+  ipc.on('workerCmd', (event, ...args) => {
+    if(windows.worker.win)
+      return windows.worker.dispatch(...args);
+    windows.worker.init(() => {
+      windows.worker.dispatch(...args);
+    });
+  });
+
+  // open save dialog
+  ipc.on('saveDialog', (...args) => {
+    openSaveDialog(...args);
   });
 }
 

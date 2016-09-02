@@ -2684,10 +2684,9 @@
             //     width    : editor.data("oldWidth"),
             //     height   : editor.data("oldHeight")
             // }).removeClass(fullscreenClass);
-
             editor.removeClass(fullscreenClass);
 
-            this.resize();
+            this.resize(null, '100%');
 
             $.proxy(settings.onfullscreenExit, this)();
 
@@ -3496,7 +3495,7 @@
           if(!pp.test(href)){
             return "<p>" + "<img src='" + FILES_PATH + '/' + href + "'/>" + "</p>";
           }else{
-            return "<p>" + "<img src='" + href + '/' + href + "'/>" + "</p>";
+            return "<p>" + "<img src='" + href + "'/>" + "</p>";
           }
         };
 
@@ -3542,7 +3541,7 @@
                 }
             }
 
-            var out = "<a href=\"" + href + "\"";
+            var out = "<a class='external' href=\"" + href + "\"";
 
             if (atLinkReg.test(title) || atLinkReg.test(text))
             {
