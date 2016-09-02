@@ -6,10 +6,10 @@
   "main": "index.js",
   "scripts": {
     "build_js": "babel --quiet src --out-dir build",
-    "build": "babel --quiet src --out-dir build && electron-packager . anote --platform=darwin --arch=x64 --ignore=node_modules/electron-*",
+    "build": "babel --quiet src --out-dir build && electron-packager . Anote --platform=darwin --arch=x64 --ignore=node_modules/electron-*",
     "start": "npm run build_js && electron .",
     "develop": "babel src --out-dir build --watch & electron .",
-    "package": "asar pack anote-darwin-x64/anote.app/Contents/Resources/app anote-darwin-x64/anote.app/Contents/Resources/app.asar --unpack-dir '{db}'"
+    "package": "asar pack Anote-darwin-x64/Anote.app/Contents/Resources/app Anote-darwin-x64/Anote.app/Contents/Resources/app.asar --unpack-dir '{db}'"
   },
   "repository": {
     "type": "git",

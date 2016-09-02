@@ -22,37 +22,56 @@ const fs = require('fs');
 const toMarkdown = require('to-markdown');
 const sanitizeHtml = require('sanitize-html');
 
+// for past image
 function pastImage(cm) {
   let image = clipboard.readImage();
   if(image && !image.isEmpty()){
     let text = clipboard.readText();
     buffer2File(image.toPNG()).then(function(key){
-      cm.replaceSelection("![" + text + "](" + key + ")");
+      cm.replaceSelection("![" + (text.length == 0 ? 'past-image' : text) + "](" + key + ")");
     });
     return true;
   }
   return false;
 }
 
+// for past html(html2markdown)
 function pastHtml(cm) {
   let htmlText = clipboard.readHTML();
   let cleanText = sanitizeHtml(htmlText, {
     allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
   'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br',
-  'table', 'thead', 'tbody', 'tr', 'th', 'td', 'pre' ],
-    selfClosing: ['br', 'hr', 'base'],
+  'table', 'thead', 'tbody', 'tr', 'th', 'td', 'pre', 'img'],
+    selfClosing: ['br', 'hr', 'base', 'img'],
     allowedAttributes: {
-      'a': [ 'href' ]
+      'a': [ 'href' ],
+      'img': [ 'src' ]
     }
   });
   if(htmlText && htmlText.length > 0){
-    console.log('pastHtml');
-    cm.replaceSelection(toMarkdown(cleanText));
+    cm.replaceSelection(toMarkdown(cleanText, {
+      converters: [
+        {
+          filter: 'code',
+          replacement: function(content) {
+            return '`' + content + '`';
+          }
+        },
+        {
+          filter: 'img',
+          replacement: function(content, node) {
+            // need add back worker
+            return "![" + 'web-image' + "](" + node.src + ")"
+          }
+        }
+      ]
+    }));
     return true;
   }
   return false
 }
 
+// past text
 function pastText(cm) {
   let text = clipboard.readText();
   if(text && text.length > 0){
@@ -129,10 +148,10 @@ class NoteEditor extends Component {
             $imageInput.trigger('click');
           }
         },
-        // a hack hook(我自己hack的)
+        // a hack hook
         onChange: function() {
-          if(that.props.onChange){
-            that.props.onChange((that.refs.textArea && that.refs.textArea.value) || null);
+          if(that.props.onChange && that.refs.textArea){
+            that.props.onChange((that.refs.textArea && that.refs.textArea.value) || '');
           }
         },
         onload: function() {
@@ -157,7 +176,6 @@ class NoteEditor extends Component {
   }
 
   setValue = (value) => {
-    console.log(`setvalue: ${value}`);
     this.editor.cm.setValue(value);
   }
 

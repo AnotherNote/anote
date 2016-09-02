@@ -2632,10 +2632,14 @@
 
                 $("html,body").css("overflow", "hidden");
 
-                editor.css({
-                    width    : $(window).width(),
-                    height   : $(window).height()
-                }).addClass(fullscreenClass);
+                // resize window has bug
+                // remove width and height add bottom 0px and right 0px to fullscreenClass
+                // editor.css({
+                //     width    : $(window).width(),
+                //     height   : $(window).height()
+                // }).addClass(fullscreenClass);
+
+                editor.addClass(fullscreenClass);
 
                 this.resize();
 
@@ -2674,10 +2678,14 @@
 
             $("html,body").css("overflow", "");
 
-            editor.css({
-                width    : editor.data("oldWidth"),
-                height   : editor.data("oldHeight")
-            }).removeClass(fullscreenClass);
+            // this has bug
+            // when I resize window the oldWidth and oldHeight,this is not right value
+            // editor.css({
+            //     width    : editor.data("oldWidth"),
+            //     height   : editor.data("oldHeight")
+            // }).removeClass(fullscreenClass);
+
+            editor.removeClass(fullscreenClass);
 
             this.resize();
 
@@ -3484,7 +3492,12 @@
 
         // the image render need hack
         markedRenderer.image = function(href, title, text) {
-          return "<p>" + "<img src='" + FILES_PATH + '/' + href + "'/>" + "</p>";
+          var pp = /[http|https]/;
+          if(!pp.test(href)){
+            return "<p>" + "<img src='" + FILES_PATH + '/' + href + "'/>" + "</p>";
+          }else{
+            return "<p>" + "<img src='" + href + '/' + href + "'/>" + "</p>";
+          }
         };
 
         markedRenderer.atLink = function(text) {
