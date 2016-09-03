@@ -176,11 +176,14 @@ class NoteEditor extends Component {
   }
 
   setValue = (value) => {
-    this.editor.cm.setValue(value);
+    if(this.editor.cm)
+      return this.editor.cm.setValue(value);
+    jQuery(ReactDom.findDOMNode(this.refs.textArea)).val(value);
   }
 
   clearHistory = () => {
-    this.editor.cm.clearHistory();
+    if(this.editor.cm)
+      this.editor.cm.clearHistory();
   }
 
   render () {

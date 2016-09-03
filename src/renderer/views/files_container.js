@@ -4,6 +4,7 @@ import React, {
 import {
     connect
 } from 'react-redux';
+import ReactDom from 'react-dom';
 import {
     listFiles,
     addFile,
@@ -107,6 +108,7 @@ class FilesContainer extends Component {
     setDispatchHandler('restoreFile', this.menuRestoreFile);
   }
 
+
   menuMoveToNotebook = () => {
     this.moveToNotebook(this.props.currentFile, this.props.files.findIndex((file) => {
       return file._id == this.props.currentFile._id;
@@ -140,7 +142,6 @@ class FilesContainer extends Component {
   // this hook method is not always recalled when url changed
   // this decided by react diff and replace strategy
   componentDidMount() {
-
     this._checkNewNoteParam();
     this._fetchFiles();
     this._fetchBooks();
@@ -149,8 +150,9 @@ class FilesContainer extends Component {
 
   // cause: use newProps, because this.props has not been updated !!!!
   componentWillReceiveProps(newProps) {
-
+    // 用于新建note
     this._checkNewNoteParam(newProps);
+
     // 确保files最新
     if(this.props.location.query.bookId != newProps.location.query.bookId){
       this._fetchFiles(newProps);
@@ -169,8 +171,11 @@ class FilesContainer extends Component {
     }
 
     // 确保currentfile最新，由于我们用一个页面相同元素换属性来展示页面，所以不是替换元素，出发不了componentDidMount
-    if(newProps.files != this.props.files || newProps.params.id != this.props.params.id)
-      this.getCurrentFile(newProps);
+    if(newProps.files != this.props.files || newProps.params.id != this.props.params.id){
+      if(newProps.params.id && newProps.files.length > 0){
+        this.getCurrentFile(newProps);
+      }
+    }
 
     // 确保有book可以新建文章
     if(newProps.books != this.props.books)
@@ -181,6 +186,11 @@ class FilesContainer extends Component {
 
   componentWillUnmount() {
     this.debouncedSaveFileToDb.cancel();
+    setDispatchHandler('moveToNotebook', null);
+    setDispatchHandler('copyToNotebook', null);
+    setDispatchHandler('moveToTrash', null);
+    setDispatchHandler('clearFile', null);
+    setDispatchHandler('restoreFile', null);
   }
 
   _checkNewNoteParam = (props) => {
@@ -262,12 +272,12 @@ class FilesContainer extends Component {
     if(this.props.params.id)
       return;
     if(fls.length > 0){
-      window.hashHistory = hashHistory;
       hashHistory.push({ pathname: `/notes/${fls[0]._id}/edit`, query: this.props.location.query });
     }
   }
 
   getCurrentFile = (newProps) => {
+    console.log('getCurrentFile');
     let currentFile = newProps.files.find((file) => {
       return file._id == newProps.params.id;
     }) || {};
@@ -278,6 +288,7 @@ class FilesContainer extends Component {
     }else if(currentFile._id && this.props.location.query.available == 'false'){
       ipcRenderer.send('onEditTrash');
     }
+    console.log(currentFile);
     return currentFile;
   }
 
@@ -490,6 +501,9 @@ class FilesContainer extends Component {
       canNew,
       chooseFile,
       {
+        importFile: () => {
+          sendWorkerCmd('importFile');
+        },
         newFile: () => {
           this.newAndCreateFile();
         },
@@ -599,6 +613,8 @@ class FilesContainer extends Component {
   }
 
   dropdownMenuChange = (event, index, value) => {
+    if(value == this.dropdownMenuValue())
+      return;
     if(value == 'trash') {
       return hashHistory.push({
         pathname: '/notes',

@@ -6,7 +6,7 @@ const {Menu, MenuItem} = electron;
 const BrowserWindow = electron.BrowserWindow;
 const menu = require('./menu');
 const shell = require('./shell');
-import { openSaveDialog } from './dialog';
+import { openSaveDialog, openFileDialog } from './dialog';
 
 var mainMsgQueue = [];
 
@@ -76,6 +76,10 @@ const init = () => {
   // open save dialog
   ipc.on('saveDialog', (...args) => {
     openSaveDialog(...args);
+  });
+
+  ipc.on('openFile', (...args) => {
+    openFileDialog(...args);
   });
 }
 

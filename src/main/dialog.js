@@ -17,6 +17,19 @@ function openSaveDialog(event, title, extensions, tmpData) {
   });
 }
 
+function openFileDialog(event, tmpData){
+  dialog.showOpenDialog({
+    properties: ['openFile', 'openDirectory'],
+    filters: [
+      {name: 'Markdown', extensions: ['md']},
+      {name: 'Html', extensions: ['html']}
+    ]
+  }, function (files) {
+    if (files) event.sender.send('dispatch', 'selectedFile', files, tmpData)
+  })
+}
+
 module.exports = {
-  openSaveDialog
+  openSaveDialog,
+  openFileDialog
 }

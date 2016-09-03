@@ -22,9 +22,11 @@ var dispatchHandlers = {
   'testHandler': function(...args){
     console.log(...args);
   },
+  // 把笔记到处存为markdown
   'saveNoteAsMarkdown': function(fileId){
     ipcRenderer.send('saveDialog', 'export a note', 'md', {fileId: fileId, type: 'saveNoteAsMarkdown'});
   },
+  // main process save的callback
   'fileSaved': function(filename, tmpData) {
     console.log(filename);
     switch (tmpData.type) {
@@ -40,6 +42,24 @@ var dispatchHandlers = {
             yield writeFileAsync(filename, content);
           });
         });
+        break;
+      default:
+
+    }
+  },
+  // 导入markdown or html
+  importFile: function() {
+    ipcRenderer.send('openFile', {type: "importFile"});
+  },
+  // 选择文件的callback
+  selectedFile: function(files, tmpData) {
+    console.log(files);
+    console.log(tmpData);
+    let file = files[0];
+    switch (tmpData.type) {
+      case "importFile":
+        console.log('xxxxx');
+        return;
         break;
       default:
 
