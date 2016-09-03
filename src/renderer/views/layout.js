@@ -47,6 +47,7 @@ class Layout extends Component {
   }
 
   componentDidMount = () => {
+    // 配些全局的相应appmenu的event
     setDispatchHandler('newNoteBook', () => {
       hashHistory.replace({
         pathname: '/',
@@ -68,6 +69,16 @@ class Layout extends Component {
           query: {available: true, newNote: true}
         });
       }
+    });
+
+    // hack notes和trash的相应
+    jQuery(ReactDom.findDOMNode(this.refs.notesLink)).click(function(event){
+      if($(this).hasClass('active'))
+        event.preventDefault();
+    });
+    jQuery(ReactDom.findDOMNode(this.refs.trashLink)).click(function(event){
+      if($(this).hasClass('active'))
+        event.preventDefault();
     });
   }
 
@@ -91,8 +102,24 @@ class Layout extends Component {
           <div className='banner'><p>Enjoy ANOTE coding now...</p></div>
           <ul className='s-menu main-menu'>
             <li><IndexLink to='/' activeClassName='active'>notebooks</IndexLink></li>
-            <li><Link to={{pathname: '/notes', query: { available: true }}} activeClassName='active'>notes</Link></li>
-            <li><Link to={{pathname: '/notes', query: { available: false }}} activeClassName='active'>trash</Link></li>
+            <li>
+              <Link
+                to={{pathname: '/notes', query: { available: true }}}
+                activeClassName='active'
+                ref='notesLink'
+              >
+                notes
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={{pathname: '/notes', query: { available: false }}}
+                activeClassName='active'
+                ref='trashLink'
+              >
+                trash
+              </Link>
+            </li>
             <li><Link to='/test' activeClassName='active'>playstation</Link></li>
           </ul>
         </div>
