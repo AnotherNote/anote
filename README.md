@@ -1,32 +1,75 @@
-# electron-quick-start
+### ANote
 
-**Clone and run for a quick way to see an Electron in action.**
+a simple opensource note app(only support markdown :)).
 
-This is a minimal Electron application based on the [Quick Start Guide](http://electron.atom.io/docs/latest/tutorial/quick-start) within the Electron documentation.
+** note: now only support mac **
 
-**Use this app along with the [Electron API Demos](http://electron.atom.io/#get-started) app for API code examples to help you get started.**
+[![quick_note.gif](http://s21.postimg.org/9pke2wjiv/quick_note.gif)](http://postimg.org/image/8aite6ifn/)
 
-A basic Electron application needs just these files:
+[![past_image.gif](http://s15.postimg.org/kdk0dn2aj/past_image.gif)](http://postimg.org/image/4fbani82f/)
 
-- `package.json` - Points to the app's main file and lists its details and dependencies.
-- `main.js` - Starts the app and creates a browser window to render HTML. This is the app's **main process**.
-- `index.html` - A web page to render. This is the app's **renderer process**.
+[![past_html.gif](http://s10.postimg.org/3sa87qn2x/past_html.gif)](http://postimg.org/image/q48114m6t/)
 
-You can learn more about each of these components within the [Quick Start Guide](http://electron.atom.io/docs/latest/tutorial/quick-start).
+[![export_as_pdf.gif](http://s21.postimg.org/5p2q0rz5z/export_as_pdf.gif)](http://postimg.org/image/p6xdgpw3n/)
 
-## To Use
+### Feature
 
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+- markdown friendly
+- past image
+- past html (include fetch image locally)
+- export markdown file with images
+- export pdf file
+- support tray menu quick note(inspired by evernote)
+- default `cmd+v` will convert html to markdown, and you can press `alt+v` to past as text(not convert html to markdown)
 
-```bash
-# Clone this repository
-git clone https://github.com/electron/electron-quick-start
-# Go into the repository
-cd electron-quick-start
-# Install dependencies and run the app
-npm install && npm start
+### Goal
+
+Just need a good note. and want you to enjoying writing.
+know where is my data (~/anote).
+
+### Todo
+
+-	write a chrome plugin for 'bookmark' article (support to markdown or just html)
+-	backend server (I think use mongodb nodejs/ruby) for sync (I hope user can deploy it easily)
+-	mobile app
+-	add file storage feature
+
+### Inspired by
+
+-	Evernote
+-	Pandao editor (use the editor style, I like it)
+
+### Downloads
+
+Go to [Release](), then you can download anote app.
+
+### Install/Build from source
+
+```
+npm install
+
+npm run build
+
+npm run package
 ```
 
-Learn more about Electron and its API in the [documentation](http://electron.atom.io/docs/latest).
+**note: first install electron and babel**
 
-#### License [CC0 (Public Domain)](LICENSE.md)
+### Run from source
+
+```
+npm run develop
+```
+
+### Using stack
+
+-	Electron
+-	React
+-	Redux
+-	Babel
+-	Material Ui
+-	jquery
+
+### Join us
+
+if u like it, contact me wpcreep@gmail.com.we can do it togethor.
