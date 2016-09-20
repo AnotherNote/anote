@@ -11,12 +11,29 @@ const windows = require('./windows');
 const ipc = require('./ipc');
 
 const menu = require('./menu');
+
+const tray = require('./tray')
+
+import config from '../config'
+
+var menubar = tray({
+  height: 450,
+  showDockIcon: true,
+  index: `file://${path.resolve(__dirname, '../../static/tray.html')}`,
+  icon: path.resolve(__dirname, '../../static/images/IconTemplate.png')
+});
+
+menubar.on('ready', function(){
+});
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 
 function init () {
   app.on('ready', function() {
-    BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.1_0');
+    // react dev plugin
+    if(config.dev)
+      BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.4_0');
     windows.main.init();
     windows.worker.init();
     menu.init();

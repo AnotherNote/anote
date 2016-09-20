@@ -16,7 +16,8 @@ let constants = keyMirror({
   EDIT_FILE: null,
   CONCAT_FILES: null,
   ACTIVE_FILE: null,
-  SET_GLOBAL_BOOK: null
+  SET_GLOBAL_BOOK: null,
+  SET_EDITOR_STATE: null
 });
 
 constants.HOME_PATH = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;

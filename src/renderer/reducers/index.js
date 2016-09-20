@@ -7,6 +7,7 @@ import histories from './histories';
 import files from './files';
 import activeFile from './active_file';
 import globalBook from './global_book';
+import editorState from './editor_state'
 
 const reducers = combineReducers({
   books,
@@ -14,7 +15,8 @@ const reducers = combineReducers({
   histories,
   files,
   activeFile,
-  globalBook
+  globalBook,
+  editorState
 });
 
 export default reducers;

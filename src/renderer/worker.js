@@ -14,9 +14,52 @@ import {
 import fs from 'fs';
 import path from 'path';
 import { copyFile } from '../util'
-
+import renderFactory from '../render_factory'
+const marked = require('marked');
+const {remote} = require('electron')
+const BrowserWindow = remote.BrowserWindow;
 const statAsync = Promise.promisify(fs.stat);
 const writeFileAsync = Promise.promisify(fs.writeFile);
+
+
+function _renderHtml(markdown) {
+  let markedRenderer = renderFactory({});
+  return marked(markdown, {
+    renderer: markedRenderer
+  });
+}
+
+function _renderPdf(html, filename) {
+  var opts = {
+    marginsType: 0,
+    printBackground: true,
+    printSelectionOnly: false,
+    pageSize: 'A4',
+    landscape: false
+  }
+  var win = new BrowserWindow({ width:0, height: 0, show: false })
+  win.loadURL(`file://${path.resolve(__dirname, '../../static/html_to_pdf.html')}`, {});
+  win.on('closed', function () { win = null });
+  win.webContents.on('dom-ready', function() {
+    win.webContents.executeJavaScript(`
+      var $marked = $('#marked');
+      $('#marked').html(\`${html}\`);
+    `);
+    setTimeout(function(){
+      win.webContents.printToPDF(opts, function (err, data) {
+        if (err) {
+          return;
+        }
+        fs.writeFile(filename, data, function (err) {
+          if (err) {
+            return;
+          }
+          win.destroy();
+        })
+      })
+    }, 200);
+  })
+}
 
 var dispatchHandlers = {
   'testHandler': function(...args){
@@ -26,9 +69,12 @@ var dispatchHandlers = {
   'saveNoteAsMarkdown': function(fileId){
     ipcRenderer.send('saveDialog', 'export a note', 'md', {fileId: fileId, type: 'saveNoteAsMarkdown'});
   },
+  'saveNoteAsPdf': function(fileId){
+    ipcRenderer.send('saveDialog', 'export a note', 'pdf', {fileId: fileId, type: 'saveNoteAsPdf'});
+  },
   // main process save的callback
   'fileSaved': function(filename, tmpData) {
-    console.log(filename);
+    var that = this;
     switch (tmpData.type) {
       case 'saveNoteAsMarkdown':
         files.find({_id: tmpData.fileId}, function(err, docs) {
@@ -38,13 +84,23 @@ var dispatchHandlers = {
           co(function * () {
             if(content.length > 0)
               content = yield mdLocalImageOut(filename, content);
-              console.log(content);
             yield writeFileAsync(filename, content);
           });
         });
         break;
+        return;
+      case 'saveNoteAsPdf':
+        files.find({_id: tmpData.fileId}, function(err, docs) {
+          if(err || docs.length == 0)
+            return;
+          let content = docs[0].content;
+          let html = _renderHtml(content);
+          _renderPdf(html, filename);
+        });
+        break;
+        return;
       default:
-
+        return;
     }
   },
   // 导入markdown or html

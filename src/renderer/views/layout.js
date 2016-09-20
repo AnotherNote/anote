@@ -17,6 +17,11 @@ import {
 } from 'react-router';
 import ReactDom from 'react-dom';
 import { setDispatchHandler } from '../dispatch_handlers'
+import {
+  files
+} from '../../main/set_db';
+import singleEvent from '../single_event';
+
 
 class Layout extends Component {
   constructor(props) {
@@ -71,6 +76,13 @@ class Layout extends Component {
       }
     });
 
+    //new note From tray
+    setDispatchHandler('newNoteFromTray', (fileParams) => {
+      files.insert(fileParams, (error, newFile) => {
+        singleEvent.emit('addNoteFromTray', newFile)
+      });
+    });
+
     // hack notes和trash的相应
     jQuery(ReactDom.findDOMNode(this.refs.notesLink)).click(function(event){
       if($(this).hasClass('active'))
@@ -88,27 +100,27 @@ class Layout extends Component {
         <div className='header'>
           <form onSubmit={this.globalSearch}>
             <TextField
-              hintText="Search a note"
+              hintText="Search notes"
               style={{ right: '0px', position: 'absolute', marginRight: '10px' }}
               inputStyle={{ color: 'white'}}
               hintStyle={{ color: 'white' }}
-              defaultValue={this.state.searchFileText}
+              defaultValue={this.state.searchFileText || ''}
               onChange={this.changeSearchFileText}
               ref='globalSearchInput'
             />
           </form>
         </div>
         <div className='sidebar'>
-          <div className='banner'><p>Enjoy ANOTE coding now...</p></div>
+          <div className='banner'><p>Enjoy ANOTE</p></div>
           <ul className='s-menu main-menu'>
-            <li><IndexLink to='/' activeClassName='active'>notebooks</IndexLink></li>
+            <li><IndexLink to='/' activeClassName='active'>Notebooks</IndexLink></li>
             <li>
               <Link
                 to={{pathname: '/notes', query: { available: true }}}
                 activeClassName='active'
                 ref='notesLink'
               >
-                notes
+                Notes
               </Link>
             </li>
             <li>
@@ -117,10 +129,10 @@ class Layout extends Component {
                 activeClassName='active'
                 ref='trashLink'
               >
-                trash
+                Trash
               </Link>
             </li>
-            <li><Link to='/test' activeClassName='active'>playstation</Link></li>
+            {/* <li><Link to='/test' activeClassName='active'>playstation</Link></li> */}
           </ul>
         </div>
         <div className='content'>

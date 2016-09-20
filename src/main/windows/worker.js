@@ -15,9 +15,9 @@ function init(callback) {
   if(worker.win)
     return;
   worker.win = new BrowserWindow({
-    width: 1000,
-    height: 800,
-    show: true
+    width: 0,
+    height: 0,
+    show: false
   });
 
   worker.win.loadURL(`file://${path.resolve(__dirname, '../../../static/worker.html')}`);

@@ -9,7 +9,8 @@ handlers.openAvailableFileItemContextMenu = function (canNew, chooseFile, callba
     return;
   if(canNew) {
     menu.append(new MenuItem({label: 'New Note', click() { callbacks.newFile(); }}));
-    menu.append(new MenuItem({label: 'Import...', click() { callbacks.importFile(); }}));
+    // todo, not now
+    // menu.append(new MenuItem({label: 'Import...', click() { callbacks.importFile(); }}));
   }
   if(chooseFile) {
     menu.append(new MenuItem({type: 'separator'}));

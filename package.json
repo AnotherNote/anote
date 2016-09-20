@@ -1,15 +1,15 @@
 {
   "name": "Anote",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "a markdown note based on electron",
   "productName": "Anote",
   "main": "index.js",
   "scripts": {
     "build_js": "babel --quiet src --out-dir build",
-    "build": "babel --quiet src --out-dir build && electron-packager . Anote --platform=darwin --arch=x64 --ignore=node_modules/electron-*",
+    "build": "babel --quiet src --out-dir build && electron-packager . Anote --platform=darwin --arch=x64 --icon='./static/images/anote.icns' --ignore=node_modules/electron-*",
     "start": "npm run build_js && electron .",
     "develop": "babel src --out-dir build --watch & electron .",
-    "package": "asar pack Anote-darwin-x64/Anote.app/Contents/Resources/app Anote-darwin-x64/Anote.app/Contents/Resources/app.asar --unpack-dir '{db}'"
+    "package": "asar pack Anote-darwin-x64/Anote.app/Contents/Resources/app Anote-darwin-x64/Anote.app/Contents/Resources/app.asar && rm -rf Anote-darwin-x64/Anote.app/Contents/Resources/app"
   },
   "repository": {
     "type": "git",
@@ -17,9 +17,12 @@
   },
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial"
+    "react",
+    "redux",
+    "markdown",
+    "note",
+    "editor",
+    "evernote"
   ],
   "author": "GitHub",
   "license": "CC0-1.0",
@@ -39,9 +42,11 @@
     "babel-polyfill": "^6.13.0",
     "bluebird": "^3.4.1",
     "co": "^4.6.0",
+    "codemirror": "^5.18.2",
     "electron-prebuilt": "^1.2.0",
     "jquery": "^3.1.0",
     "keymirror": "^0.1.1",
+    "marked": "^0.3.6",
     "material-ui": "^0.15.4",
     "nedb": "^1.8.0",
     "react": "^15.3.1",

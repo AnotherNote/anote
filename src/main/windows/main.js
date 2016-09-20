@@ -17,7 +17,7 @@ const path = require('path')
 
 import { mainMsgQueue } from '../ipc.js';
 
-function init () {
+function init (callback) {
   if(main.win) {
     return main.win.show();
   }
@@ -28,18 +28,20 @@ function init () {
       darkTheme: true,
       name: 'ANOTE',
       backgroundColor: '#eee',
-      titleBarStyle: 'hidden-inset'
+      // titleBarStyle: 'hidden-inset'
   });
 
   win.once('ready-to-show', () => {
     win.show();
+    if(callback)
+      callback();
   });
 
   // and load the index.html of the app.
   win.loadURL(`file://${path.resolve(__dirname, '../../../static/main.html')}`)
 
   // Open the DevTools.
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   // Emitted when the window is closed.
   win.on('closed', function () {

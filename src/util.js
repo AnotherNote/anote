@@ -8,10 +8,52 @@ let {
     FILES_PATH,
     TMP_FILES_PATH
 } = constants;
+const http = require('http');
+const https = require('https');
 
 const writeFileAsyn =  Promise.promisify(fs.writeFile);
 
 const unlinkAsync = Promise.promisify(fs.unlink);
+
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
+const downloadAsyn = function(url, dest) {
+  let file = fs.createWriteStream(dest)
+  return new Promise((resolve, reject) => {
+    let responseSent = false,
+      pModule = null;
+    if(url.indexOf('https') > -1){
+      pModule = https;
+    }else{
+      pModule = http;
+    }
+    pModule.get(url, response => {
+      response.pipe(file)
+      file.on('finish', () =>{
+        file.close(() => {
+          if(responseSent)  return;
+          responseSent = true
+          resolve()
+        })
+      })
+    }).on('error', err => {
+      console.log('error');
+      if(responseSent)  return;
+      responseSent = true
+      reject(err)
+    })
+  })
+};
+
+// const downloadAsyn = Promise.promisify(download);
 
 function ensureDirectoryExistence(filePath) {
     var dirname = path.dirname(filePath);
@@ -50,6 +92,25 @@ const buffer2File = (buffer) => {
   ensureDirectoryExistence(tmpPath);
   return co(function * () {
     yield writeFileAsyn(tmpPath, buffer);
+    let hashKey = yield getFileHash(tmpPath);
+    let key = hash2Key(hashKey);
+    yield copyFile(tmpPath, `${FILES_PATH}/${key}`);
+    yield unlinkAsync(tmpPath);
+    return `${key}`;
+  });
+}
+
+const downloadImageAsyn = (url) => {
+  let tmpPath = path.resolve(TMP_FILES_PATH, `${guid()}`);
+  ensureDirectoryExistence(tmpPath);
+  return co(function * () {
+    try{
+      yield downloadAsyn(url, tmpPath);
+    // 出问题了返回原来的url
+    }catch(error){
+      console.log('出问题了返回原来的url');
+      return url;
+    }
     let hashKey = yield getFileHash(tmpPath);
     let key = hash2Key(hashKey);
     yield copyFile(tmpPath, `${FILES_PATH}/${key}`);
@@ -169,6 +230,60 @@ const ppDate = (date) => {
   return `${date.getMonth()}/${date.getDate()}/${date.getFullYear().toString()}`;
 }
 
+// sequial process
+// const placeImageToLocalAsyn = (content) => {
+//   content = content || '';
+//   let pp = /!\[(.*?)\]\((.*?)\)/i;
+//   let ppp = /[http|https]/;
+//   let result = content;
+//   let m;
+//   return co (function * () {
+//     do {
+//         m = pp.exec(content);
+//         if (m) {
+//           let matchTxt = m[0];
+//           let text = m[1];
+//           let href = m[2];
+//           if(ppp.test(href)){
+//             let key = yield downloadImageAsyn(href);
+//             result = result.split(href).join(key);
+//             content = content.split(matchTxt).join('');
+//           }
+//         }
+//     } while (m);
+//     return result;
+//   });
+// }
+
+// parallel process
+const placeImageToLocalAsyn = (content) => {
+  content = content || '';
+  let pp = /!\[(.*?)\]\((.*?)\)/i;
+  let ppp = /[http|https]/;
+  let result = content;
+  let m;
+  let promisesHash = {};
+  return co (function * () {
+    do {
+        m = pp.exec(content);
+        if (m) {
+          let matchTxt = m[0];
+          let text = m[1];
+          let href = m[2];
+          if(ppp.test(href)){
+            promisesHash[href] = downloadImageAsyn(href);
+            content = content.split(matchTxt).join('');
+          }
+        }
+    } while (m);
+    let res = yield promisesHash;
+    Object.keys(res).forEach((href) => {
+      result = result.split(href).join(res[href]);
+    });
+    return result;
+  });
+}
+
 module.exports = {
     copyFile,
     getFileHash,
@@ -180,5 +295,8 @@ module.exports = {
     pick,
     chineseDate,
     ppDate,
-    buffer2File
+    buffer2File,
+    downloadImageAsyn,
+    placeImageToLocalAsyn,
+    downloadAsyn
 }

@@ -1,3 +1,5 @@
+// pandao markdown editor
+// now not used
 import path from 'path';
 import co from 'co';
 import React, {
@@ -5,7 +7,9 @@ import React, {
 } from 'react';
 import ReactDom from 'react-dom';
 import {
-    debounce
+    debounce,
+    placeImageToLocalAsyn,
+    downloadAsyn
 } from '../../util';
 import {
     copyFile,
@@ -17,6 +21,8 @@ import constants from '../../constants';
 let {
     FILES_PATH
 } = constants;
+import Spinner from './spinner'
+
 const clipboard = require('electron').clipboard;
 const fs = require('fs');
 const toMarkdown = require('to-markdown');
@@ -36,8 +42,13 @@ function pastImage(cm) {
 }
 
 // for past html(html2markdown)
-function pastHtml(cm) {
+function pastHtml(cm, ele) {
+  console.log('pastHtml');
   let htmlText = clipboard.readHTML();
+  console.log(htmlText);
+  //这里electron的坑不小，它也判断不太好是html还是text
+  if(!/<[a-z][\s\S]*>/i.test(htmlText))
+    return false;
   let cleanText = sanitizeHtml(htmlText, {
     allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
   'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br',
@@ -49,7 +60,7 @@ function pastHtml(cm) {
     }
   });
   if(htmlText && htmlText.length > 0){
-    cm.replaceSelection(toMarkdown(cleanText, {
+    let tmpContent = toMarkdown(cleanText, {
       converters: [
         {
           filter: 'code',
@@ -65,7 +76,17 @@ function pastHtml(cm) {
           }
         }
       ]
-    }));
+    });
+    let regex = /(<([^>]+)>)/ig;
+    tmpContent = tmpContent.replace(regex, '');
+    ele.showSpinner();
+    placeImageToLocalAsyn(tmpContent).then(function(content) {
+      ele.hideSpinner();
+      cm.replaceSelection(content);
+    }, function () {
+      ele.hideSpinner();
+    });
+    // cm.replaceSelection(tmpContent);
     return true;
   }
   return false
@@ -74,6 +95,8 @@ function pastHtml(cm) {
 // past text
 function pastText(cm) {
   let text = clipboard.readText();
+  console.log('pastText\n');
+  console.log(text);
   if(text && text.length > 0){
     cm.replaceSelection(text);
   }
@@ -82,11 +105,27 @@ function pastText(cm) {
 class NoteEditor extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showSpinner: false
+    }
+  }
+
+  showSpinner = () => {
+    this.setState({
+      showSpinner: true
+    });
+  }
+
+  hideSpinner = () => {
+    this.setState({
+      showSpinner: false
+    });
   }
 
   // default keymap like emacs keybinding
   // todo: add custom keymap
   keyMap = () => {
+    var that = this;
     var keyMap = {
       "Ctrl-P": function(cm) {
         cm.execCommand("goLineUp");
@@ -119,7 +158,7 @@ class NoteEditor extends Component {
         if(pastImage(cm)){
           return;
         }
-        if(pastHtml(cm)){
+        if(pastHtml(cm, that)){
           return;
         }
         pastText(cm);
@@ -194,6 +233,7 @@ class NoteEditor extends Component {
           ref='textArea'
         />
         <input type='file' style={{display: 'none'}} ref='imageInput' accept='image/*' />
+        <Spinner show={this.state.showSpinner}/>
       </div>
     );
   }

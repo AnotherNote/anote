@@ -13,7 +13,8 @@ import {
     editFile,
     activeFile,
     setGlobalBook,
-    listBooks
+    listBooks,
+    setEditorState
 } from '../actions';
 import {
     files,
@@ -42,13 +43,16 @@ const ipcRenderer = require('electron').ipcRenderer;
 import util from 'util';
 import { setDispatchHandler } from '../dispatch_handlers';
 import { sendWorkerCmd } from '../worker_util';
+import singleEvent from '../single_event';
+import Spinner from './spinner'
 
 const mapStateToProps = (state) => {
   return {
     files: state.files,
     currentFile: state.activeFile,
     globalBook: state.globalBook,
-    books: state.books
+    books: state.books,
+    editorState: state.editorState
   }
 }
 
@@ -77,6 +81,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     listBooks: (books) => {
       dispatch(listBooks(books));
+    },
+    setEditorState: (state) => {
+      dispatch(setEditorState(state));
     }
   }
 }
@@ -146,6 +153,17 @@ class FilesContainer extends Component {
     this._fetchFiles();
     this._fetchBooks();
     ipcRenderer.send('onNoEditNotesList');
+    singleEvent.on('addNoteFromTray', this._addNoteFromTray);
+  }
+
+  _addNoteFromTray = (newFile) => {
+    if(!this.props.location.query.available)
+      return;
+    if(this.props.location.query.searchFileText && this.props.location.query.searchFileText != '')
+      return;
+    if(this.props.location.query.bookId && this.props.location.query.bookId != newFile.bookId)
+      return;
+    this.props.addFile(newFile);
   }
 
   // cause: use newProps, because this.props has not been updated !!!!
@@ -191,6 +209,7 @@ class FilesContainer extends Component {
     setDispatchHandler('moveToTrash', null);
     setDispatchHandler('clearFile', null);
     setDispatchHandler('restoreFile', null);
+    singleEvent.removeAllListeners('addNoteFromTray');
   }
 
   _checkNewNoteParam = (props) => {
@@ -299,7 +318,6 @@ class FilesContainer extends Component {
     }
     // only can create note when there is bookId
     if(!this.bookId()){
-      console.log('unable to newAndCreateFile');
       return;
     }
     files.insert({bookId: this.bookId(), available: true}, (error, newFile) => {
@@ -309,7 +327,6 @@ class FilesContainer extends Component {
       }
       if(this.props.location.query.available == 'true') {
         this.props.addFile(newFile);
-        console.log('添加');
       }
       hashHistory.push({ pathname: `/notes/${newFile._id}/edit`, query: this.props.location.query});
     });
@@ -483,7 +500,7 @@ class FilesContainer extends Component {
     if(customerFunc)
       customerFunc();
     if(fileLength == 1)
-      return;
+      return hashHistory.push({ pathname: '/notes', query: this.props.location.query });
     hashHistory.push({ pathname: `/notes/${tmpFile._id}/edit`, query: this.props.location.query });
   }
 
@@ -517,7 +534,7 @@ class FilesContainer extends Component {
           sendWorkerCmd('saveNoteAsMarkdown', file._id);
         },
         exportAsPdf: () => {
-
+          sendWorkerCmd('saveNoteAsPdf', file._id);
         },
         deleteFile: () => {
           this.delFile(file, index);
@@ -661,7 +678,7 @@ class FilesContainer extends Component {
           onContextMenu={(event) => {this.onContextMenu();}}
         >
           <FlatButton
-            label={this.bookId() ? `NEW NOTE IN ${this.props.globalBook.name}` : 'UNABLE NEW BOOK!!'}
+            label={this.bookId() ? `NEW NOTE IN ${this.props.globalBook.name}` : 'NEW A BOOK First!!'}
             onClick={this.newAndCreateFile}
             primary={true}
             backgroundColor={this.bookId() ? 'rgba(255, 255, 255, 1)' : '#ddd'}
@@ -710,7 +727,7 @@ class FilesContainer extends Component {
             />
             <MenuItem
               value='trash'
-              primaryText='trash'
+              primaryText='Trash'
             />
           </DropDownMenu>
           <FilesList
@@ -720,7 +737,18 @@ class FilesContainer extends Component {
           />
         </div>
         <div className='work-pane'>
-          {this.props.children && React.cloneElement(this.props.children, {currentFile: this.props.currentFile, available: this.props.location.query.available, callbacks: {onChangeContent: this.onChangeContent, onChangeTitle: this.onChangeTitle}})}
+          {
+            this.props.children && React.cloneElement(this.props.children, {
+              currentFile: this.props.currentFile,
+              editorState: this.props.editorState,
+              setEditorState: this.props.setEditorState,
+              available: this.props.location.query.available,
+              callbacks: {
+                onChangeContent: this.onChangeContent,
+                onChangeTitle: this.onChangeTitle
+              }
+            })
+          }
         </div>
         <ConfirmDialog
           cancelString='Cancel'

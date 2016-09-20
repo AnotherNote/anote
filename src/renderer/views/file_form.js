@@ -2,21 +2,22 @@ import React, {
     Component,
     PropTypes
 } from 'react';
-import NoteEditor from './note_editor';
-import TextField from 'material-ui/TextField';
 import {
     debounce
 } from '../../util';
 import ReactDom from 'react-dom';
 import NotePreview from './note_preview';
-import NoteTitle from './note_title'
+import NoteTitle from './note_title';
+import ANoteEditor from './anote_editor';
 
 class FileForm extends Component {
   constructor(props) {
     super(props);
     this.debouncedOnTitleChange = debounce(this.onTitleChange, 200);
     this.debouncedOnContentchange = debounce(this.onContentChange, 200);
-    this.first = false;
+    this.state = {
+      oldState: null
+    };
   }
 
   onTitleChange = (value, currentFile) => {
@@ -27,12 +28,21 @@ class FileForm extends Component {
   onContentChange = (value, currentFile) => {
     if(value == null || currentFile == null)
       return;
-    if(!this.first && this.props.callbacks && this.props.callbacks.onChangeContent){
+    if(this.props.callbacks && this.props.callbacks.onChangeContent){
       if(value != currentFile.content)
         this.props.callbacks.onChangeContent(value, currentFile);
-    }else{
-      this.first = false;
     }
+  }
+
+  toggleWatching = () => {
+    this.setState({
+      oldState: this.props.editorState == 1 ? 0 : 1
+    });
+    this.props.setEditorState(this.props.editorState == 1 ? 0 : 1);
+  }
+
+  togglePreview = () => {
+    this.props.setEditorState(this.props.editorState == 2 ? this.state.oldState || 0 : 2);
   }
 
   componentWillUnmount = () => {
@@ -53,11 +63,6 @@ class FileForm extends Component {
         this.refs.fileContent.setValue(newProps.currentFile.content || '');
         this.refs.fileContent.clearHistory();
         this.debouncedOnContentchange.cancel();
-        if(newProps.currentFile.content != this.props.currentFile.content){
-          this.first = true;
-        }else{
-          this.first = false;
-        }
       }
     }
   }
@@ -90,9 +95,13 @@ class FileForm extends Component {
                           }}
                         />
                         <div className='editor-wrapper'>
-                          <NoteEditor
+                          {/* anote editor */}
+                          <ANoteEditor
                             defaultValue={this.props.currentFile && this.props.currentFile.content}
                             ref='fileContent'
+                            editorState={this.props.editorState}
+                            toggleWatching={this.toggleWatching}
+                            togglePreview={this.togglePreview}
                             onChange={(value) => {
                               this.debouncedOnContentchange(value, (this.props && this.props.currentFile) || null)
                             }}

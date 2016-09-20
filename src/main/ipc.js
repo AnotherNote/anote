@@ -64,7 +64,7 @@ const init = () => {
 
   ipc.on('openExternal', shell.openExternal);
 
-  // a bridge between main render process and worker process
+  // a bridge between main render process to worker process
   ipc.on('workerCmd', (event, ...args) => {
     if(windows.worker.win)
       return windows.worker.dispatch(...args);
@@ -72,6 +72,15 @@ const init = () => {
       windows.worker.dispatch(...args);
     });
   });
+
+  // a bridge between other window to main
+  ipc.on('mainCmd', (event, ...args) => {
+    if(windows.main.win)
+      return windows.main.dispatch(...args);
+    windows.main.init(() => {
+      windows.main.dispatch(...args);
+    })
+  })
 
   // open save dialog
   ipc.on('saveDialog', (...args) => {

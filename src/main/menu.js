@@ -16,6 +16,8 @@ var windows = require('./windows')
 
 var log = require('./log').log;
 
+import config from '../config'
+
 const BrowserWindow = electron.BrowserWindow
 
 var menu
@@ -192,43 +194,47 @@ function getMenuTemplate () {
               focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
             }
           }
-        },
-        {
-          label: 'Reload',
-          accelerator: 'CmdOrCtrl+R',
-          click: function (item, focusedWindow) {
-            if (focusedWindow) {
-              // on reload, start fresh and close any old
-              // open secondary windows
-              if (focusedWindow.id === 1) {
-                BrowserWindow.getAllWindows().forEach(function (win) {
-                  if (win.id > 1) {
-                    win.close()
-                  }
-                })
-              }
-              focusedWindow.reload()
-            }
-          }
-        },
-        {
-          label: 'Toggle Developer Tools',
-          accelerator: (function () {
-            if (process.platform === 'darwin') {
-              return 'Alt+Command+I'
-            } else {
-              return 'Ctrl+Shift+I'
-            }
-          })(),
-          click: function (item, focusedWindow) {
-            if (focusedWindow) {
-              focusedWindow.toggleDevTools()
-            }
-          }
         }
       ]
     }
   ];
+
+  if(config.dev){
+    let devSubmenu = [{
+              label: 'Reload',
+              accelerator: 'CmdOrCtrl+R',
+              click: function (item, focusedWindow) {
+                if (focusedWindow) {
+                  // on reload, start fresh and close any old
+                  // open secondary windows
+                  if (focusedWindow.id === 1) {
+                    BrowserWindow.getAllWindows().forEach(function (win) {
+                      if (win.id > 1) {
+                        win.close()
+                      }
+                    })
+                  }
+                  focusedWindow.reload()
+                }
+              }
+            },
+            {
+              label: 'Toggle Developer Tools',
+              accelerator: (function () {
+                if (process.platform === 'darwin') {
+                  return 'Alt+Command+I'
+                } else {
+                  return 'Ctrl+Shift+I'
+                }
+              })(),
+              click: function (item, focusedWindow) {
+                if (focusedWindow) {
+                  focusedWindow.toggleDevTools()
+                }
+              }
+            }];
+    template[template.length-1]['submenu'] = [...template[template.length-1]['submenu'], ...devSubmenu]
+  }
 
   if (process.platform === 'darwin') {
     const name = electron.app.getName()

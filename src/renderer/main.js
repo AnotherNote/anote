@@ -24,14 +24,15 @@ injectTapEventPlugin();
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
-const ipcRenderer = require('electron').ipcRenderer;
-
 const muiTheme = getMuiTheme({
   fontFamily: '"YaHei Consolas Hybrid", Consolas, 微软雅黑, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, Monaco, courier, monospace !important',
   palette: {
     primary1Color: '#e78170'
   }
 });
+
+const ipcRenderer = require('electron').ipcRenderer;
+
 
 // subscribe redux to control new note menu item
 function controlNewNoteMenu() {

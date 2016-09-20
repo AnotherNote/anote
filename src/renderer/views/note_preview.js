@@ -1,38 +1,45 @@
+// only preview
 import React, {
     Component,
     PropTypes
 } from 'react';
 import TextField from 'material-ui/TextField';
+import ANotePreview from './anote_preview';
 
 class NotePreview extends Component {
-  componentDidMount() {
-    editormd.markdownToHTML("previewPanel", {
-                          htmlDecode: "style,script,iframe",
-                          tocm: true
-                        });
-  }
-
   render() {
     return (
       <div>
-        <TextField
-          hintText="Untitled"
-          fullWidth={true}
-          style={{height: '50px'}}
-          inputStyle={{'fontSize': '16px', color: '#5d5d5d'}}
-          defaultValue={this.props.currentFile && this.props.currentFile.title}
-          disabled={true}
-          ref='fileTitle'
-        />
+        <div
+          style={{
+            fontSize: '18px',
+            color: '#5d5d5d',
+            height: '45px',
+            verticalAlign: 'middle',
+            lineHeight: '45px',
+            padding: '0px 18px 0px 18px',
+            backgroundColor: '#fff',
+            boxSizing: 'border-box',
+            width: '100%',
+            overflowX: 'none'
+          }}
+        >
+          {(this.props.currentFile && this.props.currentFile.title )||'Untitled'}
+        </div>
         <div
           className='editor-wrapper'
           ref='previewPanel'
           id='previewPanel'
         >
-          <textarea
-            value={this.props.currentFile && this.props.currentFile.content}
-            style={{display: 'none'}}
-            readOnly
+          <ANotePreview
+            style={{
+              position: 'absolute',
+              top: '0px',
+              right: '0px',
+              left: '0px',
+              bottom: '0px'
+            }}
+            value={this.props.currentFile.content || ''}
           />
         </div>
       </div>
