@@ -2,7 +2,7 @@
 
 a simple opensource note app(only support markdown :)).
 
-** note: now only support mac **
+**note: now only support mac**
 
 [![quick_note.gif](http://s21.postimg.org/9pke2wjiv/quick_note.gif)](http://postimg.org/image/8aite6ifn/)
 
@@ -41,7 +41,7 @@ know where is my data (~/anote).
 
 ### Downloads
 
-Go to [Release](), then you can download anote app.
+Go to [Release](https://pan.baidu.com/s/1dF3aAS5), then you can download anote app.
 
 ### Install/Build from source
 
