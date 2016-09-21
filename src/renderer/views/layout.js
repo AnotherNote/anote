@@ -21,7 +21,7 @@ import {
   files
 } from '../../main/set_db';
 import singleEvent from '../single_event';
-
+import { setupIpc } from '../setup_ipc';
 
 class Layout extends Component {
   constructor(props) {
@@ -52,6 +52,7 @@ class Layout extends Component {
   }
 
   componentDidMount = () => {
+    setupIpc();
     // 配些全局的相应appmenu的event
     setDispatchHandler('newNoteBook', () => {
       hashHistory.replace({

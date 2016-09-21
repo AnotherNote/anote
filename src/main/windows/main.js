@@ -17,7 +17,9 @@ const path = require('path')
 
 import { mainMsgQueue } from '../ipc.js';
 
-function init (callback) {
+const menu = require('../menu');
+
+function init () {
   if(main.win) {
     return main.win.show();
   }
@@ -28,13 +30,13 @@ function init (callback) {
       darkTheme: true,
       name: 'ANOTE',
       backgroundColor: '#eee',
+      show: false,
       // titleBarStyle: 'hidden-inset'
   });
 
   win.once('ready-to-show', () => {
-    win.show();
-    if(callback)
-      callback();
+    show();
+    menu.enableItem('New Notebook');
   });
 
   // and load the index.html of the app.
@@ -48,6 +50,7 @@ function init (callback) {
     win = main.win = null;
     mainMsgQueue.length = 0;
     app.mainRenderReady = false;
+    menu.onNoMainWin();
   })
 }
 

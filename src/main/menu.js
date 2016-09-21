@@ -3,6 +3,7 @@ module.exports = {
   onNotebookContainer,
   onEditNote,
   onEditTrash,
+  onNoMainWin,
   onNoEditNotesList,
   enableItem,
   disableItem
@@ -71,6 +72,18 @@ function onNoEditNotesList() {
   'Undo');
 }
 
+function onNoMainWin() {
+  disableMenuItems('Move To Notebook...',
+  'Copy To Notebook...',
+  'Move To Trash',
+  'Delete Forever',
+  'Restore...',
+  'Redo',
+  'Undo',
+  'New Notebook',
+  'New Note');
+}
+
 function enableItem(item) {
   let tmpItem = getMenuItem(item);
   tmpItem.enabled = true;
@@ -90,7 +103,6 @@ function getMenuTemplate () {
           label: 'New Notebook',
           accelerator: 'Shift+Cmd+N',
           click: () => {
-            log('new notebook');
             windows.main.dispatch('newNoteBook');
           }
         }

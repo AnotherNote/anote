@@ -53,12 +53,10 @@ const init = () => {
   });
 
   ipc.on('enableItem', (event, item) => {
-    console.log(`enableItem ${item}`);
     menu.enableItem(item);
   });
 
   ipc.on('disableItem', (event, item) => {
-    console.log(`disableItem ${item}`);
     menu.disableItem(item);
   });
 
@@ -77,9 +75,8 @@ const init = () => {
   ipc.on('mainCmd', (event, ...args) => {
     if(windows.main.win)
       return windows.main.dispatch(...args);
-    windows.main.init(() => {
-      windows.main.dispatch(...args);
-    })
+    windows.main.init();
+    windows.main.dispatch(...args);
   })
 
   // open save dialog

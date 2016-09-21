@@ -14,7 +14,6 @@ import store from './store';
 import constants from '../constants';
 window.constants = constants;
 let { FILES_PATH } = constants;
-import { setupIpc } from './setup_ipc';
 
 // material-ui use the plugin
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -74,6 +73,3 @@ $('body').on('click', 'a.external', function(event) {
     ipcRenderer.send('openExternal', href);
   }
 });
-
-// setupIpc to main
-setupIpc();

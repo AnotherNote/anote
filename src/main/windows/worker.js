@@ -29,7 +29,6 @@ function init(callback) {
   // 确保worker是开着的, 因为main window的reload会使得worker经常死掉
   if(callback){
     worker.win.webContents.once('did-finish-load', () => {
-      log('did-finish-load');
       callback();
      })
   }
