@@ -45,6 +45,7 @@ Go to [Release](https://pan.baidu.com/s/1dF3aAS5), then you can download anote a
 
 ### Install/Build from source
 
+
 ```
 npm install
 
@@ -53,7 +54,7 @@ npm run build
 npm run package
 ```
 
-**note: first install electron and babel**
+**note: first install electron and babel and electron-packager and my node is 6.4**
 
 ### Run from source
 

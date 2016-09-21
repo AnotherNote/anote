@@ -32,8 +32,8 @@ menubar.on('ready', function(){
 function init () {
   app.on('ready', function() {
     // react dev plugin
-    if(config.dev)
-      BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.4_0');
+    // if(config.dev)
+    //   BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.4_0');
     windows.main.init();
     windows.worker.init();
     menu.init();
