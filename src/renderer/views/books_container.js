@@ -106,11 +106,14 @@ class BooksContainer extends Component {
           if(tmpC == bks.length)
             that.props.listBooks(bks);
         })
-        if(!that.props.globalBook._id && bks.length > 0){
+        let availableBooks = bks.filter((book) => {
+          return book.available;
+        });
+        if(!that.props.globalBook._id && availableBooks.length > 0){
           that.props.setGlobalBook(
             {
-              _id: bks[0]._id,
-              name: bks[0].name
+              _id: availableBooks[0]._id,
+              name: availableBooks[0].name
             }
           );
         }
