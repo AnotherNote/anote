@@ -227,7 +227,7 @@ const chineseDate = (date) => {
 }
 
 const ppDate = (date) => {
-  return `${date.getMonth()}/${date.getDate()}/${date.getFullYear().toString()}`;
+  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear().toString()}`;
 }
 
 // sequial process
