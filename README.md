@@ -41,7 +41,7 @@ know where is my data (~/anote).
 
 ### Downloads
 
-Go to [Release](https://pan.baidu.com/s/1dF3aAS5), then you can download anote app.
+Go to [Release](https://pan.baidu.com/s/1jI58ugu), then you can download anote app.
 
 ### Install/Build from source
 
