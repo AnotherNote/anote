@@ -15,12 +15,12 @@ a simple opensource note app(only support markdown :)).
 ### Feature
 
 - markdown friendly
-- past image
-- past html (include fetch image locally)
+- paste image
+- paste html (include fetch image locally)
 - export markdown file with images
 - export pdf file
 - support tray menu quick note(inspired by evernote)
-- default `cmd+v` will convert html to markdown, and you can press `alt+v` to past as text(not convert html to markdown)
+- default `cmd+v` will convert html to markdown, and you can press `alt+v` to paste as text(not convert html to markdown)
 
 ### Goal
 
@@ -70,6 +70,10 @@ npm run develop
 -	Babel
 -	Material Ui
 -	jquery
+
+### localization
+
+[中文](./chinese_readme)
 
 ### Join us
 
