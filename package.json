@@ -8,7 +8,7 @@
     "build_js": "babel --quiet src --out-dir build",
     "build": "babel --quiet src --out-dir build && electron-packager . Anote --platform=darwin --arch=x64 --icon='./static/images/anote.icns' --ignore=node_modules/electron-*",
     "start": "npm run build_js && electron .",
-    "develop": "babel src --out-dir build --watch & electron .",
+    "develop": "npm run build_js && (babel src --out-dir build --watch & electron .)",
     "package": "asar pack Anote-darwin-x64/Anote.app/Contents/Resources/app Anote-darwin-x64/Anote.app/Contents/Resources/app.asar && rm -rf Anote-darwin-x64/Anote.app/Contents/Resources/app"
   },
   "repository": {
@@ -30,7 +30,7 @@
   "homepage": "https://github.com/wpzero/electron-makedown.git#readme",
   "devDependencies": {
     "asar": "^0.12.1",
-    "babel-cli": "^6.11.4",
+    "babel-cli": "^6.14.0",
     "babel-plugin-syntax-jsx": "^6.13.0",
     "babel-plugin-transform-react-jsx": "^6.8.0",
     "babel-preset-es2015": "^6.13.2",

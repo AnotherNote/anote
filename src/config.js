@@ -1,3 +1,3 @@
 export default {
-  dev: false
+  dev: true
 }
