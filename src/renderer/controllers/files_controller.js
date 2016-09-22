@@ -31,9 +31,9 @@ handlers.openUnavailableFileItemContextMenu = function (canNew, chooseFile, call
     menu.append(new MenuItem({label: 'Delete Forever...', click() { callbacks.clearFile(); }}));
     menu.append(new MenuItem({label: 'Restore...', click() { callbacks.restoreFile(); }}));
     menu.append(new MenuItem({type: 'separator'}));
-    menu.append(new MenuItem({label: 'Clear All...', click() { callbacks.clearTrash(); }}));
+    menu.append(new MenuItem({label: 'Empty Trash...', click() { callbacks.clearTrash(); }}));
   }else{
-    menu.append(new MenuItem({label: 'Clear All...', click() { callbacks.clearTrash(); }}));
+    menu.append(new MenuItem({label: 'Empty Trash...', click() { callbacks.clearTrash(); }}));
   }
   menu.popup(remote.getCurrentWindow());
 }
