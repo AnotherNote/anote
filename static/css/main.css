@@ -188,10 +188,14 @@ a.file-item>div:hover {
   box-shadow: inset 0px 0px 2px #ddd !important;
 }
 
-div.book-item:hover {
+div.book-item {
   border-width: 1.5px !important;
-  border-color: #d1c091 !important;
+  border-color: transparent !important;
   border-style: solid !important;
+}
+
+div.book-item:hover {
+  border-color: #d1c091 !important;
   box-shadow: inset 0px 0px 2px #ddd !important;
 }
 
