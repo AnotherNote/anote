@@ -11,9 +11,9 @@
     "develop": "npm run build_js && (babel src --out-dir build --watch & electron .)",
     "package": "asar pack Anote-darwin-x64/Anote.app/Contents/Resources/app Anote-darwin-x64/Anote.app/Contents/Resources/app.asar && rm -rf Anote-darwin-x64/Anote.app/Contents/Resources/app",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint **/*.js",
-    "lint-html": "eslint **/*.js -f html -o ./reports/lint-results.html",
-    "lint-fix": "eslint --fix **/*.js"
+    "lint": "eslint .",
+    "lint-html": "eslint . -f html -o ./reports/lint-results.html",
+    "lint-fix": "eslint --fix ."
   },
   "repository": {
     "type": "git",
