@@ -9,3 +9,5 @@ notes/**/*
 files
 db
 Anote-darwin-x64
+npm-debug.log
+reports
