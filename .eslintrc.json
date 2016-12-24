@@ -2,8 +2,7 @@
   "extends": "airbnb-base",
   "rules": {
     "no-console": "off",
-    "import/no-extraneous-dependencies": "off",
-    "import/no-unresolved": "off", // we disable becuase electron-rebuild
-    "max-len": "off"
+    "max-len": "off",
+    "no-unused-vars": ["error", { "vars": "all", "args": "none" }]
   }
 }

@@ -50,6 +50,7 @@
     "bluebird": "^3.4.1",
     "co": "^4.6.0",
     "codemirror": "^5.18.2",
+    "electron": "^1.4.13",
     "electron-prebuilt": "^1.2.0",
     "jquery": "^3.1.0",
     "keymirror": "^0.1.1",
