@@ -1,15 +1,10 @@
-const worker = module.exports = {
-  win: null,
-  init,
-  send,
-  dispatch,
-};
-import { log } from '../log';
+import electron from 'electron';
+import path from 'path';
 
 // 做后台工作的invisible window
-import electron from 'electron';
 const BrowserWindow = electron.BrowserWindow;
-import path from 'path';
+
+const worker = {};
 
 function init(callback) {
   if (worker.win) {
@@ -44,3 +39,9 @@ function send(...args) {
 function dispatch(...args) {
   send('dispatch', ...args);
 }
+
+worker.init = init;
+worker.send = send;
+worker.dispatch = dispatch;
+
+module.exports = worker;

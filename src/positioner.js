@@ -1,9 +1,9 @@
-
+import { screen } from 'electron';
 
 class Positioner {
   constructor(browserWindow) {
     this.browserWindow = browserWindow;
-    this.electronScreen = require('electron').screen;
+    this.electronScreen = screen;
   }
 
   _getCoords(position, trayPosition) {

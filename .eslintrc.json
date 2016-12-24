@@ -15,7 +15,8 @@
     "class-methods-use-this": "off",
     "import/prefer-default-export": "off",
     "no-shadow": "off",
-    "no-script-url": "off"
+    "no-script-url": "off",
+    "no-mixed-operators": "off"
   },
   "env": {
     "es6": true,
