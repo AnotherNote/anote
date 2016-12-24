@@ -4,5 +4,14 @@
     "no-console": "off",
     "max-len": "off",
     "no-unused-vars": ["error", { "vars": "all", "args": "none" }]
+  },
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module"
   }
 }
