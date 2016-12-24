@@ -1,33 +1,28 @@
+/* global $, editormd */
 // pandao markdown editor
 // now not used
-import path from 'path';
 import co from 'co';
 import React, {
     Component,
 } from 'react';
 import autobind from 'autobind-decorator';
 import ReactDom from 'react-dom';
-import {
-    debounce,
-    placeImageToLocalAsyn,
-    downloadAsyn,
-} from '../../util';
+import { clipboard } from 'electron';
+import toMarkdown from 'to-markdown';
+import sanitizeHtml from 'sanitize-html';
 import {
     copyFile,
     getFileHash,
     hash2Key,
     buffer2File,
+    placeImageToLocalAsyn,
 } from '../../util';
 import constants from '../../constants';
+import Spinner from './spinner';
+
 const {
     FILES_PATH,
 } = constants;
-import Spinner from './spinner';
-
-const clipboard = require('electron').clipboard;
-import fs from 'fs';
-import toMarkdown from 'to-markdown';
-import sanitizeHtml from 'sanitize-html';
 
 // for past image
 function pastImage(cm) {
@@ -74,7 +69,7 @@ function pastHtml(cm, ele) {
           filter: 'img',
           replacement(content, node) {
             // need add back worker
-            return `${'![' + 'web-image' + ']('}${node.src})`;
+            return `${'![web-image]('}${node.src})`;
           },
         },
       ],
@@ -172,8 +167,8 @@ class NoteEditor extends Component {
 
 
   componentDidMount() {
-    let that = this,
-      $imageInput = $(ReactDom.findDOMNode(that.refs.imageInput));
+    const that = this;
+    const $imageInput = $(ReactDom.findDOMNode(that.refs.imageInput));
     const editor = editormd('editormd', {
       autoFocus: false,
       path: './lib/',
@@ -220,7 +215,8 @@ class NoteEditor extends Component {
 
   setValue(value) {
     if (this.editor.cm) { return this.editor.cm.setValue(value); }
-    jQuery(ReactDom.findDOMNode(this.refs.textArea)).val(value);
+    $(ReactDom.findDOMNode(this.refs.textArea)).val(value);
+    return null;
   }
 
   clearHistory() {

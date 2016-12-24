@@ -2,13 +2,13 @@ import React, {
     Component,
 } from 'react';
 import autobind from 'autobind-decorator';
-import ANoteEditor from './anote_editor';
 import fs from 'fs';
-const { remote } = require('electron');
+import path from 'path';
+import { remote, ipcRenderer } from 'electron';
+import ANoteEditor from './anote_editor';
+
 const { Menu, MenuItem } = remote;
 const BrowserWindow = remote.BrowserWindow;
-const path = require('path');
-const ipcRender = require('electron').ipcRenderer;
 const webContents = remote.webContents;
 
 const menu = new Menu();
@@ -62,7 +62,7 @@ export default class TestContainer extends Component {
 
   testIpc() {
     // 函数是传不过去的
-    ipcRender.send('ipcTestMain', { hh: 'hh' });
+    ipcRenderer.send('ipcTestMain', { hh: 'hh' });
   }
 
   // electron printToPDF, so cool!!!!!!
