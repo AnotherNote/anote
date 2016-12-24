@@ -2,9 +2,10 @@ import Promise from 'bluebird';
 import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
-import constants from './constants';
 import co from 'co';
-let {
+import constants from './constants';
+
+const {
     FILES_PATH,
     TMP_FILES_PATH,
 } = constants;
@@ -28,8 +29,8 @@ function guid() {
 const downloadAsyn = function (url, dest) {
   const file = fs.createWriteStream(dest);
   return new Promise((resolve, reject) => {
-    let responseSent = false,
-      pModule = null;
+    let responseSent = false;
+    let pModule = null;
     if (url.indexOf('https') > -1) {
       pModule = https;
     } else {
