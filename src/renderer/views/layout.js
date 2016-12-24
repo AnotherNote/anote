@@ -1,21 +1,14 @@
+/* global $ */
 import React, {
     Component,
 } from 'react';
 import autobind from 'autobind-decorator';
 import {
-    Link,
-    IndexLink,
+  Link,
+  IndexLink,
+  hashHistory,
 } from 'react-router';
-import {
-    List,
-    ListItem,
-} from 'material-ui/List';
 import TextField from 'material-ui/TextField';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
-import {
-    hashHistory,
-} from 'react-router';
 import ReactDom from 'react-dom';
 import { setDispatchHandler } from '../dispatch_handlers';
 import {
@@ -49,7 +42,7 @@ class Layout extends Component {
   componentWillReceiveProps(newProps) {
     if (newProps.location.query.searchFileText !== this.state.searchFileText) {
       this.setState({ searchFileText: newProps.location.query.searchFileText || '' });
-      jQuery(ReactDom.findDOMNode(this.refs.globalSearchInput)).find('input').val(newProps.location.query.searchFileText || '');
+      $(ReactDom.findDOMNode(this.refs.globalSearchInput)).find('input').val(newProps.location.query.searchFileText || '');
     }
   }
 
@@ -87,12 +80,12 @@ class Layout extends Component {
     });
 
     // hack notes和trash的相应
-    jQuery(ReactDom.findDOMNode(this.refs.notesLink)).click(function (event) {
+    $(ReactDom.findDOMNode(this.refs.notesLink)).click(function (event) {
       if ($(this).hasClass('active')) {
         event.preventDefault();
       }
     });
-    jQuery(ReactDom.findDOMNode(this.refs.trashLink)).click(function (event) {
+    $(ReactDom.findDOMNode(this.refs.trashLink)).click(function (event) {
       if ($(this).hasClass('active')) {
         event.preventDefault();
       }

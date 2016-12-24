@@ -1,3 +1,4 @@
+/* global $ */
 import React, {
     Component,
     PropTypes,
@@ -8,7 +9,7 @@ import ReactDom from 'react-dom';
 @autobind
 class NoteTitle extends Component {
   componentDidMount() {
-    if (this.props.autoFocus) { jQuery(ReactDom.findDOMNode(this.refs.input)).focus(); }
+    if (this.props.autoFocus) { $(ReactDom.findDOMNode(this.refs.input)).focus(); }
   }
 
   onChange(event) {
@@ -18,7 +19,7 @@ class NoteTitle extends Component {
   }
 
   setValue(value) {
-    jQuery(ReactDom.findDOMNode(this.refs.input)).val(value);
+    $(ReactDom.findDOMNode(this.refs.input)).val(value);
   }
 
   focus() {

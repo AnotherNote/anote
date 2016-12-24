@@ -16,7 +16,9 @@
     "import/prefer-default-export": "off",
     "no-shadow": "off",
     "no-script-url": "off",
-    "no-mixed-operators": "off"
+    "no-mixed-operators": "off",
+    "no-case-declarations": "off",
+    "radix": "off"
   },
   "env": {
     "es6": true,

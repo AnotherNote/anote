@@ -1,5 +1,6 @@
 import marked from 'marked';
 import constants from './constants';
+
 const { FILES_PATH } = constants;
 
 const defaultOptions = {
@@ -7,10 +8,9 @@ const defaultOptions = {
     console.log('render image');
     const pp = /[http|https]/;
     if (!pp.test(href)) {
-      return `${'<p>' + "<img src='"}${FILES_PATH}/${href}'/>` + '</p>';
-    } else {
-      return `${'<p>' + "<img src='"}${href}'/>` + '</p>';
+      return `<p><img src='${FILES_PATH}/${href}'/></p>`;
     }
+    return `<p><img src='${href}'/></p>`;
   },
   link(href, title, text) {
     let out = `<a class='external' href="${href}"`;

@@ -4,19 +4,9 @@ import React, {
 } from 'react';
 import autobind from 'autobind-decorator';
 import FlatButton from 'material-ui/FlatButton';
-import Paper from 'material-ui/Paper';
 import Dialog from 'material-ui/Dialog';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
-import Divider from 'material-ui/Divider';
-import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import { List, ListItem } from 'material-ui/List';
 import DoneIcon from 'material-ui/svg-icons/action/done';
-
-const style = {
-  display: 'inline-block',
-  margin: '16px 32px 16px 0',
-};
 
 @autobind
 export default class ListMenu extends Component {
@@ -44,9 +34,8 @@ export default class ListMenu extends Component {
   borderStyle(dataItem) {
     if (dataItem.id === this.state.checkedId) {
       return '1.5px #d1c091 solid';
-    } else {
-      return 'none';
     }
+    return 'none';
   }
 
   render() {

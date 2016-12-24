@@ -1,4 +1,3 @@
-import path from 'path';
 import co from 'co';
 import React, {
     Component,
@@ -10,14 +9,15 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import DropZone from 'react-dropzone';
 import constants from '../../constants';
+import {
+  copyFile,
+  getFileHash,
+  hash2Key,
+} from '../../util';
+
 const {
     FILES_PATH,
 } = constants;
-import {
-    copyFile,
-    getFileHash,
-    hash2Key,
-} from '../../util';
 
 // props {book, open, onCancel, onOk}
 @autobind

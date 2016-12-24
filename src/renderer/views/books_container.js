@@ -6,42 +6,38 @@ import shallowCompare from 'react-addons-shallow-compare';
 import {
     connect,
 } from 'react-redux';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
+import TextField from 'material-ui/TextField';
+import {
+  hashHistory,
+} from 'react-router';
+import {
+  ipcRenderer,
+} from 'electron';
 import {
     addBook,
     listBooks,
     delBook,
     editBook,
-    concatBooks,
     activeBook,
     setGlobalBook,
 } from '../actions';
 import {
     files,
     books,
-    tags,
-    infos,
 } from '../../main/set_db';
 import BooksList from './books_list';
 import BookForm from './book_form';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import DropZone from 'react-dropzone';
-import TextField from 'material-ui/TextField';
 import {
     debounce,
     pick,
 } from '../../util';
-import {
-    hashHistory,
-} from 'react-router';
 import ConfirmDialog from './confirm_dialog';
 import {
   openBookItemContextMenu,
   openNormalContextMenu,
-} from '../controllers/books_controller.js';
-import {
-  ipcRenderer,
-} from 'electron';
+} from '../controllers/books_controller';
 
 function mapStateToProps(state) {
   return {

@@ -6,7 +6,6 @@ import autobind from 'autobind-decorator';
 import {
     debounce,
 } from '../../util';
-import ReactDom from 'react-dom';
 import NotePreview from './note_preview';
 import NoteTitle from './note_title';
 import ANoteEditor from './anote_editor';

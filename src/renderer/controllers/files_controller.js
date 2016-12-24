@@ -1,4 +1,5 @@
 import { remote } from 'electron';
+
 const { Menu, MenuItem } = remote;
 
 const handlers = {};

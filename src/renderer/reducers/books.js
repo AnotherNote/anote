@@ -2,7 +2,8 @@ import constants from '../../constants';
 import {
     findIndexById,
 } from '../../util';
-let {
+
+const {
     LIST_BOOKS,
     ADD_BOOK,
     DEL_BOOK,
@@ -14,17 +15,14 @@ export default function (state = [], action) {
   switch (action.type) {
     case LIST_BOOKS:
       return action.books;
-      break;
     case ADD_BOOK:
       return [action.book, ...state];
-      break;
     case DEL_BOOK:
       const tI = findIndexById(state, action.book);
       return [
         ...state.slice(0, tI),
         ...state.slice(tI + 1),
       ];
-      break;
     case EDIT_BOOK:
       const tIn = findIndexById(state, action.book);
       return [
@@ -32,13 +30,11 @@ export default function (state = [], action) {
         ...state.slice(0, tIn),
         ...state.slice(tIn + 1),
       ];
-      break;
     case CONCAT_BOOKS:
       return [
         ...state,
         ...action.books,
       ];
-      break;
     default:
       return state;
   }

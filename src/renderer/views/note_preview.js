@@ -4,7 +4,6 @@ import React, {
     PropTypes,
 } from 'react';
 import autobind from 'autobind-decorator';
-import TextField from 'material-ui/TextField';
 import ANotePreview from './anote_preview';
 
 @autobind

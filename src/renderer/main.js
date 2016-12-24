@@ -7,6 +7,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 // material-ui theme provider
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { ipcRenderer } from 'electron';
 import App from './views/app';
 import store from './store';
 import constants from '../constants';
@@ -25,9 +26,6 @@ const muiTheme = getMuiTheme({
     primary1Color: '#e78170',
   },
 });
-
-import { ipcRenderer } from 'electron';
-
 
 // subscribe redux to control new note menu item
 function controlNewNoteMenu() {

@@ -1,25 +1,21 @@
 import React, {
-    Component,
-    PropTypes,
+  Component,
+  PropTypes,
 } from 'react';
 import autobind from 'autobind-decorator';
 import {
-    Card,
-    CardHeader,
-    CardText,
+  Card,
+  CardHeader,
+  CardText,
 } from 'material-ui/Card';
 import {
-    Link,
-    IndexLink,
+  Link,
+  hashHistory,
 } from 'react-router';
 import {
   ppDate,
   chineseDate,
-  debounce,
 } from '../../util';
-import {
-    hashHistory,
-} from 'react-router';
 
 @autobind
 class FilesList extends Component {

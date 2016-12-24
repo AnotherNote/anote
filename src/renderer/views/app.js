@@ -5,14 +5,12 @@ import autobind from 'autobind-decorator';
 import {
     connect,
 } from 'react-redux';
-import reducers from '../reducers';
 import {
     Router,
     Route,
     hashHistory,
     IndexRoute,
 } from 'react-router';
-
 import {
     popHistory,
     pushHistory,
@@ -43,10 +41,6 @@ function mapDispatchToProps(dispatch) {
 
 @autobind
 class App extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
         <Router history={hashHistory}>
