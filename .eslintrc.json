@@ -6,7 +6,9 @@
     "no-unused-vars": ["error", { "vars": "all", "args": "none" }],
     "max-len": "off",
     "no-plusplus": "off",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error"
   },
   "env": {
     "es6": true,
@@ -15,6 +17,19 @@
   },
   "parser": "babel-eslint",
   "parserOptions": {
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "react"
+  ],
+  "settings": {
+    "react": {
+      "createClass": "createClass",
+      "pragma": "React",
+      "version": "15.4"
+    }
   }
 }
