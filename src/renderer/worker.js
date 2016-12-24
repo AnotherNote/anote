@@ -150,8 +150,6 @@ const dispatchHandlers = {
   },
 };
 
-import { ipcRender } from 'electron';
-
 function dispatch(action, ...args) {
   if (dispatchHandlers[action]) {
     dispatchHandlers[action](...args);
@@ -159,7 +157,7 @@ function dispatch(action, ...args) {
 }
 
 function init() {
-  ipcRender.on('dispatch', (e, ...args) => {
+  ipcRenderer.on('dispatch', (e, ...args) => {
     dispatch(...args);
   });
 }
