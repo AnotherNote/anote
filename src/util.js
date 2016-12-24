@@ -9,8 +9,8 @@ const {
     FILES_PATH,
     TMP_FILES_PATH,
 } = constants;
-const http = require('http');
-const https = require('https');
+import http from 'http';
+import https from 'https';
 
 const writeFileAsyn = Promise.promisify(fs.writeFile);
 

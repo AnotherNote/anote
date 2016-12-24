@@ -7,17 +7,17 @@ const main = module.exports = {
   win: null,
 };
 
-const electron = require('electron');
+import electron from 'electron';
 
 const app = electron.app;
 
 const BrowserWindow = electron.BrowserWindow;
 
-const path = require('path');
+import path from 'path';
 
 import { mainMsgQueue } from '../ipc.js';
 
-const menu = require('../menu');
+import menu from '../menu';
 
 function init() {
   if (main.win) {

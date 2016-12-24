@@ -7,9 +7,9 @@ const worker = module.exports = {
 import { log } from '../log';
 
 // 做后台工作的invisible window
-const electron = require('electron');
+import electron from 'electron';
 const BrowserWindow = electron.BrowserWindow;
-const path = require('path');
+import path from 'path';
 
 function init(callback) {
   if (worker.win) {

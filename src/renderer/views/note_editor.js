@@ -24,9 +24,9 @@ let {
 import Spinner from './spinner'
 
 const clipboard = require('electron').clipboard;
-const fs = require('fs');
-const toMarkdown = require('to-markdown');
-const sanitizeHtml = require('sanitize-html');
+import fs from 'fs';
+import toMarkdown from 'to-markdown';
+import sanitizeHtml from 'sanitize-html';
 
 // for past image
 function pastImage(cm) {

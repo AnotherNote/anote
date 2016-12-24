@@ -9,11 +9,11 @@ module.exports = {
   disableItem,
 };
 
-const electron = require('electron');
+import electron from 'electron';
 
 const app = electron.app;
 
-const windows = require('./windows');
+import windows from './windows';
 
 const log = require('./log').log;
 

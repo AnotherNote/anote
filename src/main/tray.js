@@ -1,8 +1,8 @@
-const path = require('path');
-const events = require('events');
-const fs = require('fs');
+import path from 'path';
+import events from 'events';
+import fs from 'fs';
 
-const electron = require('electron');
+import electron from 'electron';
 const app = electron.app;
 const Tray = electron.Tray;
 const BrowserWindow = electron.BrowserWindow;

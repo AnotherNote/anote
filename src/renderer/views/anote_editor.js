@@ -16,9 +16,9 @@ let {
     FILES_PATH
 } = constants;
 const clipboard = require('electron').clipboard;
-const fs = require('fs');
-const toMarkdown = require('to-markdown');
-const sanitizeHtml = require('sanitize-html');
+import fs from 'fs';
+import toMarkdown from 'to-markdown';
+import sanitizeHtml from 'sanitize-html';
 import Spinner from './spinner'
 import constants from '../../constants';
 import ReactDom from 'react-dom';

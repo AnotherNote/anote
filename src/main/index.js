@@ -1,17 +1,17 @@
-const electron = require('electron');
+import electron from 'electron';
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
 
-const path = require('path');
+import path from 'path';
 
-const windows = require('./windows');
+import windows from './windows';
 
-const ipc = require('./ipc');
+import ipc from './ipc';
 
-const menu = require('./menu');
+import menu from './menu';
 
-const tray = require('./tray');
+import tray from './tray';
 
 const menubar = tray({
   height: 450,

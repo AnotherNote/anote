@@ -1,4 +1,4 @@
-const { remote } = require('electron');
+import { remote } from 'electron';
 const { Menu, MenuItem } = remote;
 
 export function openBookItemContextMenu(callbacks) {

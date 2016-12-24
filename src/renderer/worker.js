@@ -1,4 +1,4 @@
-const Promise = require('bluebird');
+import Promise from 'bluebird';
 window.$ = window.jQuery = window.jquery = require('jquery');
 import co from 'co';
 require('babel-polyfill');
@@ -15,8 +15,8 @@ import fs from 'fs';
 import path from 'path';
 import { copyFile } from '../util';
 import renderFactory from '../render_factory';
-const marked = require('marked');
-const { remote } = require('electron');
+import marked from 'marked';
+import { remote } from 'electron';
 const BrowserWindow = remote.BrowserWindow;
 const statAsync = Promise.promisify(fs.stat);
 const writeFileAsync = Promise.promisify(fs.writeFile);

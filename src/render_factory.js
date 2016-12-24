@@ -1,4 +1,4 @@
-const marked = require('marked');
+import marked from 'marked';
 import constants from './constants';
 const { FILES_PATH } = constants;
 

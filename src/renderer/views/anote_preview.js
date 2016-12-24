@@ -2,7 +2,7 @@ import React, {
   Component,
   PropTypes
 } from 'react';
-const marked = require('marked');
+import marked from 'marked';
 import renderFactory from '../../render_factory'
 
 const defaultStyle = {

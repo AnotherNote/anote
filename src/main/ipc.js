@@ -1,11 +1,11 @@
-const electron = require('electron');
+import electron from 'electron';
 const app = electron.app;
 import windows from './windows';
 import { log } from './log';
 const { Menu, MenuItem } = electron;
 const BrowserWindow = electron.BrowserWindow;
-const menu = require('./menu');
-const shell = require('./shell');
+import menu from './menu';
+import shell from './shell';
 import { openSaveDialog, openFileDialog } from './dialog';
 
 const mainMsgQueue = [];
