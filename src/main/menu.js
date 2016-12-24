@@ -1,97 +1,39 @@
-module.exports = {
-  init,
-  onNotebookContainer,
-  onEditNote,
-  onEditTrash,
-  onNoMainWin,
-  onNoEditNotesList,
-  enableItem,
-  disableItem,
-};
-
 import electron from 'electron';
+import windows from './windows';
+import config from '../config';
+import { log } from './log';
 
 const app = electron.app;
-
-import windows from './windows';
-
-const log = require('./log').log;
-
-import config from '../config';
-
 const BrowserWindow = electron.BrowserWindow;
 
 let menu;
 
-function init() {
-  menu = electron.Menu.buildFromTemplate(getMenuTemplate());
-  electron.Menu.setApplicationMenu(menu);
+function getMenuItem(label) {
+  for (let i = 0; i < menu.items.length; i++) {
+    const menuItem = menu.items[i].submenu.items.find(item => item.label === label);
+    if (menuItem) return menuItem;
+  }
+  return null;
 }
 
-// 在notebook列表中
-function onNotebookContainer() {
-  disableMenuItems('Move To Notebook...',
-  'Copy To Notebook...',
-  'Move To Trash',
-  'Delete Forever',
-  'Restore...',
-  'Redo',
-  'Undo');
+function enableMenuItems(...items) {
+  for (let i = 0; i < menu.items.length; i++) {
+    menu.items[i].submenu.items.forEach((item) => {
+      if (items.includes(item.label)) {
+        item.enabled = true;
+      }
+    });
+  }
 }
 
-// 在编辑一个note中
-function onEditNote() {
-  enableMenuItems('Move To Notebook...',
-  'Copy To Notebook...',
-  'Move To Trash',
-  'Redo',
-  'Undo');
-  disableMenuItems('Delete Forever',
-  'Restore...');
-}
-
-// 在编辑状态的trash
-function onEditTrash() {
-  enableMenuItems('Delete Forever',
-  'Restore...');
-  disableMenuItems('Move To Notebook...',
-  'Copy To Notebook...',
-  'Move To Trash',
-  'Redo',
-  'Undo');
-}
-
-// 在没有编辑状态的notelist
-function onNoEditNotesList() {
-  disableMenuItems('Move To Notebook...',
-  'Copy To Notebook...',
-  'Move To Trash',
-  'Delete Forever',
-  'Restore...',
-  'Redo',
-  'Undo');
-}
-
-function onNoMainWin() {
-  disableMenuItems('Move To Notebook...',
-  'Copy To Notebook...',
-  'Move To Trash',
-  'Delete Forever',
-  'Restore...',
-  'Redo',
-  'Undo',
-  'New Notebook',
-  'New Note');
-}
-
-function enableItem(item) {
-  const tmpItem = getMenuItem(item);
-  tmpItem.enabled = true;
-}
-
-function disableItem(item) {
-  const tmpItem = getMenuItem(item);
-  tmpItem.enabled = false;
+function disableMenuItems(...items) {
+  for (let i = 0; i < menu.items.length; i++) {
+    menu.items[i].submenu.items.forEach((item) => {
+      if (items.includes(item.label)) {
+        item.enabled = false;
+      }
+    });
+  }
 }
 
 function getMenuTemplate() {
@@ -194,13 +136,7 @@ function getMenuTemplate() {
       submenu: [
         {
           label: 'Toggle Full Screen',
-          accelerator: (function () {
-            if (process.platform === 'darwin') {
-              return 'Ctrl+Command+F';
-            } else {
-              return 'F11';
-            }
-          }()),
+          accelerator: process.platform === 'darwin' ? 'Ctrl+Command+F' : 'F11',
           click(item, focusedWindow) {
             if (focusedWindow) {
               focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
@@ -232,13 +168,7 @@ function getMenuTemplate() {
     },
     {
       label: 'Toggle Developer Tools',
-      accelerator: (function () {
-        if (process.platform === 'darwin') {
-          return 'Alt+Command+I';
-        } else {
-          return 'Ctrl+Shift+I';
-        }
-      }()),
+      accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
       click(item, focusedWindow) {
         if (focusedWindow) {
           focusedWindow.toggleDevTools();
@@ -289,31 +219,84 @@ function getMenuTemplate() {
   return template;
 }
 
-function getMenuItem(label) {
-  for (let i = 0; i < menu.items.length; i++) {
-    const menuItem = menu.items[i].submenu.items.find(item => item.label === label);
-    if (menuItem) return menuItem;
-  }
+function init() {
+  menu = electron.Menu.buildFromTemplate(getMenuTemplate());
+  electron.Menu.setApplicationMenu(menu);
 }
 
-function enableMenuItems(...items) {
-  items = items || [];
-  for (let i = 0; i < menu.items.length; i++) {
-    menu.items[i].submenu.items.forEach((item) => {
-      if (items.includes(item.label)) {
-        item.enabled = true;
-      }
-    });
-  }
+// 在notebook列表中
+function onNotebookContainer() {
+  disableMenuItems('Move To Notebook...',
+  'Copy To Notebook...',
+  'Move To Trash',
+  'Delete Forever',
+  'Restore...',
+  'Redo',
+  'Undo');
 }
 
-function disableMenuItems(...items) {
-  items = items || [];
-  for (let i = 0; i < menu.items.length; i++) {
-    menu.items[i].submenu.items.forEach((item) => {
-      if (items.includes(item.label)) {
-        item.enabled = false;
-      }
-    });
-  }
+// 在编辑一个note中
+function onEditNote() {
+  enableMenuItems('Move To Notebook...',
+  'Copy To Notebook...',
+  'Move To Trash',
+  'Redo',
+  'Undo');
+  disableMenuItems('Delete Forever',
+  'Restore...');
 }
+
+// 在编辑状态的trash
+function onEditTrash() {
+  enableMenuItems('Delete Forever',
+  'Restore...');
+  disableMenuItems('Move To Notebook...',
+  'Copy To Notebook...',
+  'Move To Trash',
+  'Redo',
+  'Undo');
+}
+
+// 在没有编辑状态的notelist
+function onNoEditNotesList() {
+  disableMenuItems('Move To Notebook...',
+  'Copy To Notebook...',
+  'Move To Trash',
+  'Delete Forever',
+  'Restore...',
+  'Redo',
+  'Undo');
+}
+
+function onNoMainWin() {
+  disableMenuItems('Move To Notebook...',
+  'Copy To Notebook...',
+  'Move To Trash',
+  'Delete Forever',
+  'Restore...',
+  'Redo',
+  'Undo',
+  'New Notebook',
+  'New Note');
+}
+
+function enableItem(item) {
+  const tmpItem = getMenuItem(item);
+  tmpItem.enabled = true;
+}
+
+function disableItem(item) {
+  const tmpItem = getMenuItem(item);
+  tmpItem.enabled = false;
+}
+
+module.exports = {
+  init,
+  onNotebookContainer,
+  onEditNote,
+  onEditTrash,
+  onNoMainWin,
+  onNoEditNotesList,
+  enableItem,
+  disableItem,
+};

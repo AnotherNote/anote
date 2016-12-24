@@ -3,7 +3,10 @@
   "rules": {
     "no-console": "off",
     "max-len": "off",
-    "no-unused-vars": ["error", { "vars": "all", "args": "none" }]
+    "no-unused-vars": ["error", { "vars": "all", "args": "none" }],
+    "max-len": "off",
+    "no-plusplus": "off",
+    "no-param-reassign": "off"
   },
   "env": {
     "es6": true,
