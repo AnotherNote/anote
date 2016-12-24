@@ -90,7 +90,7 @@ function init() {
   ipc.on('openFile', (...args) => {
     openFileDialog(...args);
   });
-};
+}
 
 exports.mainMsgQueue = mainMsgQueue;
 exports.init = init;

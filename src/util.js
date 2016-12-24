@@ -52,7 +52,7 @@ function downloadAsyn(url, dest) {
       reject(err);
     });
   });
-};
+}
 
 // const downloadAsyn = Promise.promisify(download);
 
@@ -74,18 +74,18 @@ function directoryExists(path) {
 }
 
 function copyFile(source, target) {
-    return new Promise((resolve, reject) => {
-        ensureDirectoryExistence(target);
-        let rs = fs.createReadStream(source),
-            ws = fs.createWriteStream(target);
-        rs.pipe(ws);
-        ws.on('close', () => {
-            resolve();
-        });
-        ws.on('error', () => {
-            reject();
-        });
+  return new Promise((resolve, reject) => {
+    ensureDirectoryExistence(target);
+    let rs = fs.createReadStream(source),
+      ws = fs.createWriteStream(target);
+    rs.pipe(ws);
+    ws.on('close', () => {
+      resolve();
     });
+    ws.on('error', () => {
+      reject();
+    });
+  });
 }
 
 function buffer2File(buffer) {
@@ -99,7 +99,7 @@ function buffer2File(buffer) {
     yield unlinkAsync(tmpPath);
     return `${key}`;
   });
-};
+}
 
 function downloadImageAsyn(url) {
   const tmpPath = path.resolve(TMP_FILES_PATH, `${guid()}`);
@@ -118,7 +118,7 @@ function downloadImageAsyn(url) {
     yield unlinkAsync(tmpPath);
     return `${key}`;
   });
-};
+}
 
 const getFileHash = filePath => new Promise((resolve, reject) => {
   const rs = fs.createReadStream(filePath);
@@ -153,7 +153,7 @@ function debounce(func, wait, immediate) {
     clearTimeout(timeout);
   };
   return debounced;
-};
+}
 
 const throttle = function (func, wait, options) {
   let timeout,
@@ -216,7 +216,7 @@ function chineseDate(date) {
   const tmpDate = new Date(date);
   tmpDate.setHours(date.getHours() + 8);
   return tmpDate;
-};
+}
 
 const ppDate = date => `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear().toString()}`;
 
@@ -272,7 +272,7 @@ function placeImageToLocalAsyn(content) {
     });
     return result;
   });
-};
+}
 
 module.exports = {
   copyFile,
