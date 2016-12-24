@@ -3,11 +3,6 @@ import React, {
     Component,
 } from 'react';
 import autobind from 'autobind-decorator';
-import ANoteEditor from './anote_editor';
-import {
-    files,
-    books,
-} from '../../main/set_db';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Dialog from 'material-ui/Dialog';
@@ -16,6 +11,10 @@ import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import SelectField from 'material-ui/SelectField';
+import ANoteEditor from './anote_editor';
+import {
+    books,
+} from '../../main/set_db';
 import sendMainCmd from '../main_util';
 
 @autobind
@@ -76,6 +75,7 @@ class TrayApp extends Component {
         that.setState({
           books: bks,
         }, that._showSaveDialog);
+        return null;
       });
     });
   }
