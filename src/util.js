@@ -73,18 +73,20 @@ function directoryExists(path) {
   }
 }
 
-function copyFile(source, target) => new Promise((resolve, reject) {
-  ensureDirectoryExistence(target);
-  let rs = fs.createReadStream(source),
-    ws = fs.createWriteStream(target);
-  rs.pipe(ws);
-  ws.on('close', () => {
-    resolve();
-  });
-  ws.on('error', () => {
-    reject();
-  });
-});
+function copyFile(source, target) {
+    return new Promise((resolve, reject) => {
+        ensureDirectoryExistence(target);
+        let rs = fs.createReadStream(source),
+            ws = fs.createWriteStream(target);
+        rs.pipe(ws);
+        ws.on('close', () => {
+            resolve();
+        });
+        ws.on('error', () => {
+            reject();
+        });
+    });
+}
 
 function buffer2File(buffer) {
   const tmpPath = path.resolve(TMP_FILES_PATH, `${Date.now()}`);
