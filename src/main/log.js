@@ -1,5 +1,3 @@
-import electron from 'electron';
-
 import windows from './windows';
 
 export function log(...args) {

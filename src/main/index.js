@@ -1,17 +1,14 @@
 import electron from 'electron';
+import path from 'path';
+import windows from './windows';
+import ipc from './ipc';
+import menu from './menu';
+import tray from './tray';
+
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
 
-import path from 'path';
-
-import windows from './windows';
-
-import ipc from './ipc';
-
-import menu from './menu';
-
-import tray from './tray';
 
 const menubar = tray({
   height: 450,

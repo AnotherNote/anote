@@ -1,13 +1,11 @@
 import electron from 'electron';
-const app = electron.app;
 import windows from './windows';
 import { log } from './log';
-const { Menu, MenuItem } = electron;
-const BrowserWindow = electron.BrowserWindow;
 import menu from './menu';
-import shell from './shell';
 import { openSaveDialog, openFileDialog } from './dialog';
+import shell from './shell';
 
+const app = electron.app;
 const mainMsgQueue = [];
 
 function init() {
@@ -71,6 +69,7 @@ function init() {
     windows.worker.init(() => {
       windows.worker.dispatch(...args);
     });
+    return null;
   });
 
   // a bridge between other window to main
@@ -80,6 +79,7 @@ function init() {
     }
     windows.main.init();
     windows.main.dispatch(...args);
+    return null;
   });
 
   // open save dialog
