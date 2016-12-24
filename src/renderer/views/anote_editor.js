@@ -1,7 +1,7 @@
 import path from 'path';
 import co from 'co';
 import React, {
-  Component
+  Component,
 } from 'react';
 import {
   copyFile,
@@ -10,16 +10,16 @@ import {
   buffer2File,
   debounce,
   placeImageToLocalAsyn,
-  downloadAsyn
+  downloadAsyn,
 } from '../../util';
-let {
-    FILES_PATH
+const {
+    FILES_PATH,
 } = constants;
 const clipboard = require('electron').clipboard;
 import fs from 'fs';
 import toMarkdown from 'to-markdown';
 import sanitizeHtml from 'sanitize-html';
-import Spinner from './spinner'
+import Spinner from './spinner';
 import constants from '../../constants';
 import ReactDom from 'react-dom';
 
@@ -32,17 +32,17 @@ require('codemirror/addon/search/matchesonscrollbar.js');
 require('codemirror/addon/search/jump-to-line.js');
 
 
-import ANotePreview from './anote_preview'
+import ANotePreview from './anote_preview';
 require('codemirror/mode/markdown/markdown');
 
 // for past image
 function pastImage(cm) {
   console.log('pastImage');
-  let image = clipboard.readImage();
-  if(image && !image.isEmpty()){
-    let text = clipboard.readText();
-    buffer2File(image.toPNG()).then(function(key){
-      cm.replaceSelection("![" + (text.length == 0 ? 'past-image' : text) + "](" + key + ")");
+  const image = clipboard.readImage();
+  if (image && !image.isEmpty()) {
+    const text = clipboard.readText();
+    buffer2File(image.toPNG()).then((key) => {
+      cm.replaceSelection(`![${text.length == 0 ? 'past-image' : text}](${key})`);
     });
     return true;
   }
@@ -51,57 +51,58 @@ function pastImage(cm) {
 
 // for past html(html2markdown)
 function pastHtml(cm, component) {
-  let htmlText = clipboard.readHTML();
-  //这里electron的坑不小，它也判断不太好是html还是text
-  if(!/<[a-z][\s\S]*>/i.test(htmlText))
+  const htmlText = clipboard.readHTML();
+  // 这里electron的坑不小，它也判断不太好是html还是text
+  if (!/<[a-z][\s\S]*>/i.test(htmlText)) {
     return false;
-  let cleanText = sanitizeHtml(htmlText, {
-    allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
-  'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br',
-  'table', 'thead', 'tbody', 'tr', 'th', 'td', 'pre', 'img'],
+  }
+  const cleanText = sanitizeHtml(htmlText, {
+    allowedTags: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+      'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br',
+      'table', 'thead', 'tbody', 'tr', 'th', 'td', 'pre', 'img'],
     selfClosing: ['br', 'hr', 'base', 'img'],
     allowedAttributes: {
-      'a': [ 'href' ],
-      'img': [ 'src' ]
-    }
+      a: ['href'],
+      img: ['src'],
+    },
   });
-  if(htmlText && htmlText.length > 0){
+  if (htmlText && htmlText.length > 0) {
     let tmpContent = toMarkdown(cleanText, {
       converters: [
         {
           filter: 'code',
-          replacement: function(content) {
-            return '`' + content + '`';
-          }
+          replacement(content) {
+            return `\`${content}\``;
+          },
         },
         {
           filter: 'img',
-          replacement: function(content, node) {
+          replacement(content, node) {
             // need add back worker
-            return "![" + 'web-image' + "](" + node.src + ")"
-          }
-        }
-      ]
+            return `${'![' + 'web-image' + ']('}${node.src})`;
+          },
+        },
+      ],
     });
-    let regex = /(<([^>]+)>)/ig;
+    const regex = /(<([^>]+)>)/ig;
     tmpContent = tmpContent.replace(regex, '');
     component.showSpinner();
-    placeImageToLocalAsyn(tmpContent).then(function(content) {
+    placeImageToLocalAsyn(tmpContent).then((content) => {
       component.hideSpinner();
       cm.replaceSelection(content);
-    }, function () {
+    }, () => {
       component.hideSpinner();
     });
     // cm.replaceSelection(tmpContent);
     return true;
   }
-  return false
+  return false;
 }
 
 // past text
 function pastText(cm) {
-  let text = clipboard.readText();
-  if(text && text.length > 0){
+  const text = clipboard.readText();
+  if (text && text.length > 0) {
     cm.replaceSelection(text);
   }
 }
@@ -112,7 +113,7 @@ class ANoteEditor extends Component {
     this.state = {
       showSpinner: false,
       previewValue: this.props.defaultValue,
-      fullscreen: false
+      fullscreen: false,
     };
 
     this.debouncedSetPreviewValue = debounce(this.setPrevewValue, 50);
@@ -124,81 +125,84 @@ class ANoteEditor extends Component {
 
   setPrevewValue(previewValue) {
     this.setState({
-      previewValue
+      previewValue,
     });
   }
 
   showSpinner() {
     this.setState({
-      showSpinner: true
+      showSpinner: true,
     });
   }
 
   hideSpinner() {
     this.setState({
-      showSpinner: false
+      showSpinner: false,
     });
   }
 
   defaultKeyMaps() {
-    let that = this;
+    const that = this;
     return {
-      "Ctrl-P": function(cm) {
-        cm.execCommand("goLineUp");
+      'Ctrl-P': function (cm) {
+        cm.execCommand('goLineUp');
       },
-      "Ctrl-N": function(cm) {
-        cm.execCommand("goLineDown");
+      'Ctrl-N': function (cm) {
+        cm.execCommand('goLineDown');
       },
-      "Ctrl-A": function(cm) {
-        cm.execCommand("goLineStart");
+      'Ctrl-A': function (cm) {
+        cm.execCommand('goLineStart');
       },
-      "Ctrl-E": function(cm) {
-        cm.execCommand("goLineEnd");
+      'Ctrl-E': function (cm) {
+        cm.execCommand('goLineEnd');
       },
-      "Ctrl-K": function(cm) {
-        cm.execCommand("killLine");
+      'Ctrl-K': function (cm) {
+        cm.execCommand('killLine');
       },
-      "Ctrl-F": function(cm) {
-        cm.execCommand("goColumnRight");
+      'Ctrl-F': function (cm) {
+        cm.execCommand('goColumnRight');
       },
-      "Ctrl-B": function(cm) {
-        cm.execCommand("goColumnLeft");
+      'Ctrl-B': function (cm) {
+        cm.execCommand('goColumnLeft');
       },
-      "Alt-F": function(cm) {
-        cm.execCommand("goWordRight");
+      'Alt-F': function (cm) {
+        cm.execCommand('goWordRight');
       },
-      "Alt-B": function(cm){
-        cm.execCommand("goWordLeft");
+      'Alt-B': function (cm) {
+        cm.execCommand('goWordLeft');
       },
       // 自动判断文本格式来粘贴
-      "Cmd-V": function(cm){
-        if(pastImage(cm)){
+      'Cmd-V': function (cm) {
+        if (pastImage(cm)) {
           return;
         }
-        if(pastHtml(cm, that)){
+        if (pastHtml(cm, that)) {
           return;
         }
         pastText(cm);
       },
-      "Cmd-Z": function(cm){
-        let doc = cm.getDoc();
-        if(doc)
+      'Cmd-Z': function (cm) {
+        const doc = cm.getDoc();
+        if (doc) {
           doc.undo();
+        }
       },
-      "Cmd-Y": function(cm){
-        let doc = cm.getDoc();
-        if(doc)
+      'Cmd-Y': function (cm) {
+        const doc = cm.getDoc();
+        if (doc) {
           doc.redo();
+        }
       },
       // 粘贴纯文本
-      "Alt-V": function(cm) {
+      'Alt-V': function (cm) {
         pastText(cm);
       },
-      "Cmd-S": function(cm) {
-        if(that.props.onChange)
+      'Cmd-S': function (cm) {
+        if (that.props.onChange) {
           that.props.onChange(cm.getValue());
+        }
       },
-      "Cmd-F": "findPersistent"
+      'Cmd-F': 'findPersistent',
     };
   }
 
@@ -211,7 +215,7 @@ class ANoteEditor extends Component {
       theme: 'base16-light',
       mode: 'markdown',
       lineWrapping: true,
-      lineNumbers: true
+      lineNumbers: true,
     });
 
     // set keymaps
@@ -222,9 +226,10 @@ class ANoteEditor extends Component {
 
     // change event
     this.editor.on('change', (instance, changeObj) => {
-      if(this.props.editorState == 1 || this.editorState == 2)
+      if (this.props.editorState == 1 || this.editorState == 2) {
         this.debouncedSetPreviewValue(this.editor.getValue());
-      if(this.props.onChange){
+      }
+      if (this.props.onChange) {
         this.props.onChange(this.editor.getValue());
       }
     });
@@ -232,26 +237,28 @@ class ANoteEditor extends Component {
     this.editor.setValue(this.props.defaultValue || '');
 
     // set image input
-    this.$imageInput.change(function(event){
-      let files = event.target.files;
-      if(files.length == 0)
+    this.$imageInput.change((event) => {
+      const files = event.target.files;
+      if (files.length == 0) {
         return;
-      co(function * () {
-        for(let i=0; i < files.length; i++){
-          let path = files[i].path;
-          let hashKey = yield getFileHash(path);
-          let key = hash2Key(hashKey);
+      }
+      co(function* () {
+        for (let i = 0; i < files.length; i++) {
+          const path = files[i].path;
+          const hashKey = yield getFileHash(path);
+          const key = hash2Key(hashKey);
           yield copyFile(path, `${FILES_PATH}/${key}`);
-          this.editor.replaceSelection("![" + files[i].name + "](" + key + ")");
+          this.editor.replaceSelection(`![${files[i].name}](${key})`);
         }
       });
     });
   }
 
-  componentWillReceiveProps(newProps){
+  componentWillReceiveProps(newProps) {
     this.setSize(newProps);
-    if(newProps.editorState == 1 || newProps.editorState == 2)
+    if (newProps.editorState == 1 || newProps.editorState == 2) {
       this.debouncedSetPreviewValue(this.editor.getValue());
+    }
   }
 
   // set editor size based on editorState
@@ -276,52 +283,54 @@ class ANoteEditor extends Component {
         this.refs.preview.setSize('100%', '100%');
         break;
       default:
-        return;
+
     }
   }
 
   setValue(value) {
-    if(this.editor){
+    if (this.editor) {
       return this.editor.setValue(value);
     }
     jQuery(ReactDom.findDOMNode(this.refs.textArea)).val(value);
   }
 
   getValue() {
-    if(this.editor)
-      return this.editor.getValue();
+    if (this.editor) { return this.editor.getValue(); }
     return false;
   }
 
   clearHistory() {
-    if(this.editor)
+    if (this.editor) {
       this.editor.clearHistory();
+    }
   }
 
   // set keymaps
   setKeyMaps(newProps) {
-    let props = newProps || this.props;
+    const props = newProps || this.props;
     console.log(Object.assign({}, this.defaultKeyMaps(), props.keyMaps));
-    if(props.keyMaps && typeof props.keyMaps == 'object')
+    if (props.keyMaps && typeof props.keyMaps === 'object') {
       return this.editor.setOption('extraKeys', Object.assign({}, this.defaultKeyMaps(), props.keyMaps));
-    if(this.props.keyMaps && typeof props.keyMaps == 'function')
-      return this.editor.setOption('extraKeys', Object.assign({}, this.defaultKeyMaps(), props.keyMaps()));
+    }
+    if (this.props.keyMaps && typeof props.keyMaps === 'function') { return this.editor.setOption('extraKeys', Object.assign({}, this.defaultKeyMaps(), props.keyMaps())); }
     this.editor.setOption('extraKeys', this.defaultKeyMaps());
   }
 
   // 这个用于以ref形式来操作editor
   performEditor(method) {
-    if(!this.editor || !this.editor[method] || typeof this.editor[method] != 'function')
+    if (!this.editor || !this.editor[method] || typeof this.editor[method] !== 'function') {
       return;
-    let args = [].slice.apply(arguments, [1]);
+    }
+    const args = [].slice.apply(arguments, [1]);
     this.editor[method].apply(this.editor, args);
   }
 
   insertImage(event) {
     event.preventDefault();
     event.stopPropagation();
-    if(this.$imageInput)
+    if (this.$imageInput) {
       this.$imageInput.trigger('click');
+    }
   }
 
   // toolbar elements
@@ -470,55 +479,57 @@ class ANoteEditor extends Component {
             </li>
           </ul>
         </div>
-    )
+    );
   }
 
   undo(event) {
     event.preventDefault();
     event.stopPropagation();
 
-    let doc = this.editor.getDoc();
-    if(doc)
-      doc.undo();
+    const doc = this.editor.getDoc();
+    if (doc) { doc.undo(); }
   }
 
   redo(event) {
     event.preventDefault();
     event.stopPropagation();
 
-    let doc = this.editor.getDoc();
-    if(doc)
+    const doc = this.editor.getDoc();
+    if (doc) {
       doc.redo();
+    }
   }
 
   toggleFullscreen() {
     this.setState({
-      fullscreen: !this.state.fullscreen
+      fullscreen: !this.state.fullscreen,
     });
   }
 
   toggleWatching() {
-    if(this.props.toggleWatching)
+    if (this.props.toggleWatching) {
       this.props.toggleWatching();
+    }
   }
 
   togglePreview() {
-    if(this.props.togglePreview)
+    if (this.props.togglePreview) {
       this.props.togglePreview();
+    }
   }
 
   changeBold(event) {
     event.preventDefault();
     event.stopPropagation();
 
-    this.editor.replaceSelection('**' + this.editor.getSelection() + '**');
+    this.editor.replaceSelection(`**${this.editor.getSelection()}**`);
   }
 
   changeItalics(event) {
     event.preventDefault();
     event.stopPropagation();
 
-    this.editor.replaceSelection('*' + this.editor.getSelection() + '*');
+    this.editor.replaceSelection(`*${this.editor.getSelection()}*`);
   }
 
   insertHr(event) {
@@ -545,30 +556,29 @@ class ANoteEditor extends Component {
   _anoteClassNames() {
     let klasses = '';
     klasses = this.state.fullscreen ? 'anote-editor anote-fullscreen' : 'anote-editor';
-    if(this.props.editorState == 2 || this.props.withoutToolbar)
-      klasses += ' anote-without-toolbar';
+    if (this.props.editorState == 2 || this.props.withoutToolbar) { klasses += ' anote-without-toolbar'; }
     return klasses;
   }
 
   _anoteWatchingClassNames() {
     let klasses = '';
-    if(this.props.editorState == 1){
+    if (this.props.editorState == 1) {
       klasses += 'fa fa-eye-slash';
-    }else{
+    } else {
       klasses += 'fa fa-eye';
     }
     return klasses;
   }
 
   _anotePreviewCloseBtnStyle() {
-    if(this.props.editorState == 2){
+    if (this.props.editorState == 2) {
       return {
-        display: 'block'
-      }
+        display: 'block',
+      };
     }
     return {
-      display: 'none'
-    }
+      display: 'none',
+    };
   }
 
   render() {
@@ -593,7 +603,7 @@ class ANoteEditor extends Component {
             />
             <input
               type='file'
-              style={{display: 'none'}}
+              style={{ display: 'none' }}
               ref='imageInput'
               accept='image/*'
               multiple
@@ -602,7 +612,7 @@ class ANoteEditor extends Component {
               style={{
                 position: 'absolute',
                 top: '0px',
-                right: '0px'
+                right: '0px',
               }}
               value={this.state.previewValue}
               ref='preview'
@@ -616,7 +626,7 @@ class ANoteEditor extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 

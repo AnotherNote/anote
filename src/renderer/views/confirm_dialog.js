@@ -1,12 +1,12 @@
 import React, {
   Component,
-  PropTypes
+  PropTypes,
 } from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
 export default class ConfirmDialog extends Component {
-  render () {
+  render() {
     const actions = [
       <FlatButton
         primary={true}
@@ -15,8 +15,8 @@ export default class ConfirmDialog extends Component {
       />,
       <FlatButton
         label={this.props.okString}
-        onTouchTap={(event) => { this.props.onOk(event, this.props.tmpData) }}
-      />
+        onTouchTap={(event) => { this.props.onOk(event, this.props.tmpData); }}
+      />,
     ];
 
     return (
@@ -43,5 +43,5 @@ ConfirmDialog.propTypes = {
   open: PropTypes.bool,
   confirmString: PropTypes.string,
   // the data is used for tmp data persistence
-  tmpData: PropTypes.object
-}
+  tmpData: PropTypes.object,
+};

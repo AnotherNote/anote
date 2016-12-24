@@ -1,18 +1,18 @@
 import React, {
     Component,
-    PropTypes
+    PropTypes,
 } from 'react';
 import ReactDom from 'react-dom';
 
 class NoteTitle extends Component {
   componentDidMount() {
-    if(this.props.autoFocus)
-      jQuery(ReactDom.findDOMNode(this.refs.input)).focus();
+    if (this.props.autoFocus) { jQuery(ReactDom.findDOMNode(this.refs.input)).focus(); }
   }
 
   onChange(event) {
-    if(this.props.onChange)
+    if (this.props.onChange) {
       this.props.onChange(event);
+    }
   }
 
   setValue(value) {
@@ -22,8 +22,9 @@ class NoteTitle extends Component {
   focus() {
     // a chrome focus bug
     setTimeout(() => {
-      if(this.refs.input)
+      if (this.refs.input) {
         this.refs.input.focus();
+      }
     }, 1);
   }
 
@@ -44,7 +45,7 @@ class NoteTitle extends Component {
 
 NoteTitle.propTypes = {
   onChange: PropTypes.func,
-  defaultValue: PropTypes.string
-}
+  defaultValue: PropTypes.string,
+};
 
 export default NoteTitle;

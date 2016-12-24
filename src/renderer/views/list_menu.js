@@ -1,6 +1,6 @@
 import React, {
   Component,
-  PropTypes
+  PropTypes,
 } from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
@@ -9,7 +9,7 @@ import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
-import {List, ListItem} from 'material-ui/List';
+import { List, ListItem } from 'material-ui/List';
 import DoneIcon from 'material-ui/svg-icons/action/done';
 
 const style = {
@@ -19,15 +19,15 @@ const style = {
 
 export default class ListMenu extends Component {
   constructor(props) {
-      super(props);
-      this.state = {
-        checkedId: null
-      }
+    super(props);
+    this.state = {
+      checkedId: null,
+    };
   }
 
   componentWillReceiveProps(newProps) {
     this.setState({
-      checkedId: null
+      checkedId: null,
     });
   }
 
@@ -35,19 +35,19 @@ export default class ListMenu extends Component {
     console.log('selectDataItem');
     console.log(checkedId);
     this.setState({
-      checkedId: checkedId
+      checkedId,
     });
   }
 
   borderStyle(dataItem) {
-    if(dataItem.id == this.state.checkedId) {
+    if (dataItem.id == this.state.checkedId) {
       return '1.5px #d1c091 solid';
-    }else{
+    } else {
       return 'none';
     }
   }
 
-  render () {
+  render() {
     const actions = [
       <FlatButton
         primary={true}
@@ -57,8 +57,8 @@ export default class ListMenu extends Component {
       <FlatButton
         label={this.props.okString}
         onTouchTap={(event) => { this.props.onOk(event, this.state.checkedId, this.props.tmpData); }}
-        disabled={this.state.checkedId==null}
-      />
+        disabled={this.state.checkedId == null}
+      />,
     ];
 
     return (
@@ -72,8 +72,7 @@ export default class ListMenu extends Component {
         >
           <List>
             {
-              this.props.dataList.map((dataItem, index) => {
-                return (
+              this.props.dataList.map((dataItem, index) => (
                   this.props.filterFunc(dataItem, this.props.dataItem) ?
                     <ListItem
                       key={dataItem.id}
@@ -82,15 +81,14 @@ export default class ListMenu extends Component {
                     /> :
                     <ListItem
                       style={{
-                        border: this.borderStyle(dataItem)
+                        border: this.borderStyle(dataItem),
                       }}
                       key={dataItem.id}
                       primaryText={dataItem.name}
                       insetChildren={true}
-                      onTouchTap={(event) => { this.selectDataItem(event, dataItem.id) }}
+                      onTouchTap={(event) => { this.selectDataItem(event, dataItem.id); }}
                     />
-                )
-              })
+                ))
             }
           </List>
         </Dialog>
@@ -108,5 +106,5 @@ ListMenu.propTypes = {
   open: PropTypes.bool,
   dataList: PropTypes.array,
   dataItem: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]),
-  filterFunc: PropTypes.func
-}
+  filterFunc: PropTypes.func,
+};

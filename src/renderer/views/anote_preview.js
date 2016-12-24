@@ -1,41 +1,41 @@
 import React, {
   Component,
-  PropTypes
+  PropTypes,
 } from 'react';
 import marked from 'marked';
-import renderFactory from '../../render_factory'
+import renderFactory from '../../render_factory';
 
 const defaultStyle = {
   backgroundColor: '#fff',
-  overflowY: 'scroll'
-}
+  overflowY: 'scroll',
+};
 
 class ANotePreview extends Component {
   constructor(props) {
     super(props);
     this.markedRenderer = renderFactory(this.props.rendererOptions);
     this.state = {
-      style: Object.assign({}, defaultStyle, this.props.style || {})
-    }
+      style: Object.assign({}, defaultStyle, this.props.style || {}),
+    };
   }
 
   renderMarkdown() {
     return {
       __html: marked(this.props.value || '', {
-        renderer: this.markedRenderer
-      })
-    }
+        renderer: this.markedRenderer,
+      }),
+    };
   }
 
   setSize(width, height) {
-    let newStyle = {};
-    if(width)
-      newStyle['width'] = width;
-    if(height)
-      newStyle['height'] = height;
-    let style = Object.assign({}, this.state.style, newStyle);
+    const newStyle = {};
+    if (width) { newStyle.width = width; }
+    if (height) {
+      newStyle.height = height;
+    }
+    const style = Object.assign({}, this.state.style, newStyle);
     this.setState({
-      style
+      style,
     });
   }
 
@@ -57,7 +57,7 @@ class ANotePreview extends Component {
 ANotePreview.propTypes = {
   value: PropTypes.string,
   style: PropTypes.object,
-  rendererOptions: PropTypes.object
-}
+  rendererOptions: PropTypes.object,
+};
 
 export default ANotePreview;

@@ -1,11 +1,11 @@
 import React, {
     Component,
-    PropTypes
+    PropTypes,
 } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import {
     GridList,
-    GridTile
+    GridTile,
 } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
@@ -16,22 +16,22 @@ import MenuItem from 'material-ui/MenuItem';
 import constants from '../../constants';
 import {
     key2path,
-    throttle
+    throttle,
 } from '../../util';
 import {
-    Link
+    Link,
 } from 'react-router';
 const styles = {
   root: {
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-    marginTop: '20px'
+    marginTop: '20px',
   },
   gridList: {
     width: '90%',
     overflowY: 'auto',
-    marginBottom: 24
+    marginBottom: 24,
   },
 };
 
@@ -40,8 +40,8 @@ class BooksList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      gridCols: 4
-    }
+      gridCols: 4,
+    };
     this.throttledGridCols = throttle(this.gridCols, 10);
   }
 
@@ -51,50 +51,50 @@ class BooksList extends Component {
   }
 
   componentWillUnmount() {
-    if(this.throttledGridCols)
-      this.throttledGridCols.cancel();
+    if (this.throttledGridCols) { this.throttledGridCols.cancel(); }
   }
 
   // for better performance
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState);
   }
 
   gridCols() {
-    if(!this.refs.listRoot)
-      return
-    let width = this.refs.listRoot.getBoundingClientRect().width;
+    if (!this.refs.listRoot) {
+      return;
+    }
+    const width = this.refs.listRoot.getBoundingClientRect().width;
     // js switch add true when in case use less or greater than
     switch (true) {
       case width > 800:
         this.setState({
-          gridCols: 4
+          gridCols: 4,
         });
         break;
       case width > 600:
         this.setState({
-          gridCols: 3
+          gridCols: 3,
         });
         break;
       case width > 400:
         this.setState({
-          gridCols: 2
+          gridCols: 2,
         });
         break;
       default:
         this.setState({
-          gridCols: 1
+          gridCols: 1,
         });
     }
   }
 
   handleMenuChange(event, value, book) {
     // edit
-    if(parseInt(value) == 1){
+    if (parseInt(value) == 1) {
       console.log('edit book');
       this.props.callbacks.editBook(book);
     // delete
-    }else if (parseInt(value) == 2){
+    } else if (parseInt(value) == 2) {
       this.props.callbacks.delBook(book);
     }
   }
@@ -108,8 +108,7 @@ class BooksList extends Component {
           cols={this.state.gridCols}
           padding={20}
         >
-          {this.props.books.map((book) => {
-            return (
+          {this.props.books.map(book => (
                       <GridTile
                           key={book._id}
                           title={book.name}
@@ -117,7 +116,7 @@ class BooksList extends Component {
                           actionIcon={
                             <IconMenu
                               iconButtonElement={<IconButton><Settings color="white" /></IconButton>}
-                              onChange={(event, value) => { event.stopPropagation(); this.handleMenuChange(event, value, book)}}
+                              onChange={(event, value) => { event.stopPropagation(); this.handleMenuChange(event, value, book); }}
                               value={0}
                             >
                               <MenuItem value="1" primaryText="Edit..." />
@@ -125,15 +124,14 @@ class BooksList extends Component {
                             </IconMenu> }
                           cols={1}
                           className='book-item'
-                          onContextMenu={(event) => {event.stopPropagation();this.props.callbacks.onContextMenu(event, book);}}
+                          onContextMenu={(event) => { event.stopPropagation(); this.props.callbacks.onContextMenu(event, book); }}
                         >
                         <img
-                          onClick={(event) => {this.props.callbacks.jumpToNotes({pathname: '/notes', query: {bookId: book._id, bookName: book.name, available: true}})}}
+                          onClick={(event) => { this.props.callbacks.jumpToNotes({ pathname: '/notes', query: { bookId: book._id, bookName: book.name, available: true } }); }}
                           src={book.imagePath != '' ? key2path(book.imagePath) : constants.TMP_IMAGE_PATH}
                         />
                       </GridTile>
-                    )
-          })}
+                    ))}
         </GridList>
       </div>
     );
@@ -142,7 +140,7 @@ class BooksList extends Component {
 
 BooksList.propTypes = {
   books: PropTypes.array,
-  callbacks: PropTypes.object
+  callbacks: PropTypes.object,
 };
 
 export default BooksList;

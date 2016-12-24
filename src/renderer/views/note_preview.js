@@ -1,7 +1,7 @@
 // only preview
 import React, {
     Component,
-    PropTypes
+    PropTypes,
 } from 'react';
 import TextField from 'material-ui/TextField';
 import ANotePreview from './anote_preview';
@@ -21,10 +21,10 @@ class NotePreview extends Component {
             backgroundColor: '#fff',
             boxSizing: 'border-box',
             width: '100%',
-            overflowX: 'none'
+            overflowX: 'none',
           }}
         >
-          {(this.props.currentFile && this.props.currentFile.title )||'Untitled'}
+          {(this.props.currentFile && this.props.currentFile.title) || 'Untitled'}
         </div>
         <div
           className='editor-wrapper'
@@ -37,18 +37,18 @@ class NotePreview extends Component {
               top: '0px',
               right: '0px',
               left: '0px',
-              bottom: '0px'
+              bottom: '0px',
             }}
             value={this.props.currentFile.content || ''}
           />
         </div>
       </div>
-    )
+    );
   }
 }
 
 NotePreview.propTypes = {
-  currentFile: PropTypes.object
-}
+  currentFile: PropTypes.object,
+};
 
 export default NotePreview;

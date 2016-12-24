@@ -1,14 +1,14 @@
 import React, {
     Component,
-    PropTypes
+    PropTypes,
 } from 'react';
 
 class EmptyFile extends Component {
-    render() {
-        return (
+  render() {
+    return (
           <div></div>
-        )
-    }
+    );
+  }
 }
 
 export default EmptyFile;
