@@ -11,7 +11,8 @@
     "react/jsx-uses-vars": "error",
     "no-underscore-dangle": "off",
     "func-names": "off",
-    "no-useless-escape": "off"
+    "no-useless-escape": "off",
+    "class-methods-use-this": "off"
   },
   "env": {
     "es6": true,

@@ -1,14 +1,12 @@
 import path from 'path';
 import events from 'events';
 import fs from 'fs';
-
 import electron from 'electron';
+import Positioner from '../positioner';
+
 const app = electron.app;
 const Tray = electron.Tray;
 const BrowserWindow = electron.BrowserWindow;
-
-
-import Positioner from '../positioner';
 
 module.exports = function create(opts) {
   if (typeof opts === 'undefined') opts = { dir: app.getAppPath() };
@@ -24,55 +22,27 @@ module.exports = function create(opts) {
   opts.height = opts.height || 400;
   opts.tooltip = opts.tooltip || '';
 
-  app.on('ready', appReady);
-
   const menubar = new events.EventEmitter();
-  menubar.app = app;
-
-  // Set / get options
-  menubar.setOption = function (opt, val) {
-    opts[opt] = val;
-  };
-
-  menubar.getOption = function (opt) {
-    return opts[opt];
-  };
-
-  return menubar;
 
   function appReady() {
-    if (app.dock && !opts.showDockIcon) app.dock.hide();
-
-    let iconPath = opts.icon || path.join(opts.dir, 'IconTemplate.png');
-    if (!fs.existsSync(iconPath)) iconPath = path.join(__dirname, 'example', 'IconTemplate.png'); // default cat icon
-
+    let supportsTrayHighlightState;
     let cachedBounds; // cachedBounds are needed for double-clicked event
-    const defaultClickEvent = opts.showOnRightClick ? 'right-click' : 'click';
 
-    menubar.tray = opts.tray || new Tray(iconPath);
-    menubar.tray.on(defaultClickEvent, clicked);
-    menubar.tray.on('double-click', clicked);
-    menubar.tray.setToolTip(opts.tooltip);
-
-    let supportsTrayHighlightState = false;
-    try {
-      menubar.tray.setHighlightMode('never');
-      supportsTrayHighlightState = true;
-    } catch (e) {}
-
-    if (opts.preloadWindow) {
-      createWindow();
+    function hideWindow() {
+      if (supportsTrayHighlightState) menubar.tray.setHighlightMode('never');
+      if (!menubar.window) return;
+      menubar.emit('hide');
+      menubar.window.hide();
+      menubar.emit('after-hide');
     }
 
-    menubar.showWindow = showWindow;
-    menubar.hideWindow = hideWindow;
-    menubar.emit('ready');
+    function windowClear() {
+      delete menubar.window;
+      menubar.emit('after-close');
+    }
 
-    function clicked(e, bounds) {
-      if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) return hideWindow();
-      if (menubar.window && menubar.window.isVisible()) return hideWindow();
-      cachedBounds = bounds || cachedBounds;
-      showWindow(cachedBounds);
+    function emitBlur() {
+      menubar.emit('focus-lost');
     }
 
     function createWindow() {
@@ -89,7 +59,11 @@ module.exports = function create(opts) {
       menubar.positioner = new Positioner(menubar.window);
 
       menubar.window.on('blur', () => {
-        opts.alwaysOnTop ? emitBlur() : hideWindow();
+        if (opts.alwaysOnTop) {
+          emitBlur();
+        } else {
+          hideWindow();
+        }
       });
 
       if (opts.showOnAllWorkspaces !== false) {
@@ -136,24 +110,57 @@ module.exports = function create(opts) {
       menubar.emit('after-show');
     }
 
-    function hideWindow() {
-      if (supportsTrayHighlightState) menubar.tray.setHighlightMode('never');
-      if (!menubar.window) return;
-      menubar.emit('hide');
-      menubar.window.hide();
-      menubar.emit('after-hide');
+    function clicked(e, bounds) {
+      if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) return hideWindow();
+      if (menubar.window && menubar.window.isVisible()) return hideWindow();
+      cachedBounds = bounds || cachedBounds;
+      showWindow(cachedBounds);
+      return null;
     }
 
-    function windowClear() {
-      delete menubar.window;
-      menubar.emit('after-close');
+    if (app.dock && !opts.showDockIcon) app.dock.hide();
+
+    let iconPath = opts.icon || path.join(opts.dir, 'IconTemplate.png');
+    if (!fs.existsSync(iconPath)) iconPath = path.join(__dirname, 'example', 'IconTemplate.png'); // default cat icon
+
+    const defaultClickEvent = opts.showOnRightClick ? 'right-click' : 'click';
+
+    menubar.tray = opts.tray || new Tray(iconPath);
+    menubar.tray.on(defaultClickEvent, clicked);
+    menubar.tray.on('double-click', clicked);
+    menubar.tray.setToolTip(opts.tooltip);
+
+    supportsTrayHighlightState = false;
+    try {
+      menubar.tray.setHighlightMode('never');
+      supportsTrayHighlightState = true;
+    } catch (e) {
+      // No-op
     }
 
-    function emitBlur() {
-      menubar.emit('focus-lost');
+    if (opts.preloadWindow) {
+      createWindow();
     }
+
+    menubar.showWindow = showWindow;
+    menubar.hideWindow = hideWindow;
+    menubar.emit('ready');
 
     // first create
     createWindow();
   }
+
+  app.on('ready', appReady);
+  menubar.app = app;
+
+  // Set / get options
+  menubar.setOption = function (opt, val) {
+    opts[opt] = val;
+  };
+
+  menubar.getOption = function (opt) {
+    return opts[opt];
+  };
+
+  return menubar;
 };
