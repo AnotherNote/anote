@@ -38,13 +38,13 @@ class BookForm extends Component {
     }
   }
 
-  _changeName = (event) => {
+  _changeName(event) {
     this.setState({
       book: Object.assign({}, this.state.book, { name: event.target.value })
     });
   }
 
-  _submit = (event) => {
+  _submit(event) {
     event.preventDefault();
     event.stopPropagation();
     if(this.state.book.name == '' || !this.state.book.name){
@@ -56,7 +56,7 @@ class BookForm extends Component {
     this.props.onOk(this.state.book);
   }
 
-  _dropImage = (files) => {
+  _dropImage(files) {
     let that = this;
     co(function * () {
       let path = files[0].path;

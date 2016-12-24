@@ -32,7 +32,7 @@ class FilesList extends Component {
       this.debouncedLinkClick.cancel();
   }
 
-  linkClick = (pathname) => {
+  linkClick(pathname) {
     hashHistory.push({pathname: pathname, query: this.props.query})
   }
 

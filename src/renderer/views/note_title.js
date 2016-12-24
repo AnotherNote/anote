@@ -10,16 +10,16 @@ class NoteTitle extends Component {
       jQuery(ReactDom.findDOMNode(this.refs.input)).focus();
   }
 
-  onChange = (event) => {
+  onChange(event) {
     if(this.props.onChange)
       this.props.onChange(event);
   }
 
-  setValue = (value) => {
+  setValue(value) {
     jQuery(ReactDom.findDOMNode(this.refs.input)).val(value);
   }
 
-  focus = () => {
+  focus() {
     // a chrome focus bug
     setTimeout(() => {
       if(this.refs.input)

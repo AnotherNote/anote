@@ -60,7 +60,7 @@ class BooksList extends Component {
     return shallowCompare(this, nextProps, nextState);
   }
 
-  gridCols = () => {
+  gridCols() {
     if(!this.refs.listRoot)
       return
     let width = this.refs.listRoot.getBoundingClientRect().width;
@@ -88,7 +88,7 @@ class BooksList extends Component {
     }
   }
 
-  handleMenuChange = (event, value, book) => {
+  handleMenuChange(event, value, book) {
     // edit
     if(parseInt(value) == 1){
       console.log('edit book');

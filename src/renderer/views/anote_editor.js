@@ -118,29 +118,29 @@ class ANoteEditor extends Component {
     this.debouncedSetPreviewValue = debounce(this.setPrevewValue, 50);
   }
 
-  componentWillUnmount = () => {
+  componentWillUnmount() {
     this.debouncedSetPreviewValue.cancel();
   }
 
-  setPrevewValue = (previewValue) => {
+  setPrevewValue(previewValue) {
     this.setState({
       previewValue
     });
   }
 
-  showSpinner = () => {
+  showSpinner() {
     this.setState({
       showSpinner: true
     });
   }
 
-  hideSpinner = () => {
+  hideSpinner() {
     this.setState({
       showSpinner: false
     });
   }
 
-  defaultKeyMaps = () => {
+  defaultKeyMaps() {
     let that = this;
     return {
       "Ctrl-P": function(cm) {
@@ -256,7 +256,7 @@ class ANoteEditor extends Component {
 
   // set editor size based on editorState
   // 0 => normal editor, 1 => watching, 2 => preview
-  setSize = (newProps) => {
+  setSize(newProps) {
     let props = newProps || this.props,
       editorState = props.editorState || 0;
     switch (editorState) {
@@ -280,26 +280,26 @@ class ANoteEditor extends Component {
     }
   }
 
-  setValue = (value) => {
+  setValue(value) {
     if(this.editor){
       return this.editor.setValue(value);
     }
     jQuery(ReactDom.findDOMNode(this.refs.textArea)).val(value);
   }
 
-  getValue = () => {
+  getValue() {
     if(this.editor)
       return this.editor.getValue();
     return false;
   }
 
-  clearHistory = () => {
+  clearHistory() {
     if(this.editor)
       this.editor.clearHistory();
   }
 
   // set keymaps
-  setKeyMaps = (newProps) => {
+  setKeyMaps(newProps) {
     let props = newProps || this.props;
     console.log(Object.assign({}, this.defaultKeyMaps(), props.keyMaps));
     if(props.keyMaps && typeof props.keyMaps == 'object')
@@ -310,14 +310,14 @@ class ANoteEditor extends Component {
   }
 
   // 这个用于以ref形式来操作editor
-  performEditor = (method) => {
+  performEditor(method) {
     if(!this.editor || !this.editor[method] || typeof this.editor[method] != 'function')
       return;
     let args = [].slice.apply(arguments, [1]);
     this.editor[method].apply(this.editor, args);
   }
 
-  insertImage = (event) => {
+  insertImage(event) {
     event.preventDefault();
     event.stopPropagation();
     if(this.$imageInput)
@@ -325,7 +325,7 @@ class ANoteEditor extends Component {
   }
 
   // toolbar elements
-  _renderTools = () => {
+  _renderTools() {
     return (
         <div
           className='toolbar-container'
@@ -473,7 +473,7 @@ class ANoteEditor extends Component {
     )
   }
 
-  undo = (event) => {
+  undo(event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -482,7 +482,7 @@ class ANoteEditor extends Component {
       doc.undo();
   }
 
-  redo = (event) => {
+  redo(event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -491,58 +491,58 @@ class ANoteEditor extends Component {
       doc.redo();
   }
 
-  toggleFullscreen = () => {
+  toggleFullscreen() {
     this.setState({
       fullscreen: !this.state.fullscreen
     });
   }
 
-  toggleWatching = () => {
+  toggleWatching() {
     if(this.props.toggleWatching)
       this.props.toggleWatching();
   }
 
-  togglePreview = () => {
+  togglePreview() {
     if(this.props.togglePreview)
       this.props.togglePreview();
   }
 
-  changeBold = (event) => {
+  changeBold(event) {
     event.preventDefault();
     event.stopPropagation();
 
     this.editor.replaceSelection('**' + this.editor.getSelection() + '**');
   }
 
-  changeItalics = (event) => {
+  changeItalics(event) {
     event.preventDefault();
     event.stopPropagation();
 
     this.editor.replaceSelection('*' + this.editor.getSelection() + '*');
   }
 
-  insertHr = (event) => {
+  insertHr(event) {
     event.preventDefault();
     event.stopPropagation();
 
     this.editor.replaceSelection('------------');
   }
 
-  insertUl = (event) => {
+  insertUl(event) {
     event.preventDefault();
     event.stopPropagation();
 
     this.editor.replaceSelection('- ');
   }
 
-  insertOl = (event) => {
+  insertOl(event) {
     event.preventDefault();
     event.stopPropagation();
 
     this.editor.replaceSelection('1. ');
   }
 
-  _anoteClassNames = () => {
+  _anoteClassNames() {
     let klasses = '';
     klasses = this.state.fullscreen ? 'anote-editor anote-fullscreen' : 'anote-editor';
     if(this.props.editorState == 2 || this.props.withoutToolbar)
@@ -550,7 +550,7 @@ class ANoteEditor extends Component {
     return klasses;
   }
 
-  _anoteWatchingClassNames = () => {
+  _anoteWatchingClassNames() {
     let klasses = '';
     if(this.props.editorState == 1){
       klasses += 'fa fa-eye-slash';
@@ -560,7 +560,7 @@ class ANoteEditor extends Component {
     return klasses;
   }
 
-  _anotePreviewCloseBtnStyle = () => {
+  _anotePreviewCloseBtnStyle() {
     if(this.props.editorState == 2){
       return {
         display: 'block'

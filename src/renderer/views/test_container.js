@@ -25,12 +25,12 @@ export default class TestContainer extends Component {
   }
 
   // context menu handler
-  contextMunuHandler = () => {
+  contextMunuHandler() {
     menu.popup(remote.getCurrentWindow())
   }
 
   // open new window
-  windowClick = () => {
+  windowClick() {
     const modalPath = path.join('file://', __dirname, '../../../static/test.html')
     let win = new BrowserWindow({ width: 400, height: 320 })
     win.on('close', function () { win = null })
@@ -57,13 +57,13 @@ export default class TestContainer extends Component {
     });
   }
 
-  testIpc = () => {
+  testIpc() {
     // 函数是传不过去的
     ipcRender.send('ipcTestMain', {hh: 'hh'});
   }
 
   // electron printToPDF, so cool!!!!!!
-  testPdf = () => {
+  testPdf() {
     var opts = {
       marginsType: 0,
       printBackground: true,
@@ -83,14 +83,14 @@ export default class TestContainer extends Component {
     })
   }
 
-  toggleWatching = () => {
+  toggleWatching() {
     this.setState({
       editorState: this.state.editorState == 1 ? 0 : 1,
       oldState: this.state.editorState == 1 ? 0 : 1
     });
   }
 
-  togglePreview = () => {
+  togglePreview() {
     this.setState({
       editorState: this.state.editorState == 2 ? this.state.oldState || 0 : 2
     });

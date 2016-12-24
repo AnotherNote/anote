@@ -110,13 +110,13 @@ class NoteEditor extends Component {
     }
   }
 
-  showSpinner = () => {
+  showSpinner() {
     this.setState({
       showSpinner: true
     });
   }
 
-  hideSpinner = () => {
+  hideSpinner() {
     this.setState({
       showSpinner: false
     });
@@ -124,7 +124,7 @@ class NoteEditor extends Component {
 
   // default keymap like emacs keybinding
   // todo: add custom keymap
-  keyMap = () => {
+  keyMap() {
     var that = this;
     var keyMap = {
       "Ctrl-P": function(cm) {
@@ -214,13 +214,13 @@ class NoteEditor extends Component {
     this.editor = editor;
   }
 
-  setValue = (value) => {
+  setValue(value) {
     if(this.editor.cm)
       return this.editor.cm.setValue(value);
     jQuery(ReactDom.findDOMNode(this.refs.textArea)).val(value);
   }
 
-  clearHistory = () => {
+  clearHistory() {
     if(this.editor.cm)
       this.editor.cm.clearHistory();
   }

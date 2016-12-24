@@ -31,7 +31,7 @@ class TrayApp extends Component {
     }
   }
 
-  getKeyMaps = () => {
+  getKeyMaps() {
     var that = this;
     return {
       'Cmd-S': function(cm){
@@ -40,7 +40,7 @@ class TrayApp extends Component {
     };
   }
 
-  saveFile = (event) => {
+  saveFile(event) {
     if(event){
       event.preventDefault();
       event.stopPropagation();
@@ -48,7 +48,7 @@ class TrayApp extends Component {
     this._openDialog();
   }
 
-  clear = (event) => {
+  clear(event) {
     if(event){
       event.preventDefault();
       event.stopPropagation();
@@ -57,7 +57,7 @@ class TrayApp extends Component {
       this.refs.fileContent.setValue('');
   }
 
-  _openDialog = () => {
+  _openDialog() {
     var that = this;
     books.loadDatabase((error) => {
       if(error)
@@ -76,19 +76,19 @@ class TrayApp extends Component {
     });
   }
 
-  _alertNoBooks = () => {
+  _alertNoBooks() {
     this.setState({
       alertDialogOpen: true
     });
   }
 
-  _closeAlertNoBooksDialog = () => {
+  _closeAlertNoBooksDialog() {
     this.setState({
       alertDialogOpen: false
     });
   }
 
-  _showSaveDialog = () => {
+  _showSaveDialog() {
     this.setState({
       saveDialogOpen: true
     }, () => {
@@ -96,7 +96,7 @@ class TrayApp extends Component {
     });
   }
 
-  _okSave = (event) => {
+  _okSave(event) {
     event.preventDefault();
     event.stopPropagation();
     let canSave = true;
@@ -145,7 +145,7 @@ class TrayApp extends Component {
     }
   }
 
-  _cancelSave = () => {
+  _cancelSave() {
     this.setState({
       titleErrorText: null,
       title: null,
@@ -153,13 +153,13 @@ class TrayApp extends Component {
     });
   }
 
-  _changeTitle = (event) => {
+  _changeTitle(event) {
     this.setState({
       title: event.target.value
     });
   }
 
-  _changeBookId = (event, index, value) => {
+  _changeBookId(event, index, value) {
     this.setState({
       bookId: value
     })

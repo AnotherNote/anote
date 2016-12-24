@@ -116,31 +116,31 @@ class FilesContainer extends Component {
   }
 
 
-  menuMoveToNotebook = () => {
+  menuMoveToNotebook() {
     this.moveToNotebook(this.props.currentFile, this.props.files.findIndex((file) => {
       return file._id == this.props.currentFile._id;
     }));
   }
 
-  menuCopyToNotebook = () => {
+  menuCopyToNotebook() {
     this.copyToNotebook(this.props.currentFile, this.props.files.findIndex((file) => {
       return file._id == this.props.currentFile._id;
     }));
   }
 
-  menuMoveToTrash = () => {
+  menuMoveToTrash() {
     this.delFile(this.props.currentFile, this.props.files.findIndex((file) => {
       return file._id == this.props.currentFile._id;
     }));
   }
 
-  menuClearFile = () => {
+  menuClearFile() {
     this.clearFile(this.props.currentFile, this.props.files.findIndex((file) => {
       return file._id == this.props.currentFile._id;
     }));
   }
 
-  menuRestoreFile = () => {
+  menuRestoreFile() {
     this.restoreFile(this.props.currentFile, this.props.files.findIndex((file) => {
       return file._id == this.props.currentFile._id;
     }));
@@ -156,7 +156,7 @@ class FilesContainer extends Component {
     singleEvent.on('addNoteFromTray', this._addNoteFromTray);
   }
 
-  _addNoteFromTray = (newFile) => {
+  _addNoteFromTray(newFile) {
     if(!this.props.location.query.available)
       return;
     if(this.props.location.query.searchFileText && this.props.location.query.searchFileText != '')
@@ -212,7 +212,7 @@ class FilesContainer extends Component {
     singleEvent.removeAllListeners('addNoteFromTray');
   }
 
-  _checkNewNoteParam = (props) => {
+  _checkNewNoteParam(props) {
     props = props || this.props;
     if(props.location.query.newNote == 'true'){
       // 保证只开一次新建的dialog
@@ -223,14 +223,14 @@ class FilesContainer extends Component {
     return false;
   }
 
-  _delNewNoteParam = () => {
+  _delNewNoteParam() {
     hashHistory.replace({
       pathname: this.props.location.pathname,
       query: Object.assign({}, pick(this.props.location.query, 'searchFileText', 'bookId', 'bookName'), {available: true})
     });
   }
 
-  _fetchFiles = (newProps) => {
+  _fetchFiles(newProps) {
     let that = this,
       searchConditions = null,
       sortConditions = { 'updatedAt': -1 },
@@ -253,7 +253,7 @@ class FilesContainer extends Component {
   }
 
   // 如果没有book数据，就需要fetch book的数据
-  _fetchBooks = () => {
+  _fetchBooks() {
     var that = this;
     if(this.props.books.length == 0){
       books.find({}).sort({ 'updatedAt': -1 }).exec((err, bks) => {
@@ -264,7 +264,7 @@ class FilesContainer extends Component {
     }
   }
 
-  _ensureGlobalBook = (book) => {
+  _ensureGlobalBook(book) {
     let firstBook = null;
     if(!this.bookId() && (firstBook = book || this._availableBooks()[0])){
       this.props.setGlobalBook({
@@ -274,20 +274,20 @@ class FilesContainer extends Component {
     }
   }
 
-  _availableBooks = () => {
+  _availableBooks() {
     return this.props.books.filter((book) => {
       return book.available;
     });
   }
 
-  _unavailableBooks = () => {
+  _unavailableBooks() {
     return this.props.books.filter((book) => {
       return !book.available;
     });
   }
 
   // decide where to go
-  _processJump = (fls) => {
+  _processJump(fls) {
     if(this.props.params.id)
       return;
     if(fls.length > 0){
@@ -295,7 +295,7 @@ class FilesContainer extends Component {
     }
   }
 
-  getCurrentFile = (newProps) => {
+  getCurrentFile(newProps) {
     console.log('getCurrentFile');
     let currentFile = newProps.files.find((file) => {
       return file._id == newProps.params.id;
@@ -311,7 +311,7 @@ class FilesContainer extends Component {
     return currentFile;
   }
 
-  newAndCreateFile = (event) => {
+  newAndCreateFile(event) {
     if(event) {
       event.preventDefault();
       event.stopPropagation();
@@ -333,24 +333,24 @@ class FilesContainer extends Component {
   }
 
   // 用于新建的bookId
-  bookId = () => {
+  bookId() {
     let result = this.props.location.query.bookId || this.props.globalBook._id;
     return result;
   }
 
-  isInBook = () => {
+  isInBook() {
     return this.props.location.query.bookId;
   }
 
-  onChangeContent = (content, file) => {
+  onChangeContent(content, file) {
     this.debouncedSaveFileToDb(Object.assign({}, file, {content: content}));
   }
 
-  onChangeTitle = (value, file) => {
+  onChangeTitle(value, file) {
     this.debouncedSaveFileToDb(Object.assign({}, file, {title: value}));
   }
 
-  saveFileToDb = (file) => {
+  saveFileToDb(file) {
     var that = this;
     that.props.editFile(file);
     files.update({'_id': file._id}, {$set: that._fileAttributes(file)}, {upsert: false, multi: false}, (error) => {
@@ -361,11 +361,11 @@ class FilesContainer extends Component {
     });
   }
 
-  _fileAttributes = (file) => {
+  _fileAttributes(file) {
     return pick(file, 'title', 'content');
   }
 
-  delFile = (file, index) => {
+  delFile(file, index) {
     this.setState({
       confirmationOpen: true,
       confirmString: `Are you sure you want to delete the note '${file.title || "Untitled"}'`,
@@ -373,7 +373,7 @@ class FilesContainer extends Component {
     });
   }
 
-  delFileOk = (tmpData) => {
+  delFileOk(tmpData) {
     let that = this;
     files.update({ _id: tmpData.fileId }, {$set: {available: false}}, {}, function(error) {
       if(error) {
@@ -388,7 +388,7 @@ class FilesContainer extends Component {
     });
   }
 
-  clearFile = (file, index) => {
+  clearFile(file, index) {
     this.setState({
       confirmationOpen: true,
       confirmString: `Are you sure you want to delete forever the note '${file.title || "Untitled"}'`,
@@ -396,7 +396,7 @@ class FilesContainer extends Component {
     });
   }
 
-  clearFileOk = (tmpData) => {
+  clearFileOk(tmpData) {
     let that = this;
     files.remove({ _id: tmpData.fileId }, {}, function(error) {
       if(error) {
@@ -411,7 +411,7 @@ class FilesContainer extends Component {
     });
   }
 
-  clearTrash = (file, index) => {
+  clearTrash(file, index) {
     this.setState({
       confirmationOpen: true,
       confirmString: 'Are you sure you want to clear trash',
@@ -419,7 +419,7 @@ class FilesContainer extends Component {
     });
   }
 
-  clearTrashOk = () => {
+  clearTrashOk() {
     let that = this;
     files.remove({available: false}, {multi: true}, (err) => {
       that.props.listFiles([]);
@@ -430,13 +430,13 @@ class FilesContainer extends Component {
     })
   }
 
-  findBook = (bookId) => {
+  findBook(bookId) {
     return this.props.books.filter((book) => {
       return book._id == bookId;
     })[0];
   }
 
-  restoreFile = (file, index) => {
+  restoreFile(file, index) {
     let tmpBook = this.findBook(file.bookId);
     this.setState({
       confirmationOpen: true,
@@ -445,7 +445,7 @@ class FilesContainer extends Component {
     });
   }
 
-  restoreFileOk = (tmpData) => {
+  restoreFileOk(tmpData) {
     let that = this;
     let tmpBook = this.findBook(tmpData.file.bookId);
     if(tmpBook && !tmpBook.available){
@@ -481,12 +481,12 @@ class FilesContainer extends Component {
     }
   }
 
-  onOkConfirmationDialog = (event, tmpData) => {
+  onOkConfirmationDialog(event, tmpData) {
     this[tmpData.callback](tmpData);
   }
 
   // process delete action and jump
-  _processDelAndJump = ( index, fileId, customerFunc ) => {
+  _processDelAndJump( index, fileId, customerFunc ) {
     console.log('_processDelAndJump');
     console.log(index, fileId);
     let tmpFile = null,
@@ -504,13 +504,13 @@ class FilesContainer extends Component {
     hashHistory.push({ pathname: `/notes/${tmpFile._id}/edit`, query: this.props.location.query });
   }
 
-  onCancelConfirmationDialog = () => {
+  onCancelConfirmationDialog() {
     this.setState({
       confirmationOpen: false
     });
   }
 
-  onContextMenu = (file, index) => {
+  onContextMenu(file, index) {
     let chooseFile = file ? true : false;
     let canNew = this.bookId() ? true : false;
     openFileItemContextMenu(
@@ -553,7 +553,7 @@ class FilesContainer extends Component {
     );
   }
 
-  moveToNotebook = (file, index) => {
+  moveToNotebook(file, index) {
     let tmpIdx = this._availableBooks().findIndex((book) => {
       return book._id == file.bookId;
     });
@@ -568,7 +568,7 @@ class FilesContainer extends Component {
     });
   }
 
-  copyToNotebook = (file, index) => {
+  copyToNotebook(file, index) {
     let tmpIdx = this._availableBooks().findIndex((book) => {
       return book._id == file.bookId;
     });
@@ -583,22 +583,22 @@ class FilesContainer extends Component {
     });
   }
 
-  menuListFilter = (dataItem, currentDataItem) => {
+  menuListFilter(dataItem, currentDataItem) {
     return dataItem.id == currentDataItem;
   }
 
-  listMenuCancel = () => {
+  listMenuCancel() {
     this.setState({
       listMenuOpen: false
     });
   }
 
-  listMenuOk = (event, checkedId, tmpData) => {
+  listMenuOk(event, checkedId, tmpData) {
     this[`_${tmpData.type}File`](tmpData, checkedId);
   }
 
   // move file to other notebook
-  _moveFile = ({file, index}, bookId) => {
+  _moveFile({file, index}, bookId) {
     var that = this;
     files.update({ _id: file._id }, { $set: { bookId: bookId } }, {}, function(error) {
       if(error){
@@ -614,7 +614,7 @@ class FilesContainer extends Component {
   }
 
   // copy file to other notebook
-  _copyFile = ({file, index}, bookId) => {
+  _copyFile({file, index}, bookId) {
     var that = this;
     files.insert(Object.assign(
       {
@@ -629,7 +629,7 @@ class FilesContainer extends Component {
     });
   }
 
-  dropdownMenuChange = (event, index, value) => {
+  dropdownMenuChange(event, index, value) {
     if(value == this.dropdownMenuValue())
       return;
     if(value == 'trash') {
@@ -660,7 +660,7 @@ class FilesContainer extends Component {
       });
   }
 
-  dropdownMenuValue = () => {
+  dropdownMenuValue() {
     if(this.props.location.query.available == 'false') {
       return 'trash';
     }

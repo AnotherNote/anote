@@ -20,12 +20,12 @@ class FileForm extends Component {
     };
   }
 
-  onTitleChange = (value, currentFile) => {
+  onTitleChange(value, currentFile) {
     if(this.props.callbacks && this.props.callbacks.onChangeTitle && currentFile.title != value)
       this.props.callbacks.onChangeTitle(value, currentFile)
   }
 
-  onContentChange = (value, currentFile) => {
+  onContentChange(value, currentFile) {
     if(value == null || currentFile == null)
       return;
     if(this.props.callbacks && this.props.callbacks.onChangeContent){
@@ -34,23 +34,23 @@ class FileForm extends Component {
     }
   }
 
-  toggleWatching = () => {
+  toggleWatching() {
     this.setState({
       oldState: this.props.editorState == 1 ? 0 : 1
     });
     this.props.setEditorState(this.props.editorState == 1 ? 0 : 1);
   }
 
-  togglePreview = () => {
+  togglePreview() {
     this.props.setEditorState(this.props.editorState == 2 ? this.state.oldState || 0 : 2);
   }
 
-  componentWillUnmount = () => {
+  componentWillUnmount() {
     this.debouncedOnTitleChange.cancel();
     this.debouncedOnContentchange.cancel();
   }
 
-  componentWillReceiveProps = (newProps) => {
+  componentWillReceiveProps(newProps) {
     if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
       if(this.refs.fileTitle){
         this.refs.fileTitle.setValue(newProps.currentFile.title);

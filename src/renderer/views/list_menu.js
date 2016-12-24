@@ -39,7 +39,7 @@ export default class ListMenu extends Component {
     });
   }
 
-  borderStyle = (dataItem) => {
+  borderStyle(dataItem) {
     if(dataItem.id == this.state.checkedId) {
       return '1.5px #d1c091 solid';
     }else{

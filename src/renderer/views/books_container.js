@@ -127,7 +127,7 @@ class BooksContainer extends Component {
     this._checkNewNoteBookParam(newProps);
   }
 
-  _checkNewNoteBookParam = (props) => {
+  _checkNewNoteBookParam(props) {
     props = props || this.props;
     if(props.location.query.newNoteBook == 'true'){
       // 保证只开一次新建的dialog
@@ -136,7 +136,7 @@ class BooksContainer extends Component {
     }
   }
 
-  _delNewNoteBookParam = () => {
+  _delNewNoteBookParam() {
     hashHistory.replace({
       pathname: '/'
     });
@@ -146,27 +146,27 @@ class BooksContainer extends Component {
     this.debouncedChangeBooksSearchText.cancel();
   }
 
-  _newBook = (event) => {
+  _newBook(event) {
     this.props.activeBook({ imagePath: '', available: true });
     this.setState({
       bookDialogOpen: true
     });
   }
 
-  editBook = (book) => {
+  editBook(book) {
     this.props.activeBook(book);
     this.setState({
       bookDialogOpen: true
     });
   }
 
-  closeBookFormDialog = () => {
+  closeBookFormDialog() {
     this.setState({
       bookDialogOpen: false
     });
   }
 
-  submitBookFormDialog = (book) => {
+  submitBookFormDialog(book) {
     var that = this;
     if(!book._id){
       books.insert(that._bookAttributes(book), (error, newBook) => {
@@ -201,7 +201,7 @@ class BooksContainer extends Component {
     }
   }
 
-  _bookAttributes = (book) => {
+  _bookAttributes(book) {
     return pick(book, 'imagePath', 'available', 'name');
   }
 
@@ -215,11 +215,11 @@ class BooksContainer extends Component {
     return shallowCompare(this, nextProps, nextState);
   }
 
-  jumpToNotes = (obj) => {
+  jumpToNotes(obj) {
     hashHistory.push(obj);
   }
 
-  delBook = (book) => {
+  delBook(book) {
     this.setState({
       confirmationOpen: true,
       confirmString: `Are you sure you want to delete the notebook '${book.name}' all notes to trash`,
@@ -227,13 +227,13 @@ class BooksContainer extends Component {
     });
   }
 
-  onCancelConfirmationDialog = () => {
+  onCancelConfirmationDialog() {
     this.setState({
       confirmationOpen: false
     });
   }
 
-  onOkConfirmationDialog = (event, tmpData) => {
+  onOkConfirmationDialog(event, tmpData) {
     let that = this;
     books.update({_id: tmpData.bookId}, {$set: {available: false}}, {}, function(error) {
       if(error){
@@ -256,7 +256,7 @@ class BooksContainer extends Component {
     });
   }
 
-  onContextMenu = (event, book) => {
+  onContextMenu(event, book) {
     var that = this;
     openBookItemContextMenu({
       editBook: () => {
@@ -271,7 +271,7 @@ class BooksContainer extends Component {
     });
   }
 
-  onNormalContextMenu = (event) => {
+  onNormalContextMenu(event) {
     event.preventDefault();
     event.stopPropagation();
     var that = this;
@@ -282,13 +282,13 @@ class BooksContainer extends Component {
     });
   }
 
-  availableBooks = () => {
+  availableBooks() {
     return this.props.books.filter((book) => {
       return book.available;
     });
   }
 
-  unavailableBooks = () => {
+  unavailableBooks() {
     return this.props.books.filter((book) => {
       return !book.available;
     });

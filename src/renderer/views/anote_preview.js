@@ -19,7 +19,7 @@ class ANotePreview extends Component {
     }
   }
 
-  renderMarkdown = () => {
+  renderMarkdown() {
     return {
       __html: marked(this.props.value || '', {
         renderer: this.markedRenderer
@@ -27,7 +27,7 @@ class ANotePreview extends Component {
     }
   }
 
-  setSize = (width, height) => {
+  setSize(width, height) {
     let newStyle = {};
     if(width)
       newStyle['width'] = width;
