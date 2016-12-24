@@ -6,30 +6,30 @@ module.exports = {
   onNoMainWin,
   onNoEditNotesList,
   enableItem,
-  disableItem
-}
+  disableItem,
+};
 
-var electron = require('electron')
+const electron = require('electron');
 
-var app = electron.app
+const app = electron.app;
 
-var windows = require('./windows')
+const windows = require('./windows');
 
-var log = require('./log').log;
+const log = require('./log').log;
 
-import config from '../config'
+import config from '../config';
 
-const BrowserWindow = electron.BrowserWindow
+const BrowserWindow = electron.BrowserWindow;
 
-var menu
+let menu;
 
-function init () {
-  menu = electron.Menu.buildFromTemplate(getMenuTemplate())
-  electron.Menu.setApplicationMenu(menu)
+function init() {
+  menu = electron.Menu.buildFromTemplate(getMenuTemplate());
+  electron.Menu.setApplicationMenu(menu);
 }
 
 // 在notebook列表中
-function onNotebookContainer () {
+function onNotebookContainer() {
   disableMenuItems('Move To Notebook...',
   'Copy To Notebook...',
   'Move To Trash',
@@ -85,17 +85,17 @@ function onNoMainWin() {
 }
 
 function enableItem(item) {
-  let tmpItem = getMenuItem(item);
+  const tmpItem = getMenuItem(item);
   tmpItem.enabled = true;
 }
 
 function disableItem(item) {
-  let tmpItem = getMenuItem(item);
+  const tmpItem = getMenuItem(item);
   tmpItem.enabled = false;
 }
 
-function getMenuTemplate () {
-  var template = [
+function getMenuTemplate() {
+  const template = [
     {
       label: 'Notebook',
       submenu: [
@@ -104,9 +104,9 @@ function getMenuTemplate () {
           accelerator: 'Shift+Cmd+N',
           click: () => {
             windows.main.dispatch('newNoteBook');
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
     {
       label: 'Note',
@@ -117,47 +117,47 @@ function getMenuTemplate () {
           click: () => {
             log('new note');
             windows.main.dispatch('newNote');
-          }
+          },
         },
         {
           label: 'Move To Notebook...',
           click: () => {
             log('move to notebook');
             windows.main.dispatch('moveToNotebook');
-          }
+          },
         },
         {
           label: 'Copy To Notebook...',
           click: () => {
-            log('copy to notebook')
+            log('copy to notebook');
             windows.main.dispatch('copyToNotebook');
-          }
+          },
         },
         {
           label: 'Move To Trash',
           click: () => {
             log('move to trash');
             windows.main.dispatch('moveToTrash');
-          }
+          },
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: 'Delete Forever',
           click: () => {
-            log('delete forever')
+            log('delete forever');
             windows.main.dispatch('clearFile');
-          }
+          },
         },
         {
           label: 'Restore...',
           click: () => {
-            log('restore')
+            log('restore');
             windows.main.dispatch('restoreFile');
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
     {
       label: 'Edit',
@@ -165,19 +165,19 @@ function getMenuTemplate () {
         {
           label: 'Redo',
           accelerator: 'Cmd+Z',
-          click: () => { log('redo') }
+          click: () => { log('redo'); },
         },
         {
           label: 'Undo',
           accelerator: 'Shft+Cmd+Z',
-          click: () => { log('Undo') }
+          click: () => { log('Undo'); },
         },
-        { type: "separator" },
-        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-      ]
+        { type: 'separator' },
+        { label: 'Cut', accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
+        { label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
+        { label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
+        { label: 'Select All', accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' },
+      ],
     },
     {
       label: 'Window',
@@ -185,9 +185,9 @@ function getMenuTemplate () {
         {
           label: 'Minimize',
           accelerator: 'CmdOrCtrl+M',
-          role: 'minimize'
-        }
-      ]
+          role: 'minimize',
+        },
+      ],
     },
     {
       label: 'View',
@@ -196,124 +196,124 @@ function getMenuTemplate () {
           label: 'Toggle Full Screen',
           accelerator: (function () {
             if (process.platform === 'darwin') {
-              return 'Ctrl+Command+F'
+              return 'Ctrl+Command+F';
             } else {
-              return 'F11'
+              return 'F11';
             }
-          })(),
-          click: function (item, focusedWindow) {
+          }()),
+          click(item, focusedWindow) {
             if (focusedWindow) {
-              focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
+              focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
             }
-          }
-        }
-      ]
-    }
+          },
+        },
+      ],
+    },
   ];
 
-  if(config.dev){
-    let devSubmenu = [{
-              label: 'Reload',
-              accelerator: 'CmdOrCtrl+R',
-              click: function (item, focusedWindow) {
-                if (focusedWindow) {
+  if (config.dev) {
+    const devSubmenu = [{
+      label: 'Reload',
+      accelerator: 'CmdOrCtrl+R',
+      click(item, focusedWindow) {
+        if (focusedWindow) {
                   // on reload, start fresh and close any old
                   // open secondary windows
-                  if (focusedWindow.id === 1) {
-                    BrowserWindow.getAllWindows().forEach(function (win) {
-                      if (win.id > 1) {
-                        win.close()
-                      }
-                    })
-                  }
-                  focusedWindow.reload()
-                }
+          if (focusedWindow.id === 1) {
+            BrowserWindow.getAllWindows().forEach((win) => {
+              if (win.id > 1) {
+                win.close();
               }
-            },
-            {
-              label: 'Toggle Developer Tools',
-              accelerator: (function () {
-                if (process.platform === 'darwin') {
-                  return 'Alt+Command+I'
-                } else {
-                  return 'Ctrl+Shift+I'
-                }
-              })(),
-              click: function (item, focusedWindow) {
-                if (focusedWindow) {
-                  focusedWindow.toggleDevTools()
-                }
-              }
-            }];
-    template[template.length-1]['submenu'] = [...template[template.length-1]['submenu'], ...devSubmenu]
+            });
+          }
+          focusedWindow.reload();
+        }
+      },
+    },
+    {
+      label: 'Toggle Developer Tools',
+      accelerator: (function () {
+        if (process.platform === 'darwin') {
+          return 'Alt+Command+I';
+        } else {
+          return 'Ctrl+Shift+I';
+        }
+      }()),
+      click(item, focusedWindow) {
+        if (focusedWindow) {
+          focusedWindow.toggleDevTools();
+        }
+      },
+    }];
+    template[template.length - 1].submenu = [...template[template.length - 1].submenu, ...devSubmenu];
   }
 
   if (process.platform === 'darwin') {
-    const name = electron.app.getName()
+    const name = electron.app.getName();
     template.unshift({
       label: name,
       submenu: [{
         label: `About ${name}`,
-        role: 'about'
+        role: 'about',
       }, {
-        type: 'separator'
+        type: 'separator',
       }, {
         label: 'Services',
         role: 'services',
-        submenu: []
+        submenu: [],
       }, {
-        type: 'separator'
+        type: 'separator',
       }, {
         label: `Hide ${name}`,
         accelerator: 'Command+H',
-        role: 'hide'
+        role: 'hide',
       }, {
         label: 'Hide Others',
         accelerator: 'Command+Alt+H',
-        role: 'hideothers'
+        role: 'hideothers',
       }, {
         label: 'Show All',
-        role: 'unhide'
+        role: 'unhide',
       }, {
-        type: 'separator'
+        type: 'separator',
       }, {
         label: 'Quit',
         accelerator: 'Command+Q',
-        click: function () {
-          app.quit()
-        }
-      }]
-    })
+        click() {
+          app.quit();
+        },
+      }],
+    });
   }
 
   return template;
 }
 
-function getMenuItem (label) {
-  for (var i = 0; i < menu.items.length; i++) {
-    var menuItem = menu.items[i].submenu.items.find(function (item) {
-      return item.label === label
-    })
-    if (menuItem) return menuItem
+function getMenuItem(label) {
+  for (let i = 0; i < menu.items.length; i++) {
+    const menuItem = menu.items[i].submenu.items.find(item => item.label === label);
+    if (menuItem) return menuItem;
   }
 }
 
-function enableMenuItems (...items) {
+function enableMenuItems(...items) {
   items = items || [];
-  for (var i = 0; i < menu.items.length; i++) {
+  for (let i = 0; i < menu.items.length; i++) {
     menu.items[i].submenu.items.forEach((item) => {
-      if(items.includes(item.label))
+      if (items.includes(item.label)) {
         item.enabled = true;
-    })
+      }
+    });
   }
 }
 
-function disableMenuItems (...items) {
+function disableMenuItems(...items) {
   items = items || [];
-  for (var i = 0; i < menu.items.length; i++) {
+  for (let i = 0; i < menu.items.length; i++) {
     menu.items[i].submenu.items.forEach((item) => {
-      if(items.includes(item.label))
+      if (items.includes(item.label)) {
         item.enabled = false;
-    })
+      }
+    });
   }
 }

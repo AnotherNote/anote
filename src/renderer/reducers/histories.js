@@ -2,15 +2,15 @@
 import constants from '../../constants';
 let {
     POP_HISTORY,
-    PUSH_HISTORY
+    PUSH_HISTORY,
 } = constants;
 
 const defaultHome = {
   containerName: 'BooksContainer',
-  props: {}
+  props: {},
 };
 
-export default function(state = [defaultHome], action) {
+export default function (state = [defaultHome], action) {
   switch (action.type) {
     case PUSH_HISTORY:
       return [...state, action.history].slice(-10);

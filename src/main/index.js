@@ -1,10 +1,10 @@
-const electron = require('electron')
+const electron = require('electron');
 // Module to control application life.
-const app = electron.app
+const app = electron.app;
 // Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow
+const BrowserWindow = electron.BrowserWindow;
 
-const path = require('path')
+const path = require('path');
 
 const windows = require('./windows');
 
@@ -12,25 +12,25 @@ const ipc = require('./ipc');
 
 const menu = require('./menu');
 
-const tray = require('./tray')
+const tray = require('./tray');
 
-import config from '../config'
+import config from '../config';
 
-var menubar = tray({
+const menubar = tray({
   height: 450,
   showDockIcon: true,
   index: `file://${path.resolve(__dirname, '../../static/tray.html')}`,
-  icon: path.resolve(__dirname, '../../static/images/IconTemplate.png')
+  icon: path.resolve(__dirname, '../../static/images/IconTemplate.png'),
 });
 
-menubar.on('ready', function(){
+menubar.on('ready', () => {
 });
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 
-function init () {
-  app.on('ready', function() {
+function init() {
+  app.on('ready', () => {
     // react dev plugin
     // if(config.dev)
     //   BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.4_0');
@@ -40,38 +40,38 @@ function init () {
   });
 }
 
-var shouldQuit = false;
+let shouldQuit = false;
 
-if(!shouldQuit){
+if (!shouldQuit) {
   shouldQuit = app.makeSingleInstance(onAppOpen);
-  if(shouldQuit){
+  if (shouldQuit) {
     app.quite();
   }
 }
 
-if(!shouldQuit){
+if (!shouldQuit) {
   init();
 }
 
 ipc.init();
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit();
   }
-})
+});
 
-app.on('activate', function () {
+app.on('activate', () => {
   if (windows.main.win === null) {
     windows.main.init();
   }
-})
+});
 
-function onAppOpen () {
-  if(app.ipcReady){
+function onAppOpen() {
+  if (app.ipcReady) {
     windows.main.show();
   }
 }

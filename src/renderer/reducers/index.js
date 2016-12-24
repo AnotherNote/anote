@@ -1,5 +1,5 @@
 import {
-    combineReducers
+    combineReducers,
 } from 'redux';
 import books from './books';
 import activeBook from './active_book';
@@ -7,7 +7,7 @@ import histories from './histories';
 import files from './files';
 import activeFile from './active_file';
 import globalBook from './global_book';
-import editorState from './editor_state'
+import editorState from './editor_state';
 
 const reducers = combineReducers({
   books,
@@ -16,7 +16,7 @@ const reducers = combineReducers({
   files,
   activeFile,
   globalBook,
-  editorState
+  editorState,
 });
 
 export default reducers;

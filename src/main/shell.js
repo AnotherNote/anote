@@ -1,6 +1,6 @@
 module.exports = {
-  openExternal
-}
+  openExternal,
+};
 
 const shell = require('electron').shell;
 

@@ -1,7 +1,7 @@
 import keyMirror from 'keymirror';
 import path from 'path';
 
-let constants = keyMirror({
+const constants = keyMirror({
   LIST_BOOKS: null,
   ADD_BOOK: null,
   DEL_BOOK: null,
@@ -17,7 +17,7 @@ let constants = keyMirror({
   CONCAT_FILES: null,
   ACTIVE_FILE: null,
   SET_GLOBAL_BOOK: null,
-  SET_EDITOR_STATE: null
+  SET_EDITOR_STATE: null,
 });
 
 constants.HOME_PATH = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
