@@ -1,7 +1,7 @@
 const dialog = require('electron').dialog;
 
-function openSaveDialog(event, title, extensions, tmpData) {
-  extensions = extensions.split(',');
+function openSaveDialog(event, title, extensionString, tmpData) {
+  const extensions = extensionString.split(',');
   const options = {
     title,
     filters: [

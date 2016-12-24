@@ -3,6 +3,7 @@
   "rules": {
     "no-console": "off",
     "import/no-extraneous-dependencies": "off",
-    "import/no-unresolved": "off" // we disable becuase electron-rebuild
+    "import/no-unresolved": "off", // we disable becuase electron-rebuild
+    "max-len": "off"
   }
 }

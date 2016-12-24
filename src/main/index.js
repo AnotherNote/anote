@@ -2,7 +2,6 @@ const electron = require('electron');
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
 
 const path = require('path');
 
@@ -13,8 +12,6 @@ const ipc = require('./ipc');
 const menu = require('./menu');
 
 const tray = require('./tray');
-
-import config from '../config';
 
 const menubar = tray({
   height: 450,
@@ -33,11 +30,17 @@ function init() {
   app.on('ready', () => {
     // react dev plugin
     // if(config.dev)
-    //   BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.4_0');
+    // BrowserWindow.addDevToolsExtension('/Users/wpzero/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.4_0');
     windows.main.init();
     windows.worker.init();
     menu.init();
   });
+}
+
+function onAppOpen() {
+  if (app.ipcReady) {
+    windows.main.show();
+  }
 }
 
 let shouldQuit = false;
@@ -69,9 +72,3 @@ app.on('activate', () => {
     windows.main.init();
   }
 });
-
-function onAppOpen() {
-  if (app.ipcReady) {
-    windows.main.show();
-  }
-}
