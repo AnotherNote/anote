@@ -26,7 +26,7 @@ function guid() {
     s4()}-${s4()}${s4()}${s4()}`;
 }
 
-const downloadAsyn = function (url, dest) {
+function downloadAsyn(url, dest) {
   const file = fs.createWriteStream(dest);
   return new Promise((resolve, reject) => {
     let responseSent = false;
@@ -73,7 +73,7 @@ function directoryExists(path) {
   }
 }
 
-const copyFile = (source, target) => new Promise((resolve, reject) => {
+function copyFile(source, target) => new Promise((resolve, reject) {
   ensureDirectoryExistence(target);
   let rs = fs.createReadStream(source),
     ws = fs.createWriteStream(target);
@@ -86,7 +86,7 @@ const copyFile = (source, target) => new Promise((resolve, reject) => {
   });
 });
 
-const buffer2File = (buffer) => {
+function buffer2File(buffer) {
   const tmpPath = path.resolve(TMP_FILES_PATH, `${Date.now()}`);
   ensureDirectoryExistence(tmpPath);
   return co(function* () {
@@ -99,7 +99,7 @@ const buffer2File = (buffer) => {
   });
 };
 
-const downloadImageAsyn = (url) => {
+function downloadImageAsyn(url) {
   const tmpPath = path.resolve(TMP_FILES_PATH, `${guid()}`);
   ensureDirectoryExistence(tmpPath);
   return co(function* () {
@@ -133,7 +133,7 @@ const hash2Key = hash => `${hash.slice(0, 5)}/${hash}`;
 
 const key2path = key => `${FILES_PATH}/${key}`;
 
-const debounce = (func, wait, immediate) => {
+function debounce(func, wait, immediate) {
   let timeout = null,
     debounced = function () {
       let context = this,
@@ -210,7 +210,7 @@ const findIndexById = (list, item) => list.findIndex(currentItem => currentItem.
 
 const pick = (o, ...props) => Object.assign({}, ...props.map(prop => ({ [prop]: o[prop] })));
 
-const chineseDate = (date) => {
+function chineseDate(date) {
   const tmpDate = new Date(date);
   tmpDate.setHours(date.getHours() + 8);
   return tmpDate;
@@ -219,7 +219,7 @@ const chineseDate = (date) => {
 const ppDate = date => `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear().toString()}`;
 
 // sequial process
-// const placeImageToLocalAsyn = (content) => {
+// function placeImageToLocalAsyn(content) {
 //   content = content || '';
 //   let pp = /!\[(.*?)\]\((.*?)\)/i;
 //   let ppp = /[http|https]/;
@@ -244,7 +244,7 @@ const ppDate = date => `${date.getMonth() + 1}/${date.getDate()}/${date.getFullY
 // }
 
 // parallel process
-const placeImageToLocalAsyn = (content) => {
+function placeImageToLocalAsyn(content) {
   content = content || '';
   const pp = /!\[(.*?)\]\((.*?)\)/i;
   const ppp = /[http|https]/;

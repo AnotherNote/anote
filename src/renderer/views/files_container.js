@@ -46,7 +46,7 @@ import { sendWorkerCmd } from '../worker_util';
 import singleEvent from '../single_event';
 import Spinner from './spinner'
 
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
     files: state.files,
     currentFile: state.activeFile,
@@ -56,7 +56,7 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
     addFile: (file) => {
       dispatch(addFile(file));

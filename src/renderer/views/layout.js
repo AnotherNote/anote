@@ -31,7 +31,7 @@ class Layout extends Component {
     };
   }
 
-  globalSearch = (event) => {
+  globalSearch(event) {
     event.preventDefault();
     event.stopPropagation();
     hashHistory.push({ pathname: '/notes', query: {searchFileText: this.state.searchFileText, available: true}});

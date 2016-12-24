@@ -23,13 +23,13 @@ import FileForm from './file_form';
 import EmptyFile from './empty_file';
 import TestContainer from './test_container';
 
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
     histories: state.histories
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
     popHistory: () => {
       dispatch(popHistory());

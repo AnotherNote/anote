@@ -42,7 +42,7 @@ import {
   ipcRenderer
 } from 'electron';
 
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
     books: state.books,
     currentBook: state.activeBook,
@@ -50,7 +50,7 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
     addBook: (book) => {
       dispatch(addBook(book));

@@ -10,7 +10,7 @@ import { openSaveDialog, openFileDialog } from './dialog';
 
 const mainMsgQueue = [];
 
-const init = () => {
+function init() {
   const ipc = electron.ipcMain;
 
   ipc.on('mainRenderReady', (e) => {
