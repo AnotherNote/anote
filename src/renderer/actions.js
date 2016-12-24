@@ -1,5 +1,6 @@
 import constants from '../constants';
-let {
+
+const {
     LIST_BOOKS,
     ADD_BOOK,
     DEL_BOOK,
