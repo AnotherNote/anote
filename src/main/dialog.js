@@ -1,4 +1,4 @@
-const dialog = require('electron').dialog;
+import { dialog } from 'electron';
 
 function openSaveDialog(event, title, extensionString, tmpData) {
   const extensions = extensionString.split(',');

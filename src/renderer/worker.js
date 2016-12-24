@@ -150,7 +150,7 @@ const dispatchHandlers = {
   },
 };
 
-const ipcRender = require('electron').ipcRenderer;
+import { ipcRender } from 'electron';
 
 function dispatch(action, ...args) {
   if (dispatchHandlers[action]) {

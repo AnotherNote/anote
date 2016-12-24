@@ -1,4 +1,4 @@
-const ipcRender = require('electron').ipcRenderer;
+import { ipcRender } from 'electron';
 import dispatchHandlers from './dispatch_handlers';
 
 // setup render ipc

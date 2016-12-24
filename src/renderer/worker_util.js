@@ -1,4 +1,4 @@
-const ipcRenderer = require('electron').ipcRenderer;
+import { ipcRenderer } from 'electron';
 
 export function sendWorkerCmd(...args) {
   ipcRenderer.send('workerCmd', ...args);

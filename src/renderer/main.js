@@ -26,7 +26,7 @@ const muiTheme = getMuiTheme({
   },
 });
 
-const ipcRenderer = require('electron').ipcRenderer;
+import { ipcRenderer } from 'electron';
 
 
 // subscribe redux to control new note menu item

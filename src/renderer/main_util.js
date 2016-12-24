@@ -1,4 +1,4 @@
-const ipcRenderer = require('electron').ipcRenderer;
+import { ipcRenderer } from 'electron';
 
 export default function sendMainCmd(...args) {
   ipcRenderer.send('mainCmd', ...args);
