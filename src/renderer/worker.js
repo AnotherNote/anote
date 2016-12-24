@@ -1,26 +1,24 @@
 import Promise from 'bluebird';
-window.$ = window.jQuery = window.jquery = require('jquery');
 import co from 'co';
-require('babel-polyfill');
-import constants from '../constants';
-const { FILES_PATH } = constants;
-const ipcRenderer = require('electron').ipcRenderer;
-import {
-    files,
-    books,
-    tags,
-    infos,
-} from '../main/set_db';
 import fs from 'fs';
 import path from 'path';
+import marked from 'marked';
+import { remote, ipcRenderer } from 'electron';
+import jQuery from 'jquery';
+import constants from '../constants';
+import {
+  files,
+} from '../main/set_db';
 import { copyFile } from '../util';
 import renderFactory from '../render_factory';
-import marked from 'marked';
-import { remote } from 'electron';
+
+require('babel-polyfill');
+
+window.$ = window.jQuery = window.jquery = jQuery;
+const { FILES_PATH } = constants;
 const BrowserWindow = remote.BrowserWindow;
 const statAsync = Promise.promisify(fs.stat);
 const writeFileAsync = Promise.promisify(fs.writeFile);
-
 
 function _renderHtml(markdown) {
   const markedRenderer = renderFactory({});
@@ -50,89 +48,14 @@ function _renderPdf(html, filename) {
         if (err) {
           return;
         }
-        fs.writeFile(filename, data, (err) => {
-          if (err) {
+        fs.writeFile(filename, data, (innerErr) => {
+          if (innerErr) {
             return;
           }
           win.destroy();
         });
       });
     }, 200);
-  });
-}
-
-const dispatchHandlers = {
-  testHandler(...args) {
-    console.log(...args);
-  },
-  // 把笔记到处存为markdown
-  saveNoteAsMarkdown(fileId) {
-    ipcRenderer.send('saveDialog', 'export a note', 'md', { fileId, type: 'saveNoteAsMarkdown' });
-  },
-  saveNoteAsPdf(fileId) {
-    ipcRenderer.send('saveDialog', 'export a note', 'pdf', { fileId, type: 'saveNoteAsPdf' });
-  },
-  // main process save的callback
-  fileSaved(filename, tmpData) {
-    const that = this;
-    switch (tmpData.type) {
-      case 'saveNoteAsMarkdown':
-        files.find({ _id: tmpData.fileId }, (err, docs) => {
-          if (err || docs.length == 0) { return; }
-          let content = docs[0].content;
-          co(function* () {
-            if (content.length > 0) {
-              content = yield mdLocalImageOut(filename, content);
-            }
-            yield writeFileAsync(filename, content);
-          });
-        });
-        break;
-
-      case 'saveNoteAsPdf':
-        files.find({ _id: tmpData.fileId }, (err, docs) => {
-          if (err || docs.length == 0) { return; }
-          const content = docs[0].content;
-          const html = _renderHtml(content);
-          _renderPdf(html, filename);
-        });
-        break;
-
-      default:
-
-    }
-  },
-  // 导入markdown or html
-  importFile() {
-    ipcRenderer.send('openFile', { type: 'importFile' });
-  },
-  // 选择文件的callback
-  selectedFile(files, tmpData) {
-    console.log(files);
-    console.log(tmpData);
-    const file = files[0];
-    switch (tmpData.type) {
-      case 'importFile':
-        console.log('xxxxx');
-
-        break;
-      default:
-
-    }
-  },
-};
-
-const ipcRender = require('electron').ipcRenderer;
-
-function dispatch(action, ...args) {
-  if (dispatchHandlers[action]) {
-    dispatchHandlers[action](...args);
-  }
-}
-
-function init() {
-  ipcRender.on('dispatch', (e, ...args) => {
-    dispatch(...args);
   });
 }
 
@@ -166,6 +89,78 @@ function mdLocalImageOut(filename, content) {
       }
     } while (m);
     return result;
+  });
+}
+
+const dispatchHandlers = {
+  testHandler(...args) {
+    console.log(...args);
+  },
+  // 把笔记到处存为markdown
+  saveNoteAsMarkdown(fileId) {
+    ipcRenderer.send('saveDialog', 'export a note', 'md', { fileId, type: 'saveNoteAsMarkdown' });
+  },
+  saveNoteAsPdf(fileId) {
+    ipcRenderer.send('saveDialog', 'export a note', 'pdf', { fileId, type: 'saveNoteAsPdf' });
+  },
+  // main process save的callback
+  fileSaved(filename, tmpData) {
+    switch (tmpData.type) {
+      case 'saveNoteAsMarkdown':
+        files.find({ _id: tmpData.fileId }, (err, docs) => {
+          if (err || docs.length === 0) { return; }
+          let content = docs[0].content;
+          co(function* () {
+            if (content.length > 0) {
+              content = yield mdLocalImageOut(filename, content);
+            }
+            yield writeFileAsync(filename, content);
+          });
+        });
+        break;
+
+      case 'saveNoteAsPdf':
+        files.find({ _id: tmpData.fileId }, (err, docs) => {
+          if (err || docs.length === 0) { return; }
+          const content = docs[0].content;
+          const html = _renderHtml(content);
+          _renderPdf(html, filename);
+        });
+        break;
+
+      default:
+
+    }
+  },
+  // 导入markdown or html
+  importFile() {
+    ipcRenderer.send('openFile', { type: 'importFile' });
+  },
+  // 选择文件的callback
+  selectedFile(innerfiles, tmpData) {
+    console.log(innerfiles);
+    console.log(tmpData);
+    switch (tmpData.type) {
+      case 'importFile':
+        console.log('xxxxx');
+        break;
+      default:
+
+    }
+  },
+};
+
+const ipcRender = require('electron').ipcRenderer;
+
+function dispatch(action, ...args) {
+  if (dispatchHandlers[action]) {
+    dispatchHandlers[action](...args);
+  }
+}
+
+function init() {
+  ipcRender.on('dispatch', (e, ...args) => {
+    dispatch(...args);
   });
 }
 

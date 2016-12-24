@@ -12,7 +12,9 @@
     "no-underscore-dangle": "off",
     "func-names": "off",
     "no-useless-escape": "off",
-    "class-methods-use-this": "off"
+    "class-methods-use-this": "off",
+    "import/prefer-default-export": "off",
+    "no-shadow": "off"
   },
   "env": {
     "es6": true,

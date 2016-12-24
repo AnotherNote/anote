@@ -5,7 +5,14 @@ import {
     connect,
 } from 'react-redux';
 import autobind from 'autobind-decorator';
-import ReactDom from 'react-dom';
+import {
+  hashHistory,
+} from 'react-router';
+import FlatButton from 'material-ui/FlatButton';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
+import Divider from 'material-ui/Divider';
+import { ipcRenderer } from 'electron';
 import {
     listFiles,
     addFile,
@@ -20,32 +27,20 @@ import {
 import {
     files,
     books,
-    tags,
 } from '../../main/set_db';
-import {
-    hashHistory,
-} from 'react-router';
 import FilesList from './files_list';
-import FileForm from './file_form';
-import FlatButton from 'material-ui/FlatButton';
 import {
     debounce,
     pick,
 } from '../../util';
 import {
   openFileItemContextMenu,
-} from '../controllers/files_controller.js';
+} from '../controllers/files_controller';
 import ConfirmDialog from './confirm_dialog';
 import ListMenu from './list_menu';
-import DropDownMenu from 'material-ui/DropDownMenu';
-import MenuItem from 'material-ui/MenuItem';
-import Divider from 'material-ui/Divider';
-const ipcRenderer = require('electron').ipcRenderer;
-import util from 'util';
 import { setDispatchHandler } from '../dispatch_handlers';
 import { sendWorkerCmd } from '../worker_util';
 import singleEvent from '../single_event';
-import Spinner from './spinner';
 
 function mapStateToProps(state) {
   return {
@@ -119,23 +114,23 @@ class FilesContainer extends Component {
 
 
   menuMoveToNotebook() {
-    this.moveToNotebook(this.props.currentFile, this.props.files.findIndex(file => file._id == this.props.currentFile._id));
+    this.moveToNotebook(this.props.currentFile, this.props.files.findIndex(file => file._id === this.props.currentFile._id));
   }
 
   menuCopyToNotebook() {
-    this.copyToNotebook(this.props.currentFile, this.props.files.findIndex(file => file._id == this.props.currentFile._id));
+    this.copyToNotebook(this.props.currentFile, this.props.files.findIndex(file => file._id === this.props.currentFile._id));
   }
 
   menuMoveToTrash() {
-    this.delFile(this.props.currentFile, this.props.files.findIndex(file => file._id == this.props.currentFile._id));
+    this.delFile(this.props.currentFile, this.props.files.findIndex(file => file._id === this.props.currentFile._id));
   }
 
   menuClearFile() {
-    this.clearFile(this.props.currentFile, this.props.files.findIndex(file => file._id == this.props.currentFile._id));
+    this.clearFile(this.props.currentFile, this.props.files.findIndex(file => file._id === this.props.currentFile._id));
   }
 
   menuRestoreFile() {
-    this.restoreFile(this.props.currentFile, this.props.files.findIndex(file => file._id == this.props.currentFile._id));
+    this.restoreFile(this.props.currentFile, this.props.files.findIndex(file => file._id === this.props.currentFile._id));
   }
 
   // this hook method is not always recalled when url changed
@@ -152,10 +147,10 @@ class FilesContainer extends Component {
     if (!this.props.location.query.available) {
       return;
     }
-    if (this.props.location.query.searchFileText && this.props.location.query.searchFileText != '') {
+    if (this.props.location.query.searchFileText && this.props.location.query.searchFileText !== '') {
       return;
     }
-    if (this.props.location.query.bookId && this.props.location.query.bookId != newFile.bookId) {
+    if (this.props.location.query.bookId && this.props.location.query.bookId !== newFile.bookId) {
       return;
     }
     this.props.addFile(newFile);
@@ -167,7 +162,7 @@ class FilesContainer extends Component {
     this._checkNewNoteParam(newProps);
 
     // 确保files最新
-    if (this.props.location.query.bookId != newProps.location.query.bookId) {
+    if (this.props.location.query.bookId !== newProps.location.query.bookId) {
       this._fetchFiles(newProps);
       if (newProps.location.query.bookId) {
         this.props.setGlobalBook({
@@ -178,20 +173,20 @@ class FilesContainer extends Component {
     }
 
     // searchFileText change 重新 fetch 数据
-    if (this.props.location.query.searchFileText != newProps.location.query.searchFileText
-        || this.props.location.query.available != newProps.location.query.available) {
+    if (this.props.location.query.searchFileText !== newProps.location.query.searchFileText
+        || this.props.location.query.available !== newProps.location.query.available) {
       this._fetchFiles(newProps);
     }
 
     // 确保currentfile最新，由于我们用一个页面相同元素换属性来展示页面，所以不是替换元素，出发不了componentDidMount
-    if (newProps.files != this.props.files || newProps.params.id != this.props.params.id) {
+    if (newProps.files !== this.props.files || newProps.params.id !== this.props.params.id) {
       if (newProps.params.id && newProps.files.length > 0) {
         this.getCurrentFile(newProps);
       }
     }
 
     // 确保有book可以新建文章
-    if (newProps.books != this.props.books) {
+    if (newProps.books !== this.props.books) {
       this._ensureGlobalBook(newProps.books.filter(book => book.available)[0]);
     }
   }
@@ -208,7 +203,7 @@ class FilesContainer extends Component {
 
   _checkNewNoteParam(props) {
     props = props || this.props;
-    if (props.location.query.newNote == 'true') {
+    if (props.location.query.newNote === 'true') {
       // 保证只开一次新建的dialog
       this._delNewNoteParam();
       this.newAndCreateFile();
@@ -225,15 +220,15 @@ class FilesContainer extends Component {
   }
 
   _fetchFiles(newProps) {
-    let that = this,
-      searchConditions = null,
-      sortConditions = { updatedAt: -1 },
-      props = newProps || this.props;
+    const that = this;
+    let searchConditions = null;
+    const sortConditions = { updatedAt: -1 };
+    const props = newProps || this.props;
     if (props.location.query.bookId) {
       searchConditions = { bookId: props.location.query.bookId, available: true };
     } else if (props.location.query.searchFileText) {
       searchConditions = { $or: [{ title: { $regex: new RegExp(props.location.query.searchFileText, 'i') } }, { content: { $regex: new RegExp(props.location.query.searchFileText, 'i') } }], available: true };
-    } else if (props.location.query.available == 'false') {
+    } else if (props.location.query.available === 'false') {
       searchConditions = { available: false };
     } else {
       searchConditions = { available: true };
@@ -250,7 +245,7 @@ class FilesContainer extends Component {
   // 如果没有book数据，就需要fetch book的数据
   _fetchBooks() {
     const that = this;
-    if (this.props.books.length == 0) {
+    if (this.props.books.length === 0) {
       books.find({}).sort({ updatedAt: -1 }).exec((err, bks) => {
         that.props.listBooks(bks);
       });
@@ -260,12 +255,14 @@ class FilesContainer extends Component {
   }
 
   _ensureGlobalBook(book) {
-    let firstBook = null;
-    if (!this.bookId() && (firstBook = book || this._availableBooks()[0])) {
-      this.props.setGlobalBook({
-        _id: firstBook._id,
-        name: firstBook.name,
-      });
+    if (!this.bookId()) {
+      const firstBook = book;
+      if (firstBook || this._availableBooks()[0]) {
+        this.props.setGlobalBook({
+          _id: firstBook._id,
+          name: firstBook.name,
+        });
+      }
     }
   }
 
@@ -289,12 +286,12 @@ class FilesContainer extends Component {
 
   getCurrentFile(newProps) {
     console.log('getCurrentFile');
-    const currentFile = newProps.files.find(file => file._id == newProps.params.id) || {};
+    const currentFile = newProps.files.find(file => file._id === newProps.params.id) || {};
     this.debouncedSaveFileToDb.cancel();
     this.props.activeFile(currentFile);
-    if (currentFile._id && this.props.location.query.available == 'true') {
+    if (currentFile._id && this.props.location.query.available === 'true') {
       ipcRenderer.send('onEditNote');
-    } else if (currentFile._id && this.props.location.query.available == 'false') {
+    } else if (currentFile._id && this.props.location.query.available === 'false') {
       ipcRenderer.send('onEditTrash');
     }
     console.log(currentFile);
@@ -314,7 +311,7 @@ class FilesContainer extends Component {
       if (error) {
         throw error;
       }
-      if (this.props.location.query.available == 'true') {
+      if (this.props.location.query.available === 'true') {
         this.props.addFile(newFile);
       }
       hashHistory.push({ pathname: `/notes/${newFile._id}/edit`, query: this.props.location.query });
@@ -417,7 +414,7 @@ class FilesContainer extends Component {
   }
 
   findBook(bookId) {
-    return this.props.books.filter(book => book._id == bookId)[0];
+    return this.props.books.filter(book => book._id === bookId)[0];
   }
 
   restoreFile(file, index) {
@@ -470,9 +467,9 @@ class FilesContainer extends Component {
   _processDelAndJump(index, fileId, customerFunc) {
     console.log('_processDelAndJump');
     console.log(index, fileId);
-    let tmpFile = null,
-      fileLength = this.props.files.length;
-    if (fileLength > 1 && index == fileLength - 1) {
+    let tmpFile = null;
+    const fileLength = this.props.files.length;
+    if (fileLength > 1 && index === fileLength - 1) {
       tmpFile = this.props.files[0];
     } else if (fileLength > 1) {
       tmpFile = this.props.files[index + 1];
@@ -481,8 +478,9 @@ class FilesContainer extends Component {
     if (customerFunc) {
       customerFunc();
     }
-    if (fileLength == 1) { return hashHistory.push({ pathname: '/notes', query: this.props.location.query }); }
+    if (fileLength === 1) { return hashHistory.push({ pathname: '/notes', query: this.props.location.query }); }
     hashHistory.push({ pathname: `/notes/${tmpFile._id}/edit`, query: this.props.location.query });
+    return null;
   }
 
   onCancelConfirmationDialog() {
@@ -492,8 +490,8 @@ class FilesContainer extends Component {
   }
 
   onContextMenu(file, index) {
-    const chooseFile = file ? true : false;
-    const canNew = this.bookId() ? true : false;
+    const chooseFile = !!file;
+    const canNew = !!this.bookId();
     openFileItemContextMenu(
       this.props.location.query.available,
       canNew,
@@ -535,7 +533,7 @@ class FilesContainer extends Component {
   }
 
   moveToNotebook(file, index) {
-    const tmpIdx = this._availableBooks().findIndex(book => book._id == file.bookId);
+    const tmpIdx = this._availableBooks().findIndex(book => book._id === file.bookId);
     this.setState({
       currentBookId: this._availableBooks()[tmpIdx]._id,
       listMenuOpen: true,
@@ -548,7 +546,7 @@ class FilesContainer extends Component {
   }
 
   copyToNotebook(file, index) {
-    const tmpIdx = this._availableBooks().findIndex(book => book._id == file.bookId);
+    const tmpIdx = this._availableBooks().findIndex(book => book._id === file.bookId);
     this.setState({
       currentBookId: this._availableBooks()[tmpIdx]._id,
       listMenuOpen: true,
@@ -561,7 +559,7 @@ class FilesContainer extends Component {
   }
 
   menuListFilter(dataItem, currentDataItem) {
-    return dataItem.id == currentDataItem;
+    return dataItem.id === currentDataItem;
   }
 
   listMenuCancel() {
@@ -606,10 +604,10 @@ class FilesContainer extends Component {
   }
 
   dropdownMenuChange(event, index, value) {
-    if (value == this.dropdownMenuValue()) {
-      return;
+    if (value === this.dropdownMenuValue()) {
+      return null;
     }
-    if (value == 'trash') {
+    if (value === 'trash') {
       return hashHistory.push({
         pathname: '/notes',
         query: {
@@ -617,7 +615,7 @@ class FilesContainer extends Component {
         },
       });
     }
-    if (value == 'all') {
+    if (value === 'all') {
       return hashHistory.push({
         pathname: '/notes',
         query: {
@@ -636,10 +634,11 @@ class FilesContainer extends Component {
         },
       });
     }
+    return null;
   }
 
   dropdownMenuValue() {
-    if (this.props.location.query.available == 'false') {
+    if (this.props.location.query.available === 'false') {
       return 'trash';
     }
     if (this.props.location.query.bookId) {

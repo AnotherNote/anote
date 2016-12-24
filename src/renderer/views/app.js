@@ -62,6 +62,6 @@ class App extends Component {
         </Router>
     );
   }
-};
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
