@@ -1,9 +1,14 @@
-import path from 'path';
+/* global $ */
 import co from 'co';
 import React, {
   Component,
 } from 'react';
 import autobind from 'autobind-decorator';
+import toMarkdown from 'to-markdown';
+import sanitizeHtml from 'sanitize-html';
+import clipboard from 'electron';
+import ReactDom from 'react-dom';
+import CodeMirror from 'codemirror';
 import {
   copyFile,
   getFileHash,
@@ -11,29 +16,20 @@ import {
   buffer2File,
   debounce,
   placeImageToLocalAsyn,
-  downloadAsyn,
 } from '../../util';
+import Spinner from './spinner';
+import constants from '../../constants';
+import ANotePreview from './anote_preview';
+
 const {
     FILES_PATH,
 } = constants;
-const clipboard = require('electron').clipboard;
-import fs from 'fs';
-import toMarkdown from 'to-markdown';
-import sanitizeHtml from 'sanitize-html';
-import Spinner from './spinner';
-import constants from '../../constants';
-import ReactDom from 'react-dom';
-
-import CodeMirror from 'codemirror';
 require('codemirror/addon/dialog/dialog.js');
 require('codemirror/addon/search/searchcursor.js');
 require('codemirror/addon/search/search.js');
 require('codemirror/addon/scroll/annotatescrollbar.js');
 require('codemirror/addon/search/matchesonscrollbar.js');
 require('codemirror/addon/search/jump-to-line.js');
-
-
-import ANotePreview from './anote_preview';
 require('codemirror/mode/markdown/markdown');
 
 // for past image
@@ -43,7 +39,7 @@ function pastImage(cm) {
   if (image && !image.isEmpty()) {
     const text = clipboard.readText();
     buffer2File(image.toPNG()).then((key) => {
-      cm.replaceSelection(`![${text.length == 0 ? 'past-image' : text}](${key})`);
+      cm.replaceSelection(`![${text.length === 0 ? 'past-image' : text}](${key})`);
     });
     return true;
   }
@@ -80,7 +76,7 @@ function pastHtml(cm, component) {
           filter: 'img',
           replacement(content, node) {
             // need add back worker
-            return `${'![' + 'web-image' + ']('}${node.src})`;
+            return `${'![web-image]('}${node.src})`;
           },
         },
       ],
@@ -266,8 +262,8 @@ class ANoteEditor extends Component {
   // set editor size based on editorState
   // 0 => normal editor, 1 => watching, 2 => preview
   setSize(newProps) {
-    let props = newProps || this.props,
-      editorState = props.editorState || 0;
+    const props = newProps || this.props;
+    const editorState = props.editorState || 0;
     switch (editorState) {
       // normal
       case 0:
@@ -293,7 +289,8 @@ class ANoteEditor extends Component {
     if (this.editor) {
       return this.editor.setValue(value);
     }
-    jQuery(ReactDom.findDOMNode(this.refs.textArea)).val(value);
+    $(ReactDom.findDOMNode(this.refs.textArea)).val(value);
+    return false;
   }
 
   getValue() {
@@ -316,15 +313,15 @@ class ANoteEditor extends Component {
     }
     if (this.props.keyMaps && typeof props.keyMaps === 'function') { return this.editor.setOption('extraKeys', Object.assign({}, this.defaultKeyMaps(), props.keyMaps())); }
     this.editor.setOption('extraKeys', this.defaultKeyMaps());
+    return null;
   }
 
   // 这个用于以ref形式来操作editor
-  performEditor(method) {
+  performEditor(method, ...args) {
     if (!this.editor || !this.editor[method] || typeof this.editor[method] !== 'function') {
       return;
     }
-    const args = [].slice.apply(arguments, [1]);
-    this.editor[method].apply(this.editor, args);
+    this.editor[method].call(this.editor, ...args);
   }
 
   insertImage(event) {
