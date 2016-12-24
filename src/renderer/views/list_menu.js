@@ -42,7 +42,7 @@ export default class ListMenu extends Component {
   }
 
   borderStyle(dataItem) {
-    if (dataItem.id == this.state.checkedId) {
+    if (dataItem.id === this.state.checkedId) {
       return '1.5px #d1c091 solid';
     } else {
       return 'none';
@@ -59,7 +59,7 @@ export default class ListMenu extends Component {
       <FlatButton
         label={this.props.okString}
         onTouchTap={(event) => { this.props.onOk(event, this.state.checkedId, this.props.tmpData); }}
-        disabled={this.state.checkedId == null}
+        disabled={this.state.checkedId === null}
       />,
     ];
 

@@ -32,7 +32,7 @@ class BookForm extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (JSON.stringify(newProps.book) != JSON.stringify(this.state.book)) {
+    if (JSON.stringify(newProps.book) !== JSON.stringify(this.state.book)) {
       this.setState({
         book: newProps.book,
         nameErrorText: null,
@@ -49,7 +49,7 @@ class BookForm extends Component {
   _submit(event) {
     event.preventDefault();
     event.stopPropagation();
-    if (this.state.book.name == '' || !this.state.book.name) {
+    if (this.state.book.name === '' || !this.state.book.name) {
       this.setState({
         nameErrorText: 'need a name!!',
       });
@@ -105,7 +105,7 @@ class BookForm extends Component {
           /><br/>
           <DropZone onDrop={this._dropImage} multiple={false} style={{ width: '200px', height: '200px' }}>
             <img
-              src={this.state.book.imagePath != '' ? `${FILES_PATH}/${this.state.book.imagePath}` : constants.TMP_IMAGE_PATH}
+              src={this.state.book.imagePath !== '' ? `${FILES_PATH}/${this.state.book.imagePath}` : constants.TMP_IMAGE_PATH}
               style={{ height: '100%', width: '100%', objectFit: 'contain' }}
             />
           </DropZone>

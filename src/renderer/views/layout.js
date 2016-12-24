@@ -47,7 +47,7 @@ class Layout extends Component {
 
   // maybe not a legant way, the method break the react lifecycle!!!
   componentWillReceiveProps(newProps) {
-    if (newProps.location.query.searchFileText != this.state.searchFileText) {
+    if (newProps.location.query.searchFileText !== this.state.searchFileText) {
       this.setState({ searchFileText: newProps.location.query.searchFileText || '' });
       jQuery(ReactDom.findDOMNode(this.refs.globalSearchInput)).find('input').val(newProps.location.query.searchFileText || '');
     }

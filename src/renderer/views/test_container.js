@@ -89,14 +89,14 @@ export default class TestContainer extends Component {
 
   toggleWatching() {
     this.setState({
-      editorState: this.state.editorState == 1 ? 0 : 1,
-      oldState: this.state.editorState == 1 ? 0 : 1,
+      editorState: this.state.editorState === 1 ? 0 : 1,
+      oldState: this.state.editorState === 1 ? 0 : 1,
     });
   }
 
   togglePreview() {
     this.setState({
-      editorState: this.state.editorState == 2 ? this.state.oldState || 0 : 2,
+      editorState: this.state.editorState === 2 ? this.state.oldState || 0 : 2,
     });
   }
 

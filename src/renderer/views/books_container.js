@@ -94,7 +94,7 @@ class BooksContainer extends Component {
     // can write some fetch infos code
     const that = this;
     books.find({ }).sort({ updatedAt: -1 }).exec((err, bks) => {
-      if (bks.length == 0) {
+      if (bks.length === 0) {
         that.props.listBooks(bks);
       }
       let tmpC = 0;
@@ -105,7 +105,7 @@ class BooksContainer extends Component {
           }
           bk.filesCount = count;
           tmpC += 1;
-          if (tmpC == bks.length) {
+          if (tmpC === bks.length) {
             that.props.listBooks(bks);
           }
         });
@@ -130,7 +130,7 @@ class BooksContainer extends Component {
 
   _checkNewNoteBookParam(props) {
     props = props || this.props;
-    if (props.location.query.newNoteBook == 'true') {
+    if (props.location.query.newNoteBook === 'true') {
       // 保证只开一次新建的dialog
       this._delNewNoteBookParam();
       this._newBook();
@@ -239,7 +239,7 @@ class BooksContainer extends Component {
         throw error;
       }
       that.props.editBook(Object.assign({}, tmpData.book, { available: false }));
-      if (that.props.globalBook._id == tmpData.bookId) {
+      if (that.props.globalBook._id === tmpData.bookId) {
         that.props.setGlobalBook({});
       }
       files.update({ bookId: tmpData.bookId }, { $set: { available: false } }, { multi: true }, (error) => {
@@ -309,7 +309,7 @@ class BooksContainer extends Component {
         </div>
         <BooksList
           books={this.availableBooks().filter((book) => {
-            if (!this.state.booksSearchText || this.state.booksSearchText == '') {
+            if (!this.state.booksSearchText || this.state.booksSearchText === '') {
               return true;
             }
             const patt = new RegExp(this.state.booksSearchText, 'i');

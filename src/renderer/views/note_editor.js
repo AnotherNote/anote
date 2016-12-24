@@ -35,7 +35,7 @@ function pastImage(cm) {
   if (image && !image.isEmpty()) {
     const text = clipboard.readText();
     buffer2File(image.toPNG()).then((key) => {
-      cm.replaceSelection(`![${text.length == 0 ? 'past-image' : text}](${key})`);
+      cm.replaceSelection(`![${text.length === 0 ? 'past-image' : text}](${key})`);
     });
     return true;
   }
@@ -199,7 +199,7 @@ class NoteEditor extends Component {
       onload() {
         $imageInput.change((event) => {
           const files = event.target.files;
-          if (files.length == 0) {
+          if (files.length === 0) {
             return;
           }
           co(function* () {

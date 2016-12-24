@@ -67,7 +67,7 @@ class TrayApp extends Component {
         return;
       }
       books.find({ available: true }).sort({ updatedAt: -1 }).exec((err, bks) => {
-        if (bks.length == 0) {
+        if (bks.length === 0) {
           that.setState({
             books: [],
           });
@@ -106,13 +106,13 @@ class TrayApp extends Component {
     let canSave = true;
 
     // validates
-    if (!this.state.bookId || this.state.bookId == '') {
+    if (!this.state.bookId || this.state.bookId === '') {
       canSave = false;
       this.setState({
         bookIdErrorText: 'must choose a book!!!',
       });
     }
-    if (!this.state.title || this.state.title == '') {
+    if (!this.state.title || this.state.title === '') {
       canSave = false;
       this.setState({
         titleErrorText: 'must input a title',

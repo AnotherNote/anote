@@ -224,7 +224,7 @@ class ANoteEditor extends Component {
 
     // change event
     this.editor.on('change', (instance, changeObj) => {
-      if (this.props.editorState == 1 || this.editorState == 2) {
+      if (this.props.editorState === 1 || this.editorState === 2) {
         this.debouncedSetPreviewValue(this.editor.getValue());
       }
       if (this.props.onChange) {
@@ -237,7 +237,7 @@ class ANoteEditor extends Component {
     // set image input
     this.$imageInput.change((event) => {
       const files = event.target.files;
-      if (files.length == 0) {
+      if (files.length === 0) {
         return;
       }
       co(function* () {
@@ -254,7 +254,7 @@ class ANoteEditor extends Component {
 
   componentWillReceiveProps(newProps) {
     this.setSize(newProps);
-    if (newProps.editorState == 1 || newProps.editorState == 2) {
+    if (newProps.editorState === 1 || newProps.editorState === 2) {
       this.debouncedSetPreviewValue(this.editor.getValue());
     }
   }
@@ -555,13 +555,13 @@ class ANoteEditor extends Component {
   _anoteClassNames() {
     let klasses = '';
     klasses = this.state.fullscreen ? 'anote-editor anote-fullscreen' : 'anote-editor';
-    if (this.props.editorState == 2 || this.props.withoutToolbar) { klasses += ' anote-without-toolbar'; }
+    if (this.props.editorState === 2 || this.props.withoutToolbar) { klasses += ' anote-without-toolbar'; }
     return klasses;
   }
 
   _anoteWatchingClassNames() {
     let klasses = '';
-    if (this.props.editorState == 1) {
+    if (this.props.editorState === 1) {
       klasses += 'fa fa-eye-slash';
     } else {
       klasses += 'fa fa-eye';
@@ -570,7 +570,7 @@ class ANoteEditor extends Component {
   }
 
   _anotePreviewCloseBtnStyle() {
-    if (this.props.editorState == 2) {
+    if (this.props.editorState === 2) {
       return {
         display: 'block',
       };
@@ -590,7 +590,7 @@ class ANoteEditor extends Component {
           className='content-wrapper'
         >
           <div
-            className={this.props.editorState == 2 || !!this.props.withoutToolbar ? 'toolbar hidden' : 'toolbar'}
+            className={this.props.editorState === 2 || !!this.props.withoutToolbar ? 'toolbar hidden' : 'toolbar'}
           >
               {this._renderTools()}
           </div>

@@ -92,11 +92,11 @@ class BooksList extends Component {
 
   handleMenuChange(event, value, book) {
     // edit
-    if (parseInt(value) == 1) {
+    if (parseInt(value) === 1) {
       console.log('edit book');
       this.props.callbacks.editBook(book);
     // delete
-    } else if (parseInt(value) == 2) {
+    } else if (parseInt(value) === 2) {
       this.props.callbacks.delBook(book);
     }
   }
@@ -130,7 +130,7 @@ class BooksList extends Component {
                         >
                         <img
                           onClick={(event) => { this.props.callbacks.jumpToNotes({ pathname: '/notes', query: { bookId: book._id, bookName: book.name, available: true } }); }}
-                          src={book.imagePath != '' ? key2path(book.imagePath) : constants.TMP_IMAGE_PATH}
+                          src={book.imagePath !== '' ? key2path(book.imagePath) : constants.TMP_IMAGE_PATH}
                         />
                       </GridTile>
                     ))}
