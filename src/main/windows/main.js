@@ -1,23 +1,40 @@
-const main = module.exports = {
-  init,
-  show,
-  hide,
-  send,
-  dispatch,
-  win: null,
-};
-
 import electron from 'electron';
-
-const app = electron.app;
-
-const BrowserWindow = electron.BrowserWindow;
-
 import path from 'path';
 
-import { mainMsgQueue } from '../ipc.js';
-
+import { mainMsgQueue } from '../ipc';
 import menu from '../menu';
+
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const main = {};
+
+function show() {
+  if (!main.win) {
+    return;
+  }
+  main.win.show();
+}
+
+function hide() {
+  if (!main.win) {
+    return;
+  }
+  main.win.hide();
+}
+
+function send(...args) {
+  if (!main.win || !app.mainRenderReady) {
+    mainMsgQueue.push(args);
+  } else {
+    main.win.send(...args);
+  }
+}
+
+// dispath a event to render process
+// 处于给render process 发送事件dispatch，并且处理.
+function dispatch(...args) {
+  send('dispatch', ...args);
+}
 
 function init() {
   if (main.win) {
@@ -52,32 +69,14 @@ function init() {
     app.mainRenderReady = false;
     menu.onNoMainWin();
   });
+
+  return null;
 }
 
-function show() {
-  if (!main.win) {
-    return;
-  }
-  main.win.show();
-}
+main.init = init;
+main.show = show;
+main.hide = hide;
+main.send = send;
+main.dispatch = dispatch;
 
-function hide() {
-  if (!main.win) {
-    return;
-  }
-  main.win.hide();
-}
-
-function send(...args) {
-  if (!main.win || !app.mainRenderReady) {
-    mainMsgQueue.push(args);
-  } else {
-    main.win.send(...args);
-  }
-}
-
-// dispath a event to render process
-// 处于给render process 发送事件dispatch，并且处理.
-function dispatch(...args) {
-  send('dispatch', ...args);
-}
+module.exports = main;
