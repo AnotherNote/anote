@@ -3,14 +3,14 @@ import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
 import co from 'co';
+import http from 'http';
+import https from 'https';
 import constants from './constants';
 
 const {
     FILES_PATH,
     TMP_FILES_PATH,
 } = constants;
-import http from 'http';
-import https from 'https';
 
 const writeFileAsyn = Promise.promisify(fs.writeFile);
 
@@ -56,6 +56,14 @@ function downloadAsyn(url, dest) {
 
 // const downloadAsyn = Promise.promisify(download);
 
+function directoryExists(pathInFunc) {
+  try {
+    return fs.statSync(pathInFunc).isDirectory();
+  } catch (err) {
+    return false;
+  }
+}
+
 function ensureDirectoryExistence(filePath) {
   const dirname = path.dirname(filePath);
   if (directoryExists(dirname)) {
@@ -63,21 +71,14 @@ function ensureDirectoryExistence(filePath) {
   }
   ensureDirectoryExistence(dirname);
   fs.mkdirSync(dirname);
-}
-
-function directoryExists(path) {
-  try {
-    return fs.statSync(path).isDirectory();
-  } catch (err) {
-    return false;
-  }
+  return false;
 }
 
 function copyFile(source, target) {
   return new Promise((resolve, reject) => {
     ensureDirectoryExistence(target);
-    let rs = fs.createReadStream(source),
-      ws = fs.createWriteStream(target);
+    const rs = fs.createReadStream(source);
+    const ws = fs.createWriteStream(target);
     rs.pipe(ws);
     ws.on('close', () => {
       resolve();
@@ -87,6 +88,20 @@ function copyFile(source, target) {
     });
   });
 }
+
+const hash2Key = hash => `${hash.slice(0, 5)}/${hash}`;
+const key2path = key => `${FILES_PATH}/${key}`;
+
+const getFileHash = filePath => new Promise((resolve, reject) => {
+  const rs = fs.createReadStream(filePath);
+  const hash = crypto.createHash('sha1');
+  hash.setEncoding('hex');
+  rs.pipe(hash);
+  rs.on('end', () => {
+    hash.end();
+    resolve(hash.read());
+  });
+});
 
 function buffer2File(buffer) {
   const tmpPath = path.resolve(TMP_FILES_PATH, `${Date.now()}`);
@@ -120,35 +135,20 @@ function downloadImageAsyn(url) {
   });
 }
 
-const getFileHash = filePath => new Promise((resolve, reject) => {
-  const rs = fs.createReadStream(filePath);
-  const hash = crypto.createHash('sha1');
-  hash.setEncoding('hex');
-  rs.pipe(hash);
-  rs.on('end', () => {
-    hash.end();
-    resolve(hash.read());
-  });
-});
-
-const hash2Key = hash => `${hash.slice(0, 5)}/${hash}`;
-
-const key2path = key => `${FILES_PATH}/${key}`;
-
 function debounce(func, wait, immediate) {
-  let timeout = null,
-    debounced = function () {
-      let context = this,
-        args = arguments;
-      const later = function () {
-        timeout = null;
-        if (!immediate) func.apply(context, args);
-      };
-      const callNow = immediate && !timeout;
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-      if (callNow) func.apply(context, args);
+  let timeout = null;
+  const debounced = (...argsInFunc) => {
+    const context = this;
+    const args = argsInFunc;
+    const later = function () {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
     };
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
   debounced.cancel = function () {
     clearTimeout(timeout);
   };
@@ -156,10 +156,10 @@ function debounce(func, wait, immediate) {
 }
 
 const throttle = function (func, wait, options) {
-  let timeout,
-    context,
-    args,
-    result;
+  let timeout;
+  let context;
+  let args;
+  let result;
   let previous = 0;
   if (!options) options = {};
   const getNow = function () {
@@ -173,14 +173,14 @@ const throttle = function (func, wait, options) {
     if (!timeout) context = args = null;
   };
 
-  const throttled = function () {
+  const throttled = function (...argsInFunc) {
     const now = getNow();
     if (!previous && options.leading === false) previous = now;
     const remaining = wait - (now - previous);
     context = this;
-        // 但是args每次都是最新的
-    args = arguments;
-        // 距离上次的时间已经大约wait，直接运行
+    // 但是args每次都是最新的
+    args = argsInFunc;
+    // 距离上次的时间已经大约wait，直接运行
     if (remaining <= 0 || remaining > wait) {
       if (timeout) {
         clearTimeout(timeout);
@@ -208,7 +208,7 @@ const throttle = function (func, wait, options) {
   return throttled;
 };
 
-const findIndexById = (list, item) => list.findIndex(currentItem => currentItem._id == item._id);
+const findIndexById = (list, item) => list.findIndex(currentItem => currentItem._id === item._id);
 
 const pick = (o, ...props) => Object.assign({}, ...props.map(prop => ({ [prop]: o[prop] })));
 
@@ -258,7 +258,6 @@ function placeImageToLocalAsyn(content) {
       m = pp.exec(content);
       if (m) {
         const matchTxt = m[0];
-        const text = m[1];
         const href = m[2];
         if (ppp.test(href)) {
           promisesHash[href] = downloadImageAsyn(href);

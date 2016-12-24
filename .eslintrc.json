@@ -9,7 +9,9 @@
     "no-param-reassign": "off",
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "func-names": "off",
+    "no-useless-escape": "off"
   },
   "env": {
     "es6": true,
