@@ -1,12 +1,8 @@
-//tray menubar 速记功能
+// tray menubar 速记功能
 import React, {
-    Component
+    Component,
 } from 'react';
-import ANoteEditor from './anote_editor';
-import {
-    files,
-    books
-} from '../../main/set_db';
+import autobind from 'autobind-decorator';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Dialog from 'material-ui/Dialog';
@@ -15,8 +11,13 @@ import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import SelectField from 'material-ui/SelectField';
+import ANoteEditor from './anote_editor';
+import {
+    books,
+} from '../../main/set_db';
 import sendMainCmd from '../main_util';
 
+@autobind
 class TrayApp extends Component {
   constructor(props) {
     super(props);
@@ -27,96 +28,99 @@ class TrayApp extends Component {
       books: [],
       titleErrorText: null,
       bookIdErrorText: null,
-      title: null
-    }
-  }
-
-  getKeyMaps = () => {
-    var that = this;
-    return {
-      'Cmd-S': function(cm){
-        that.saveFile();
-      }
+      title: null,
     };
   }
 
-  saveFile = (event) => {
-    if(event){
+  getKeyMaps() {
+    const that = this;
+    return {
+      'Cmd-S': function (cm) {
+        that.saveFile();
+      },
+    };
+  }
+
+  saveFile(event) {
+    if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
     this._openDialog();
   }
 
-  clear = (event) => {
-    if(event){
+  clear(event) {
+    if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
-    if(this.refs.fileContent)
+    if (this.refs.fileContent) {
       this.refs.fileContent.setValue('');
+    }
   }
 
-  _openDialog = () => {
-    var that = this;
+  _openDialog() {
+    const that = this;
     books.loadDatabase((error) => {
-      if(error)
+      if (error) {
         return;
-      books.find({available: true}).sort({ 'updatedAt': -1  }).exec((err, bks) => {
-        if(bks.length == 0) {
+      }
+      books.find({ available: true }).sort({ updatedAt: -1 }).exec((err, bks) => {
+        if (bks.length === 0) {
           that.setState({
-            books: []
+            books: [],
           });
           return that._alertNoBooks();
         }
         that.setState({
-          books: bks
+          books: bks,
         }, that._showSaveDialog);
+        return null;
       });
     });
   }
 
-  _alertNoBooks = () => {
+  _alertNoBooks() {
     this.setState({
-      alertDialogOpen: true
+      alertDialogOpen: true,
     });
   }
 
-  _closeAlertNoBooksDialog = () => {
+  _closeAlertNoBooksDialog() {
     this.setState({
-      alertDialogOpen: false
+      alertDialogOpen: false,
     });
   }
 
-  _showSaveDialog = () => {
+  _showSaveDialog() {
     this.setState({
-      saveDialogOpen: true
+      saveDialogOpen: true,
     }, () => {
       this.refs.titleInput.focus();
     });
   }
 
-  _okSave = (event) => {
+  _okSave(event) {
     event.preventDefault();
     event.stopPropagation();
     let canSave = true;
 
     // validates
-    if(!this.state.bookId || this.state.bookId == ''){
+    if (!this.state.bookId || this.state.bookId === '') {
       canSave = false;
       this.setState({
-        bookIdErrorText: 'must choose a book!!!'
+        bookIdErrorText: 'must choose a book!!!',
       });
     }
-    if(!this.state.title || this.state.title == ''){
+    if (!this.state.title || this.state.title === '') {
       canSave = false;
       this.setState({
-        titleErrorText: 'must input a title'
+        titleErrorText: 'must input a title',
       });
     }
 
     // persistence
-    if(canSave){
+    if (canSave) {
       // cannot save like this, because some cache I think.
       // files.insert({
       //   bookId: this.state.bookId,
@@ -130,7 +134,7 @@ class TrayApp extends Component {
         bookId: this.state.bookId,
         available: true,
         content: this.refs.fileContent.getValue() || '',
-        title: this.state.title
+        title: this.state.title,
       });
 
       this.setState({
@@ -138,35 +142,35 @@ class TrayApp extends Component {
         title: null,
         bookIdErrorText: null,
         titleErrorText: null,
-        saveDialogOpen: false
+        saveDialogOpen: false,
       });
       this.refs.fileContent.setValue('');
       this.refs.fileContent.clearHistory();
     }
   }
 
-  _cancelSave = () => {
+  _cancelSave() {
     this.setState({
       titleErrorText: null,
       title: null,
-      saveDialogOpen: false
+      saveDialogOpen: false,
     });
   }
 
-  _changeTitle = (event) => {
+  _changeTitle(event) {
     this.setState({
-      title: event.target.value
+      title: event.target.value,
     });
   }
 
-  _changeBookId = (event, index, value) => {
+  _changeBookId(event, index, value) {
     this.setState({
-      bookId: value
-    })
+      bookId: value,
+    });
   }
 
-  render () {
-    var saveActions = [
+  render() {
+    const saveActions = [
       <FlatButton
         label='Cancel'
         secondary={true}
@@ -177,7 +181,7 @@ class TrayApp extends Component {
         primary={true}
         keyboardFocused={true}
         onTouchTap={this._okSave}
-      />
+      />,
     ];
 
     return (
@@ -190,10 +194,10 @@ class TrayApp extends Component {
           <ul className="menu left">
             <li>
               <IconMenu
-                anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-                targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+                targetOrigin={{ horizontal: 'left', vertical: 'top' }}
                 iconButtonElement={
-                  <IconButton style={{width: '40px', height: '40px', padding: '3px'}}><MoreVertIcon/></IconButton>
+                  <IconButton style={{ width: '40px', height: '40px', padding: '3px' }}><MoreVertIcon/></IconButton>
                 }
               >
                 <MenuItem
@@ -215,8 +219,8 @@ class TrayApp extends Component {
             defaultValue={this.state.content}
             ref='fileContent'
             editorState={0}
-            toggleWatching={function(){}}
-            togglePreview={function(){}}
+            toggleWatching={function () {}}
+            togglePreview={function () {}}
             onChange={() => {
             }}
             keyMaps={this.getKeyMaps()}
@@ -247,15 +251,13 @@ class TrayApp extends Component {
             errorText={this.state.bookIdErrorText}
           >
             {
-              this.state.books.map((book) => {
-                return (
+              this.state.books.map(book => (
                   <MenuItem
                     key={book._id}
                     value={book._id}
                     primaryText={book.name}
                   />
-                )
-              })
+                ))
             }
           </SelectField>
           </form>
@@ -269,7 +271,7 @@ class TrayApp extends Component {
               primary={true}
               keyboardFocused={true}
               onTouchTap={this._closeAlertNoBooksDialog}
-            />
+            />,
           ]}
           open={this.state.alertDialogOpen}
           onRequestClose={this._closeAlertNoBooksDialog}

@@ -1,25 +1,24 @@
-const electron = require('electron');
-const app = electron.app;
+import electron from 'electron';
 import windows from './windows';
 import { log } from './log';
-const {Menu, MenuItem} = electron;
-const BrowserWindow = electron.BrowserWindow;
-const menu = require('./menu');
-const shell = require('./shell');
+import menu from './menu';
 import { openSaveDialog, openFileDialog } from './dialog';
+import shell from './shell';
 
-var mainMsgQueue = [];
+const app = electron.app;
+const mainMsgQueue = [];
 
-const init = () => {
-  var ipc = electron.ipcMain;
+function init() {
+  const ipc = electron.ipcMain;
 
-  ipc.on('mainRenderReady', function(e) {
+  ipc.on('mainRenderReady', (e) => {
     app.mainRenderReady = true;
 
     // 暂存msg的queue
-    mainMsgQueue.forEach(function (message) {
-      if(windows.main)
+    mainMsgQueue.forEach((message) => {
+      if (windows.main) {
         windows.main.send(...message);
+      }
     });
 
     mainMsgQueue.length = 0;
@@ -64,20 +63,24 @@ const init = () => {
 
   // a bridge between main render process to worker process
   ipc.on('workerCmd', (event, ...args) => {
-    if(windows.worker.win)
+    if (windows.worker.win) {
       return windows.worker.dispatch(...args);
+    }
     windows.worker.init(() => {
       windows.worker.dispatch(...args);
     });
+    return null;
   });
 
   // a bridge between other window to main
   ipc.on('mainCmd', (event, ...args) => {
-    if(windows.main.win)
+    if (windows.main.win) {
       return windows.main.dispatch(...args);
+    }
     windows.main.init();
     windows.main.dispatch(...args);
-  })
+    return null;
+  });
 
   // open save dialog
   ipc.on('saveDialog', (...args) => {

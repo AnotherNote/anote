@@ -1,70 +1,72 @@
-import path from 'path';
 import co from 'co';
 import React, {
     Component,
-    PropTypes
+    PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import DropZone from 'react-dropzone';
 import constants from '../../constants';
-let {
-    FILES_PATH
-} = constants;
 import {
-    copyFile,
-    getFileHash,
-    hash2Key
-} from '../../util'
+  copyFile,
+  getFileHash,
+  hash2Key,
+} from '../../util';
+
+const {
+    FILES_PATH,
+} = constants;
 
 // props {book, open, onCancel, onOk}
+@autobind
 class BookForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
       book: this.props.book,
       nameErrorText: null,
-      processImage: false
-    }
+      processImage: false,
+    };
   }
 
   componentWillReceiveProps(newProps) {
-    if(JSON.stringify(newProps.book) != JSON.stringify(this.state.book)) {
+    if (JSON.stringify(newProps.book) !== JSON.stringify(this.state.book)) {
       this.setState({
         book: newProps.book,
-        nameErrorText: null
+        nameErrorText: null,
       });
     }
   }
 
-  _changeName = (event) => {
+  _changeName(event) {
     this.setState({
-      book: Object.assign({}, this.state.book, { name: event.target.value })
+      book: Object.assign({}, this.state.book, { name: event.target.value }),
     });
   }
 
-  _submit = (event) => {
+  _submit(event) {
     event.preventDefault();
     event.stopPropagation();
-    if(this.state.book.name == '' || !this.state.book.name){
+    if (this.state.book.name === '' || !this.state.book.name) {
       this.setState({
-        nameErrorText: 'need a name!!'
+        nameErrorText: 'need a name!!',
       });
       return;
     }
     this.props.onOk(this.state.book);
   }
 
-  _dropImage = (files) => {
-    let that = this;
-    co(function * () {
-      let path = files[0].path;
-      let hashKey = yield getFileHash(path);
-      let key = hash2Key(hashKey);
+  _dropImage(files) {
+    const that = this;
+    co(function* () {
+      const path = files[0].path;
+      const hashKey = yield getFileHash(path);
+      const key = hash2Key(hashKey);
       yield copyFile(path, `${FILES_PATH}/${key}`);
       that.setState({
-        book: Object.assign({}, that.state.book, { imagePath: key })
+        book: Object.assign({}, that.state.book, { imagePath: key }),
       });
     });
   }
@@ -81,7 +83,7 @@ class BookForm extends Component {
         primary={true}
         keyboardFocused={true}
         onTouchTap={this._submit}
-      />
+      />,
     ];
 
     return (
@@ -101,9 +103,9 @@ class BookForm extends Component {
             defaultValue={this.state.book.name}
             onChange={this._changeName}
           /><br/>
-          <DropZone onDrop={this._dropImage} multiple={false} style={{width: '200px', height: '200px'}}>
+          <DropZone onDrop={this._dropImage} multiple={false} style={{ width: '200px', height: '200px' }}>
             <img
-              src={this.state.book.imagePath != '' ? `${FILES_PATH}/${this.state.book.imagePath}` : constants.TMP_IMAGE_PATH}
+              src={this.state.book.imagePath !== '' ? `${FILES_PATH}/${this.state.book.imagePath}` : constants.TMP_IMAGE_PATH}
               style={{ height: '100%', width: '100%', objectFit: 'contain' }}
             />
           </DropZone>
@@ -115,10 +117,10 @@ class BookForm extends Component {
 
 // strong params
 BookForm.propTypes = {
-    book: PropTypes.object,
-    open: PropTypes.bool,
-    onCancel: PropTypes.func,
-    onOk: PropTypes.func
-}
+  book: PropTypes.object,
+  open: PropTypes.bool,
+  onCancel: PropTypes.func,
+  onOk: PropTypes.func,
+};
 
 export default BookForm;

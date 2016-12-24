@@ -1,29 +1,33 @@
+/* global $ */
 import React, {
     Component,
-    PropTypes
+    PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import ReactDom from 'react-dom';
 
+@autobind
 class NoteTitle extends Component {
   componentDidMount() {
-    if(this.props.autoFocus)
-      jQuery(ReactDom.findDOMNode(this.refs.input)).focus();
+    if (this.props.autoFocus) { $(ReactDom.findDOMNode(this.refs.input)).focus(); }
   }
 
-  onChange = (event) => {
-    if(this.props.onChange)
+  onChange(event) {
+    if (this.props.onChange) {
       this.props.onChange(event);
+    }
   }
 
-  setValue = (value) => {
-    jQuery(ReactDom.findDOMNode(this.refs.input)).val(value);
+  setValue(value) {
+    $(ReactDom.findDOMNode(this.refs.input)).val(value);
   }
 
-  focus = () => {
+  focus() {
     // a chrome focus bug
     setTimeout(() => {
-      if(this.refs.input)
+      if (this.refs.input) {
         this.refs.input.focus();
+      }
     }, 1);
   }
 
@@ -44,7 +48,7 @@ class NoteTitle extends Component {
 
 NoteTitle.propTypes = {
   onChange: PropTypes.func,
-  defaultValue: PropTypes.string
-}
+  defaultValue: PropTypes.string,
+};
 
 export default NoteTitle;

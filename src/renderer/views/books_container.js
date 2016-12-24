@@ -1,56 +1,53 @@
 import React, {
-    Component
+    Component,
 } from 'react';
+import autobind from 'autobind-decorator';
 import shallowCompare from 'react-addons-shallow-compare';
 import {
-    connect
+    connect,
 } from 'react-redux';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
+import TextField from 'material-ui/TextField';
+import {
+  hashHistory,
+} from 'react-router';
+import {
+  ipcRenderer,
+} from 'electron';
 import {
     addBook,
     listBooks,
     delBook,
     editBook,
-    concatBooks,
     activeBook,
-    setGlobalBook
+    setGlobalBook,
 } from '../actions';
 import {
     files,
     books,
-    tags,
-    infos
 } from '../../main/set_db';
 import BooksList from './books_list';
 import BookForm from './book_form';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import DropZone from 'react-dropzone';
-import TextField from 'material-ui/TextField';
 import {
     debounce,
-    pick
+    pick,
 } from '../../util';
-import {
-    hashHistory
-} from 'react-router';
 import ConfirmDialog from './confirm_dialog';
 import {
   openBookItemContextMenu,
-  openNormalContextMenu
-} from '../controllers/books_controller.js';
-import {
-  ipcRenderer
-} from 'electron';
+  openNormalContextMenu,
+} from '../controllers/books_controller';
 
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
     books: state.books,
     currentBook: state.activeBook,
-    globalBook: state.globalBook
-  }
+    globalBook: state.globalBook,
+  };
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
     addBook: (book) => {
       dispatch(addBook(book));
@@ -69,10 +66,11 @@ const mapDispatchToProps = (dispatch) => {
     },
     setGlobalBook: (book) => {
       dispatch(setGlobalBook(book));
-    }
-  }
+    },
+  };
 }
 
+@autobind
 class BooksContainer extends Component {
   constructor(props) {
     super(props);
@@ -83,38 +81,37 @@ class BooksContainer extends Component {
       // for custom confirm dialog
       confirmationOpen: false,
       confirmString: '',
-      confirmationTmpData: {}
-    }
+      confirmationTmpData: {},
+    };
     this.debouncedChangeBooksSearchText = debounce(this.changeBooksSearchText, 200);
   }
   // hook method for fetch books
   componentDidMount() {
     // can write some fetch infos code
-    let that = this;
-    books.find({  }).sort({ 'updatedAt': -1 }).exec((err, bks) => {
-      if(bks.length == 0)
+    const that = this;
+    books.find({ }).sort({ updatedAt: -1 }).exec((err, bks) => {
+      if (bks.length === 0) {
         that.props.listBooks(bks);
+      }
       let tmpC = 0;
       bks.forEach((bk, index) => {
-        files.count({bookId: bk._id, available: true}, (error, count) => {
-          if(error){
+        files.count({ bookId: bk._id, available: true }, (error, count) => {
+          if (error) {
             throw new Error('db error');
-            return;
           }
           bk.filesCount = count;
           tmpC += 1;
-          if(tmpC == bks.length)
+          if (tmpC === bks.length) {
             that.props.listBooks(bks);
-        })
-        let availableBooks = bks.filter((book) => {
-          return book.available;
+          }
         });
-        if(!that.props.globalBook._id && availableBooks.length > 0){
+        const availableBooks = bks.filter(book => book.available);
+        if (!that.props.globalBook._id && availableBooks.length > 0) {
           that.props.setGlobalBook(
             {
               _id: availableBooks[0]._id,
-              name: availableBooks[0].name
-            }
+              name: availableBooks[0].name,
+            },
           );
         }
       });
@@ -127,18 +124,18 @@ class BooksContainer extends Component {
     this._checkNewNoteBookParam(newProps);
   }
 
-  _checkNewNoteBookParam = (props) => {
+  _checkNewNoteBookParam(props) {
     props = props || this.props;
-    if(props.location.query.newNoteBook == 'true'){
+    if (props.location.query.newNoteBook === 'true') {
       // 保证只开一次新建的dialog
       this._delNewNoteBookParam();
       this._newBook();
     }
   }
 
-  _delNewNoteBookParam = () => {
+  _delNewNoteBookParam() {
     hashHistory.replace({
-      pathname: '/'
+      pathname: '/',
     });
   }
 
@@ -146,118 +143,114 @@ class BooksContainer extends Component {
     this.debouncedChangeBooksSearchText.cancel();
   }
 
-  _newBook = (event) => {
+  _newBook(event) {
     this.props.activeBook({ imagePath: '', available: true });
     this.setState({
-      bookDialogOpen: true
+      bookDialogOpen: true,
     });
   }
 
-  editBook = (book) => {
+  editBook(book) {
     this.props.activeBook(book);
     this.setState({
-      bookDialogOpen: true
+      bookDialogOpen: true,
     });
   }
 
-  closeBookFormDialog = () => {
+  closeBookFormDialog() {
     this.setState({
-      bookDialogOpen: false
+      bookDialogOpen: false,
     });
   }
 
-  submitBookFormDialog = (book) => {
-    var that = this;
-    if(!book._id){
+  submitBookFormDialog(book) {
+    const that = this;
+    if (!book._id) {
       books.insert(that._bookAttributes(book), (error, newBook) => {
-        if(error){
+        if (error) {
           throw error;
-          return;
         }
-        that.props.addBook(Object.assign({}, newBook, {filesCount: 0}));
+        that.props.addBook(Object.assign({}, newBook, { filesCount: 0 }));
         that.setState({
-          bookDialogOpen: false
+          bookDialogOpen: false,
         });
-        if(!that.props.globalBook._id){
+        if (!that.props.globalBook._id) {
           that.props.setGlobalBook(
             {
               _id: newBook._id,
-              name: newBook.name
-            }
+              name: newBook.name,
+            },
           );
         }
       });
-    }else{
-      books.update({'_id': book._id}, that._bookAttributes(book), {}, (error) => {
-        if(error){
+    } else {
+      books.update({ _id: book._id }, that._bookAttributes(book), {}, (error) => {
+        if (error) {
           throw error;
-          return;
         }
         that.props.editBook(book);
         that.setState({
-          bookDialogOpen: false
+          bookDialogOpen: false,
         });
       });
     }
   }
 
-  _bookAttributes = (book) => {
+  _bookAttributes(book) {
     return pick(book, 'imagePath', 'available', 'name');
   }
 
-  changeBooksSearchText = (event)=> {
+  changeBooksSearchText = (event) => {
     this.setState({
-      booksSearchText: event.target.value
+      booksSearchText: event.target.value,
     });
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState);
   }
 
-  jumpToNotes = (obj) => {
+  jumpToNotes(obj) {
     hashHistory.push(obj);
   }
 
-  delBook = (book) => {
+  delBook(book) {
     this.setState({
       confirmationOpen: true,
       confirmString: `Are you sure you want to delete the notebook '${book.name}' all notes to trash`,
-      confirmationTmpData: {bookId: book._id, book: book}
+      confirmationTmpData: { bookId: book._id, book },
     });
   }
 
-  onCancelConfirmationDialog = () => {
+  onCancelConfirmationDialog() {
     this.setState({
-      confirmationOpen: false
+      confirmationOpen: false,
     });
   }
 
-  onOkConfirmationDialog = (event, tmpData) => {
-    let that = this;
-    books.update({_id: tmpData.bookId}, {$set: {available: false}}, {}, function(error) {
-      if(error){
+  onOkConfirmationDialog(event, tmpData) {
+    const that = this;
+    books.update({ _id: tmpData.bookId }, { $set: { available: false } }, {}, (error) => {
+      if (error) {
         throw error;
-        return;
       }
-      that.props.editBook(Object.assign({}, tmpData.book, {available: false}));
-      if(that.props.globalBook._id == tmpData.bookId) {
+      that.props.editBook(Object.assign({}, tmpData.book, { available: false }));
+      if (that.props.globalBook._id === tmpData.bookId) {
         that.props.setGlobalBook({});
       }
       files.update({ bookId: tmpData.bookId }, { $set: { available: false } }, { multi: true }, (error) => {
-        if(error){
+        if (error) {
           throw error;
-          return;
         }
         that.setState({
-          confirmationOpen: false
+          confirmationOpen: false,
         });
       });
     });
   }
 
-  onContextMenu = (event, book) => {
-    var that = this;
+  onContextMenu(event, book) {
+    const that = this;
     openBookItemContextMenu({
       editBook: () => {
         that.editBook(book);
@@ -267,31 +260,27 @@ class BooksContainer extends Component {
       },
       newBook: () => {
         that._newBook();
-      }
+      },
     });
   }
 
-  onNormalContextMenu = (event) => {
+  onNormalContextMenu(event) {
     event.preventDefault();
     event.stopPropagation();
-    var that = this;
+    const that = this;
     openNormalContextMenu({
       newBook: () => {
         that._newBook();
-      }
+      },
     });
   }
 
-  availableBooks = () => {
-    return this.props.books.filter((book) => {
-      return book.available;
-    });
+  availableBooks() {
+    return this.props.books.filter(book => book.available);
   }
 
-  unavailableBooks = () => {
-    return this.props.books.filter((book) => {
-      return !book.available;
-    });
+  unavailableBooks() {
+    return this.props.books.filter(book => !book.available);
   }
 
   render() {
@@ -300,7 +289,7 @@ class BooksContainer extends Component {
         onContextMenu={this.onNormalContextMenu}
         style={{
           height: '100%',
-          width: '100%'
+          width: '100%',
         }}
       >
         <FloatingActionButton style={{ position: 'fixed', bottom: '10px', right: '10px', zIndex: 1000 }} onClick={this._newBook}>
@@ -311,21 +300,22 @@ class BooksContainer extends Component {
             hintText="Search a notebook"
             style={{ marginLeft: '10px' }}
             defaultValue={this.state.booksSearchText}
-            onChange={(event) => {event.persist();this.debouncedChangeBooksSearchText(event)}}
+            onChange={(event) => { event.persist(); this.debouncedChangeBooksSearchText(event); }}
             />
         </div>
         <BooksList
-          books={this.availableBooks().filter((book) =>  {
-            if(!this.state.booksSearchText || this.state.booksSearchText == '')
+          books={this.availableBooks().filter((book) => {
+            if (!this.state.booksSearchText || this.state.booksSearchText === '') {
               return true;
-              let patt = new RegExp(this.state.booksSearchText, 'i');
-              return patt.test(book.name);
+            }
+            const patt = new RegExp(this.state.booksSearchText, 'i');
+            return patt.test(book.name);
           })}
           callbacks={{
             editBook: this.editBook,
             delBook: this.delBook,
             jumpToNotes: this.jumpToNotes,
-            onContextMenu: this.onContextMenu
+            onContextMenu: this.onContextMenu,
           }}
         />
         <BookForm

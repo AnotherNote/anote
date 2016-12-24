@@ -1,3 +1,45 @@
 {
-  "extends": "airbnb-base"
+  "extends": "airbnb-base",
+  "rules": {
+    "no-console": "off",
+    "max-len": "off",
+    "no-unused-vars": ["error", { "vars": "all", "args": "none" }],
+    "max-len": "off",
+    "no-plusplus": "off",
+    "no-param-reassign": "off",
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "no-underscore-dangle": "off",
+    "func-names": "off",
+    "no-useless-escape": "off",
+    "class-methods-use-this": "off",
+    "import/prefer-default-export": "off",
+    "no-shadow": "off",
+    "no-script-url": "off",
+    "no-mixed-operators": "off",
+    "no-case-declarations": "off",
+    "radix": "off"
+  },
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "react"
+  ],
+  "settings": {
+    "react": {
+      "createClass": "createClass",
+      "pragma": "React",
+      "version": "15.4"
+    }
+  }
 }

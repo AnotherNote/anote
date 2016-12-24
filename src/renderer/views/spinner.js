@@ -9,7 +9,7 @@ const style = {
     top: '0px',
     bottom: '0px',
     background: '#fff',
-    zIndex: 900
+    zIndex: 900,
   },
   center: {
     margin: 'auto',
@@ -19,16 +19,16 @@ const style = {
     bottom: 0,
     right: 0,
     width: '60px',
-    height: '60px'
+    height: '60px',
   },
   refresh: {
     display: 'inline-block',
     position: 'relative',
-    zIndex: 1000
+    zIndex: 1000,
   },
 };
 
-const Spinner = (props) => (
+const Spinner = props => (
   props.show ?
     <div style={style.container}>
       <div style={style.center}>

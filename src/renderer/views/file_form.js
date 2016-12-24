@@ -1,65 +1,67 @@
 import React, {
     Component,
-    PropTypes
+    PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import {
-    debounce
+    debounce,
 } from '../../util';
-import ReactDom from 'react-dom';
 import NotePreview from './note_preview';
 import NoteTitle from './note_title';
 import ANoteEditor from './anote_editor';
 
+@autobind
 class FileForm extends Component {
   constructor(props) {
     super(props);
     this.debouncedOnTitleChange = debounce(this.onTitleChange, 200);
     this.debouncedOnContentchange = debounce(this.onContentChange, 200);
     this.state = {
-      oldState: null
+      oldState: null,
     };
   }
 
-  onTitleChange = (value, currentFile) => {
-    if(this.props.callbacks && this.props.callbacks.onChangeTitle && currentFile.title != value)
-      this.props.callbacks.onChangeTitle(value, currentFile)
+  onTitleChange(value, currentFile) {
+    if (this.props.callbacks && this.props.callbacks.onChangeTitle && currentFile.title !== value) { this.props.callbacks.onChangeTitle(value, currentFile); }
   }
 
-  onContentChange = (value, currentFile) => {
-    if(value == null || currentFile == null)
+  onContentChange(value, currentFile) {
+    if (value === null || currentFile === null) {
       return;
-    if(this.props.callbacks && this.props.callbacks.onChangeContent){
-      if(value != currentFile.content)
+    }
+    if (this.props.callbacks && this.props.callbacks.onChangeContent) {
+      if (value !== currentFile.content) {
         this.props.callbacks.onChangeContent(value, currentFile);
+      }
     }
   }
 
-  toggleWatching = () => {
+  toggleWatching() {
     this.setState({
-      oldState: this.props.editorState == 1 ? 0 : 1
+      oldState: this.props.editorState === 1 ? 0 : 1,
     });
-    this.props.setEditorState(this.props.editorState == 1 ? 0 : 1);
+    this.props.setEditorState(this.props.editorState === 1 ? 0 : 1);
   }
 
-  togglePreview = () => {
-    this.props.setEditorState(this.props.editorState == 2 ? this.state.oldState || 0 : 2);
+  togglePreview() {
+    this.props.setEditorState(this.props.editorState === 2 ? this.state.oldState || 0 : 2);
   }
 
-  componentWillUnmount = () => {
+  componentWillUnmount() {
     this.debouncedOnTitleChange.cancel();
     this.debouncedOnContentchange.cancel();
   }
 
-  componentWillReceiveProps = (newProps) => {
-    if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
-      if(this.refs.fileTitle){
+  componentWillReceiveProps(newProps) {
+    if ((this.props.currentFile && this.props.currentFile._id) !== (newProps.currentFile && newProps.currentFile._id)) {
+      if (this.refs.fileTitle) {
         this.refs.fileTitle.setValue(newProps.currentFile.title);
         this.refs.fileTitle.focus();
         this.debouncedOnTitleChange.cancel();
       }
     }
-    if((this.props.currentFile && this.props.currentFile._id) != (newProps.currentFile && newProps.currentFile._id)){
-      if(this.refs.fileContent){
+    if ((this.props.currentFile && this.props.currentFile._id) !== (newProps.currentFile && newProps.currentFile._id)) {
+      if (this.refs.fileContent) {
         this.refs.fileContent.setValue(newProps.currentFile.content || '');
         this.refs.fileContent.clearHistory();
         this.debouncedOnContentchange.cancel();
@@ -72,8 +74,8 @@ class FileForm extends Component {
   // key={(this.props.currentFile && this.props.currentFile._id) || 'none'}
   // 暂时去掉key的写法，用componentWillReceiveProps来手动赋值，提高editor的效率
   render() {
-    let realForm = (
-                    this.props.available == 'true' ?
+    const realForm = (
+                    this.props.available === 'true' ?
                       <div>
                         <NoteTitle
                           autoFocus={true}
@@ -91,7 +93,7 @@ class FileForm extends Component {
                             borderBottom: '1pz solid #808080',
                             fontSize: '16px',
                             width: '100%',
-                            boxSizing: 'border-box'
+                            boxSizing: 'border-box',
                           }}
                         />
                         <div className='editor-wrapper'>
@@ -103,7 +105,7 @@ class FileForm extends Component {
                             toggleWatching={this.toggleWatching}
                             togglePreview={this.togglePreview}
                             onChange={(value) => {
-                              this.debouncedOnContentchange(value, (this.props && this.props.currentFile) || null)
+                              this.debouncedOnContentchange(value, (this.props && this.props.currentFile) || null);
                             }}
                           />
                         </div>
@@ -122,7 +124,7 @@ class FileForm extends Component {
 
 FileForm.propTypes = {
   currentFile: PropTypes.object,
-  callbacks: PropTypes.object
-}
+  callbacks: PropTypes.object,
+};
 
 export default FileForm;
