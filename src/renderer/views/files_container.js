@@ -4,6 +4,7 @@ import React, {
 import {
     connect,
 } from 'react-redux';
+import autobind from 'autobind-decorator';
 import ReactDom from 'react-dom';
 import {
     listFiles,
@@ -88,6 +89,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+@autobind
 class FilesContainer extends Component {
   constructor(props) {
     super(props);

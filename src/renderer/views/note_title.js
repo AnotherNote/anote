@@ -2,8 +2,10 @@ import React, {
     Component,
     PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import ReactDom from 'react-dom';
 
+@autobind
 class NoteTitle extends Component {
   componentDidMount() {
     if (this.props.autoFocus) { jQuery(ReactDom.findDOMNode(this.refs.input)).focus(); }

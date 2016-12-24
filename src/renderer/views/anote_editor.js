@@ -3,6 +3,7 @@ import co from 'co';
 import React, {
   Component,
 } from 'react';
+import autobind from 'autobind-decorator';
 import {
   copyFile,
   getFileHash,
@@ -107,6 +108,7 @@ function pastText(cm) {
   }
 }
 
+@autobind
 class ANoteEditor extends Component {
   constructor(props) {
     super(props);

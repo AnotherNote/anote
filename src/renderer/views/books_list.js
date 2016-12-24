@@ -2,6 +2,7 @@ import React, {
     Component,
     PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import shallowCompare from 'react-addons-shallow-compare';
 import {
     GridList,
@@ -36,6 +37,7 @@ const styles = {
 };
 
 // props {callbacks, books}
+@autobind
 class BooksList extends Component {
   constructor(props) {
     super(props);

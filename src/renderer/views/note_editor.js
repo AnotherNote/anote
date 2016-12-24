@@ -5,6 +5,7 @@ import co from 'co';
 import React, {
     Component,
 } from 'react';
+import autobind from 'autobind-decorator';
 import ReactDom from 'react-dom';
 import {
     debounce,
@@ -103,6 +104,7 @@ function pastText(cm) {
   }
 }
 
+@autobind
 class NoteEditor extends Component {
   constructor(props) {
     super(props);

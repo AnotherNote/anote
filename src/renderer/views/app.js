@@ -1,6 +1,7 @@
 import React, {
     Component,
 } from 'react';
+import autobind from 'autobind-decorator';
 import {
     connect,
 } from 'react-redux';
@@ -40,7 +41,8 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-const App = class App extends Component {
+@autobind
+class App extends Component {
   constructor(props) {
     super(props);
   }

@@ -2,6 +2,7 @@ import React, {
   Component,
   PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
 import Dialog from 'material-ui/Dialog';
@@ -17,6 +18,7 @@ const style = {
   margin: '16px 32px 16px 0',
 };
 
+@autobind
 export default class ListMenu extends Component {
   constructor(props) {
     super(props);

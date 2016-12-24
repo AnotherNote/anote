@@ -4,6 +4,7 @@ import React, {
     Component,
     PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -19,6 +20,7 @@ import {
 } from '../../util';
 
 // props {book, open, onCancel, onOk}
+@autobind
 class BookForm extends Component {
   constructor(props) {
     super(props);

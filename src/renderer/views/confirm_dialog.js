@@ -2,9 +2,11 @@ import React, {
   Component,
   PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
+@autobind
 export default class ConfirmDialog extends Component {
   render() {
     const actions = [

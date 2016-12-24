@@ -2,6 +2,7 @@ import React, {
     Component,
     PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import {
     Card,
     CardHeader,
@@ -20,6 +21,7 @@ import {
     hashHistory,
 } from 'react-router';
 
+@autobind
 class FilesList extends Component {
   constructor(props) {
     super(props);

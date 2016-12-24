@@ -1,6 +1,7 @@
 import React, {
     Component,
 } from 'react';
+import autobind from 'autobind-decorator';
 import {
     Link,
     IndexLink,
@@ -23,6 +24,7 @@ import {
 import singleEvent from '../single_event';
 import { setupIpc } from '../setup_ipc';
 
+@autobind
 class Layout extends Component {
   constructor(props) {
     super(props);

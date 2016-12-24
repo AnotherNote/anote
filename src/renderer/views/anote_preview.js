@@ -2,6 +2,7 @@ import React, {
   Component,
   PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import marked from 'marked';
 import renderFactory from '../../render_factory';
 
@@ -10,6 +11,7 @@ const defaultStyle = {
   overflowY: 'scroll',
 };
 
+@autobind
 class ANotePreview extends Component {
   constructor(props) {
     super(props);

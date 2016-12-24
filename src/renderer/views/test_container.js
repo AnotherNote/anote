@@ -1,6 +1,7 @@
 import React, {
     Component,
 } from 'react';
+import autobind from 'autobind-decorator';
 import ANoteEditor from './anote_editor';
 import fs from 'fs';
 const { remote } = require('electron');
@@ -15,6 +16,7 @@ menu.append(new MenuItem({ label: 'MenuItem1', click() { console.log('item 1 cli
 menu.append(new MenuItem({ type: 'separator' }));
 menu.append(new MenuItem({ label: 'MenuItem2', type: 'checkbox', checked: true }));
 
+@autobind
 export default class TestContainer extends Component {
   constructor(props) {
     super(props);

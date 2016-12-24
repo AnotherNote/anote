@@ -2,6 +2,7 @@
 import React, {
     Component,
 } from 'react';
+import autobind from 'autobind-decorator';
 import ANoteEditor from './anote_editor';
 import {
     files,
@@ -17,6 +18,7 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import SelectField from 'material-ui/SelectField';
 import sendMainCmd from '../main_util';
 
+@autobind
 class TrayApp extends Component {
   constructor(props) {
     super(props);

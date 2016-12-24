@@ -1,6 +1,7 @@
 import React, {
     Component,
 } from 'react';
+import autobind from 'autobind-decorator';
 import shallowCompare from 'react-addons-shallow-compare';
 import {
     connect,
@@ -73,6 +74,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+@autobind
 class BooksContainer extends Component {
   constructor(props) {
     super(props);

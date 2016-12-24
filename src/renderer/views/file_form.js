@@ -2,6 +2,7 @@ import React, {
     Component,
     PropTypes,
 } from 'react';
+import autobind from 'autobind-decorator';
 import {
     debounce,
 } from '../../util';
@@ -10,6 +11,7 @@ import NotePreview from './note_preview';
 import NoteTitle from './note_title';
 import ANoteEditor from './anote_editor';
 
+@autobind
 class FileForm extends Component {
   constructor(props) {
     super(props);
