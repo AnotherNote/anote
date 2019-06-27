@@ -1,16 +1,17 @@
+## This project is not maintained anymore...
+
 ### ANote
 
 A simple opensource note app(support markdown only :) ).
 
 **Note: Only support mac for now**
 
-[![quick_note.gif](http://s21.postimg.org/9pke2wjiv/quick_note.gif)](http://postimg.org/image/8aite6ifn/)
+[![quick_note.gif](https://i.imgur.com/k5YrBHc.gif)](https://i.imgur.com/k5YrBHc.gif)
 
-[![past_image.gif](http://s15.postimg.org/kdk0dn2aj/past_image.gif)](http://postimg.org/image/4fbani82f/)
+[![past_image.gif](https://i.imgur.com/wg5Flr1.gif)](http://i.imgur.com/wg5Flr1.gif)
 
-[![past_html.gif](http://s10.postimg.org/3sa87qn2x/past_html.gif)](http://postimg.org/image/q48114m6t/)
+[![past_html.gif](https://i.imgur.com/sg0qa3I.gif)](https://i.imgur.com/sg0qa3I.gif)
 
-[![export_as_pdf.gif](http://s21.postimg.org/5p2q0rz5z/export_as_pdf.gif)](http://postimg.org/image/p6xdgpw3n/)
 
 ### Features
 
